@@ -41,6 +41,10 @@
   files and oversized source artifacts.
 - GitHub hosting is private by default. Absence of a root `LICENSE` blocks
   public source distribution but does not block private version control.
+- `.github/workflows/quality.yml` is the source quality gate. It uses Python
+  3.12, the pinned uv CLI, `uv sync --all-extras --frozen`, Python compilation,
+  Node syntax checking and pytest on a Windows runner. It receives no runtime
+  or provider secrets.
 
 ## Dreamina static visual-asset pipeline
 

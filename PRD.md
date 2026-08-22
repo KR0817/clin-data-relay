@@ -47,6 +47,9 @@ Acceptance criteria:
   license and a public-release review.
 - The first baseline tag matches the application development version and is
   created only after a clean-root dependency install and complete test run.
+- Every push to `main` and every pull request must recreate the locked Python
+  environment and pass Python compilation, workbench JavaScript syntax and the
+  full automated test suite before the change is considered mergeable.
 
 ## 2026-08-22 Dreamina-assisted workbench visual assets
 

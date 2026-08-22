@@ -11,6 +11,8 @@ This file is not a substitute for a Git history or an approved project license.
   private Git baseline that excludes runtime data, secrets and build outputs.
 - Adopted `ClinData Relay` as the user-facing product name while retaining
   compatibility-sensitive package, API and launcher filenames.
+- Added a secret-free Windows CI quality gate for locked installation,
+  compilation, workbench syntax and the full test suite.
 - Established `app.version.__version__` as the package and runtime version source.
 - Included the closed workbench HTML, CSS, JavaScript and approved WebP assets
   in Python package builds.

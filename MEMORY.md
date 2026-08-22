@@ -292,3 +292,6 @@
 - Existing Kimi and LibreClinica secrets were deliberately not migrated. They
   must be configured again through approved local runtime setup if the new
   checkout is used as the live service.
+- `.github/workflows/quality.yml` is the required source CI gate for pushes and
+  pull requests. It recreates the frozen Python 3.12 environment and runs
+  compilation, JavaScript syntax and the full pytest suite without secrets.
