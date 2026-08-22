@@ -576,6 +576,30 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   validation, hold and duplicate failures are logged in independent bounded
   transactions because no candidate transaction is committed for those paths.
 
+## Reviewed-package clinical import repository
+
+- `app/reviewed_import_repository.py` owns immutable import commands/results
+  and the SQLite adapter. Its external interface is `import_package(command)`
+  plus `list_imported_values(import_id)`; callers do not manage SQL or audit
+  ordering.
+- Each record contains only centre-scoped pseudonymous subject/event/field
+  references, the originating source SHA-256, final reviewed value/unit,
+  review timestamp and a deterministic quality assessment prepared from the
+  active versioned rules. Mutable mappings are canonicalized before storage.
+- One transaction covers receipt claim, source metadata, candidate rows,
+  quality rows, hash-chained audit rows and the terminal imported/duplicate
+  attempt. PostgreSQL takes a transaction-scoped audit advisory lock before
+  reading the chain tail. A partial unique index protects active candidate
+  identity/value/unit equivalence across concurrent package imports.
+- The encrypted envelope remains filesystem/object-storage material outside
+  the repository. The local route writes it to a new source-specific path and
+  removes that new file when repository import does not succeed; package bytes
+  never enter PostgreSQL.
+- `app/postgres_reviewed_import_repository.py` is optional-central code and is
+  not imported by Centre Lite. Migration 3 creates source metadata, candidates,
+  audit events and quality findings required only by this vertical slice.
+  Missing central reads and managed identity keep readiness false.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

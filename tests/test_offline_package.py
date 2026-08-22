@@ -55,6 +55,31 @@ def test_reviewed_package_rejects_tampering() -> None:
         parse_reviewed_package(json.dumps(document).encode("utf-8"))
 
 
+def test_reviewed_package_rejects_non_timestamp_review_provenance() -> None:
+    content, _package_id, _digest = build_reviewed_package(
+        centre_code="SITE_A",
+        dictionary_id="synthetic-lab-mapping",
+        dictionary_version="0.1.0",
+        created_by="site-a-investigator@example.test",
+        created_at="2026-08-14T00:00:00+00:00",
+        records=[
+            {
+                "centre_code": "SITE_A",
+                "edc_subject_ref": "SUBJ001",
+                "edc_event_ref": "WEEK_0",
+                "field_code": "ALT",
+                "final_value": "31",
+                "unit": "U/L",
+                "source_sha256": "a" * 64,
+                "reviewed_at": "unknown",
+            }
+        ],
+    )
+
+    with pytest.raises(OfflinePackageError, match="offline_package_timestamp_invalid"):
+        parse_reviewed_package(content)
+
+
 def test_encrypted_reviewed_package_hides_values_and_round_trips() -> None:
     encrypted, package_id, package_sha256 = build_encrypted_reviewed_package(
         passphrase="centre-passphrase-2026",

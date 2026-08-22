@@ -371,3 +371,26 @@
   cases skipped on this workstation, plus Python compilation, JavaScript syntax
   checking and `uv lock --check`. The upstream Starlette/httpx deprecation
   warning remains.
+
+## 2026-08-22 reviewed-package clinical import slice
+
+- `app/reviewed_import_repository.py` owns the complete validated centre-package
+  clinical transaction. The SQLite route no longer embeds source/candidate/
+  quality/audit SQL; it builds one immutable command and consumes created and
+  duplicate counts from the repository result.
+- `app/postgres_reviewed_import_repository.py` implements the same import,
+  imported-value read and audit-verification interface. PostgreSQL migration 3
+  adds only source metadata, offline-import candidates, quality findings and a
+  sequenced hash-chain audit table. A transaction advisory lock serializes the
+  global chain tail, while a partial unique index prevents concurrent exact
+  active-candidate duplicates.
+- Encrypted package bytes remain source-storage material and never enter the
+  repository or PostgreSQL. The local route writes a new source-specific file
+  atomically and removes it if the database import fails or loses the package
+  claim race. The package parser now rejects missing, naive or malformed
+  `created_at`/`reviewed_at` timestamps with
+  `offline_package_timestamp_invalid` before database selection.
+- Local verification passed 212 tests with four PostgreSQL service-backed cases
+  skipped on this workstation, plus Python compilation, JavaScript syntax and
+  `uv lock --check`. Central readiness remains false because general central
+  reads, managed identity and operational qualification are incomplete.

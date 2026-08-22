@@ -378,6 +378,20 @@ an enabled central HTTP profile. No request is routed to PostgreSQL until the
 complete central clinical write path and institutional authentication are
 qualified.
 
+## Reviewed-package import persistence
+
+The single-file and batch encrypted-package endpoints remain HTTP-compatible.
+After decryption, dictionary validation and transfer-hold evaluation, the
+local route delegates the complete Companion clinical write to the SQLite
+reviewed-import repository. Its returned created/duplicate counts remain the
+response source. A repeated or concurrently claimed package still returns
+`409 offline_package_already_imported`.
+
+The equivalent PostgreSQL interface is contract-tested without adding an HTTP
+route or enabling `COMPANION_DEPLOYMENT_PROFILE=central`. The repository accepts
+no package bytes, passphrases, images, direct identity fields or external-model
+credentials.
+
 ## Errors
 
 Stable detail codes include:
@@ -400,3 +414,4 @@ Stable detail codes include:
 - `recognition_job_no_failed_items`
 - `recognition_job_duplicate_source`
 - `recognition_job_multiple_centres`
+- `offline_package_timestamp_invalid`

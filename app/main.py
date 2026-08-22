@@ -72,6 +72,12 @@ from app.package_import_repository import (
     PackageImportReceipt,
     SQLitePackageImportRepository,
 )
+from app.reviewed_import_repository import (
+    ReviewedImportQuality,
+    ReviewedImportRecord,
+    ReviewedPackageImportCommand,
+    SQLiteReviewedImportRepository,
+)
 from app.runtime_config import RuntimeConfig
 from app.upload_validation import ImageUploadError, validate_image_upload
 from app.pdf_safety import PdfSafetyError, validate_pdf_structure
@@ -818,6 +824,7 @@ def create_app(
     database_existed_before_initialise = resolved_database_path.is_file()
     database.initialise()
     package_import_repository = SQLitePackageImportRepository(database)
+    reviewed_import_repository = SQLiteReviewedImportRepository(database)
     if database_existed_before_initialise and os.getenv("COMPANION_AUTO_BACKUP", "false").lower() == "true":
         backup_directory = Path(
             os.getenv("COMPANION_BACKUP_DIRECTORY", str(resolved_database_path.parent / ".runtime" / "backups"))
@@ -881,6 +888,7 @@ def create_app(
 
     app.state.database = database
     app.state.package_import_repository = package_import_repository
+    app.state.reviewed_import_repository = reviewed_import_repository
     app.state.environment = resolved_environment
     app.state.product_mode = resolved_product_mode
     app.state.runtime_config = runtime_config
@@ -1551,7 +1559,6 @@ def create_app(
         record_count: int = 0,
         created_count: int = 0,
         duplicate_count: int = 0,
-        connection: sqlite3.Connection | None = None,
     ) -> None:
         attempt = PackageImportAttempt(
             id=str(uuid4()),
@@ -1570,10 +1577,7 @@ def create_app(
             created_by=user.username,
             created_at=utc_now(),
         )
-        if connection is None:
-            package_import_repository.append_attempt(attempt)
-        else:
-            package_import_repository.append_attempt_in_connection(connection, attempt)
+        package_import_repository.append_attempt(attempt)
 
     def audit(
         connection: sqlite3.Connection,
@@ -2978,8 +2982,6 @@ def create_app(
         original_filename = Path(file.filename or f"{package_id}.enc.json").name
         import_id = str(uuid4())
         created_at = utc_now()
-        created_count = 0
-        duplicate_count = 0
         receipt = PackageImportReceipt(
             id=import_id,
             package_id=package_id,
@@ -3037,144 +3039,58 @@ def create_app(
             )
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="transfer_hold_active")
 
-        def persist_imported_records(connection: sqlite3.Connection) -> None:
-            nonlocal created_count, duplicate_count
-            source_file_id = str(uuid4())
-            connection.execute(
-                """
-                INSERT INTO source_files (
-                    id, centre_code, source_filename, sha256, mime_type, storage_key,
-                    created_by, created_at
-                ) VALUES (?, ?, ?, ?, 'application/json', ?, ?, ?)
-                """,
-                (
-                    source_file_id,
-                    centre_code,
-                    original_filename,
-                    package_sha256,
-                    f"offline-package/{package_sha256}.json",
-                    user.username,
-                    created_at,
-                ),
+        source_file_id = str(uuid4())
+        reviewed_records: list[ReviewedImportRecord] = []
+        for record in records:
+            assessment = assess_candidate(
+                resolved_quality_rules,
+                event_ref=str(record["edc_event_ref"]),
+                field_code=str(record["field_code"]),
+                value=str(record["final_value"]),
+                unit=record.get("unit"),
             )
-            package_path = (
-                database.database_path.parent
-                / "offline_packages"
-                / centre_code
-                / f"{source_file_id}.json"
-            )
-            package_path.parent.mkdir(parents=True, exist_ok=True)
-            package_path.write_bytes(content)
-            for record in records:
-                duplicate = connection.execute(
-                    """
-                    SELECT id FROM candidates
-                    WHERE centre_code = ? AND edc_subject_ref = ? AND edc_event_ref = ?
-                      AND field_code = ? AND proposed_value = ? AND unit IS ?
-                      AND status != 'rejected'
-                    LIMIT 1
-                    """,
-                    (
-                        centre_code,
-                        record["edc_subject_ref"],
-                        record["edc_event_ref"],
-                        record["field_code"],
-                        record["final_value"],
-                        record.get("unit"),
-                    ),
-                ).fetchone()
-                if duplicate is not None:
-                    duplicate_count += 1
-                    continue
-                candidate_id = str(uuid4())
-                connection.execute(
-                    """
-                    INSERT INTO candidates (
-                        id, centre_code, source_file_id, edc_subject_ref, edc_event_ref,
-                        field_code, proposed_value, unit, final_value, status,
-                        ocr_engine_version, kimi_model, schema_version, confidence,
-                        local_ocr_value, local_ocr_unit, extraction_agreement, evidence_text,
-                        import_batch_id, origin_type, created_by, created_at,
-                        reviewed_by, reviewed_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'human_confirmed',
-                              'offline-reviewed-package-v1', 'not_used_offline_package',
-                              'offline-reviewed-package-v1', 1.0, ?, ?, 'offline_reviewed', ?,
-                              ?, 'offline_package', ?, ?, ?, ?)
-                    """,
-                    (
-                        candidate_id,
-                        centre_code,
-                        source_file_id,
-                        record["edc_subject_ref"],
-                        record["edc_event_ref"],
-                        record["field_code"],
-                        record["final_value"],
-                        record.get("unit"),
-                        record["final_value"],
-                        record["final_value"],
-                        record.get("unit"),
-                        "Imported from a reviewed centre package; source evidence remains at the originating centre.",
-                        import_id,
-                        user.username,
-                        created_at,
-                        "originating-centre-reviewer",
-                        record["reviewed_at"],
-                    ),
-                )
-                audit(
-                    connection,
-                    candidate_id=candidate_id,
-                    centre_code=centre_code,
-                    event_type="offline_package_imported",
-                    actor_username=user.username,
-                    details={
-                        "package_id": package_id,
-                        "package_sha256": package_sha256,
-                        "source_sha256": record["source_sha256"],
-                        "field_code": record["field_code"],
-                    },
-                )
-                candidate = get_candidate(connection, candidate_id)
-                evaluate_and_store_quality(
-                    connection,
-                    candidate,
-                    value=str(record["final_value"]),
+            reviewed_records.append(
+                ReviewedImportRecord(
+                    source_sha256=str(record["source_sha256"]),
+                    edc_subject_ref=str(record["edc_subject_ref"]),
+                    edc_event_ref=str(record["edc_event_ref"]),
+                    field_code=str(record["field_code"]),
+                    final_value=str(record["final_value"]),
                     unit=record.get("unit"),
-                    actor_username=user.username,
+                    reviewed_at=str(record["reviewed_at"]),
+                    quality=ReviewedImportQuality(
+                        status=str(assessment["status"]),  # type: ignore[arg-type]
+                        rule_version=str(assessment["rule_version"]),
+                        findings_json=json.dumps(assessment["findings"], ensure_ascii=False),
+                    ),
                 )
-                created_count += 1
-
-        with database.connect() as connection:
-            claim_succeeded = package_import_repository.claim_in_connection(connection, receipt)
-            if claim_succeeded:
-                persist_imported_records(connection)
-                write_offline_package_log(
-                    user=user,
-                    source_filename=original_filename,
-                    result="imported",
-                    package_sha256=package_sha256,
-                    package_id=package_id,
-                    centre_code=centre_code,
-                    dictionary_id=str(package.get("dictionary_id")),
-                    dictionary_version=str(package.get("dictionary_version")),
-                    record_count=len(records),
-                    created_count=created_count,
-                    duplicate_count=duplicate_count,
-                    connection=connection,
-                )
-        if not claim_succeeded:
-            write_offline_package_log(
-                user=user,
-                source_filename=original_filename,
-                result="duplicate",
-                package_sha256=package_sha256,
-                package_id=package_id,
-                centre_code=centre_code,
-                dictionary_id=str(package.get("dictionary_id")),
-                dictionary_version=str(package.get("dictionary_version")),
-                error_code="offline_package_already_imported",
-                record_count=len(records),
             )
+        import_command = ReviewedPackageImportCommand(
+            receipt=receipt,
+            source_file_id=source_file_id,
+            source_filename=original_filename,
+            storage_key=f"offline-package/{package_sha256}.json",
+            dictionary_id=str(package.get("dictionary_id")),
+            dictionary_version=str(package.get("dictionary_version")),
+            records=tuple(reviewed_records),
+        )
+        package_path = (
+            database.database_path.parent
+            / "offline_packages"
+            / centre_code
+            / f"{source_file_id}.json"
+        )
+        package_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary_package_path = package_path.with_suffix(".json.tmp")
+        temporary_package_path.write_bytes(content)
+        temporary_package_path.replace(package_path)
+        try:
+            import_result = reviewed_import_repository.import_package(import_command)
+        except Exception:
+            package_path.unlink(missing_ok=True)
+            raise
+        if import_result.status == "duplicate":
+            package_path.unlink(missing_ok=True)
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="offline_package_already_imported",
@@ -3185,8 +3101,8 @@ def create_app(
             "package_sha256": package_sha256,
             "centre_code": centre_code,
             "record_count": len(records),
-            "created_count": created_count,
-            "duplicate_count": duplicate_count,
+            "created_count": import_result.created_count,
+            "duplicate_count": import_result.duplicate_count,
             "status": "imported_reviewed_values",
             "authority_submission": "not_attempted",
         }

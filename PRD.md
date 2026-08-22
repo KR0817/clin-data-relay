@@ -653,5 +653,35 @@ Acceptance criteria:
 - Failure detail is capped at 500 characters and source filename at 200
   characters. Neither adapter may persist ciphertext, passphrases, extracted
   values or direct identifiers in the ledger.
+
+## 2026-08-22 reviewed-package clinical import slice
+
+The next central persistence slice moves one complete clinical transaction
+behind a shared repository interface: accepting a previously human-reviewed,
+pseudonymous centre package into the Companion. It does not enable general
+candidate creation, source-image intake, user administration or Authority EDC
+submission in PostgreSQL.
+
+Acceptance criteria:
+
+- `import_package()` atomically claims the package, creates source metadata,
+  inserts non-duplicate human-confirmed candidates, evaluates/persists the
+  supplied deterministic quality result, appends chained audit events and
+  records the final import attempt.
+- SQLite and PostgreSQL adapters pass the same contract for first import,
+  exact-value deduplication, repeated-package rejection and imported-value
+  retrieval.
+- PostgreSQL serializes audit-chain tail updates and uses a database uniqueness
+  constraint to prevent two different packages from creating the same active
+  candidate concurrently.
+- The repository accepts only pseudonymous field records and metadata. Raw
+  images, encrypted package bytes, passphrases, Kimi keys and direct identity
+  fields are outside its interface and schema.
+- The existing local HTTP endpoint retains its request, response, role,
+  dictionary, hold and encrypted-file behavior while delegating the clinical
+  transaction to the SQLite adapter.
+- PostgreSQL migration 3 remains an incomplete central repository;
+  `clinical_data_ready=false` and central startup stay fail-closed until all
+  required central reads, identity and operational controls are qualified.
 - The evidence contract is persisted and returned with candidates; a repeated extraction returns the same candidates and run without a second candidate set.
 - A PDF inspection response distinguishes usable text-layer pages from scanned pages before extraction. Scanned pages remain fail-closed until an approved local OCR adapter is enabled.

@@ -12,6 +12,7 @@ import json
 import base64
 import os
 import re
+from datetime import datetime
 from typing import Any, Mapping, Sequence
 from uuid import uuid4
 
@@ -44,6 +45,16 @@ class OfflinePackageError(ValueError):
     def __init__(self, code: str) -> None:
         super().__init__(code)
         self.code = code
+
+
+def _is_timezone_aware_timestamp(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None
 
 
 def _validate_passphrase(passphrase: str) -> None:
@@ -201,6 +212,8 @@ def parse_reviewed_package(content: bytes) -> dict[str, Any]:
         raise OfflinePackageError("offline_package_invalid_schema")
     if document.get("package_type") != PACKAGE_TYPE or document.get("package_version") != PACKAGE_VERSION:
         raise OfflinePackageError("offline_package_version_unsupported")
+    if not _is_timezone_aware_timestamp(document.get("created_at")):
+        raise OfflinePackageError("offline_package_timestamp_invalid")
     centre_code = document.get("centre_code")
     if not isinstance(centre_code, str) or not re.fullmatch(r"^[A-Z][A-Z0-9_-]{1,31}$", centre_code):
         raise OfflinePackageError("offline_package_centre_invalid")
@@ -241,6 +254,8 @@ def parse_reviewed_package(content: bytes) -> dict[str, Any]:
             raise OfflinePackageError("offline_package_unit_invalid")
         if not isinstance(record["source_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", record["source_sha256"]):
             raise OfflinePackageError("offline_package_source_hash_invalid")
+        if not _is_timezone_aware_timestamp(record["reviewed_at"]):
+            raise OfflinePackageError("offline_package_timestamp_invalid")
         key = (record["edc_subject_ref"], record["edc_event_ref"], record["field_code"], record["source_sha256"])
         if key in seen:
             raise OfflinePackageError("offline_package_duplicate_record")

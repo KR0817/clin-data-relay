@@ -13,10 +13,11 @@ from psycopg.rows import dict_row
 from app.package_import_repository import PackageImportAttempt, PackageImportReceipt
 
 
-LATEST_POSTGRES_SCHEMA_VERSION = 2
+LATEST_POSTGRES_SCHEMA_VERSION = 3
 MIGRATION_NAMES = {
     1: "central_repository_bootstrap",
     2: "package_import_ledger",
+    3: "reviewed_package_clinical_import",
 }
 MIGRATION_STATEMENTS = {
     1: (),
@@ -57,6 +58,89 @@ MIGRATION_STATEMENTS = {
         """
         CREATE INDEX IF NOT EXISTS idx_offline_package_import_logs_created_at
         ON offline_package_import_logs (created_at DESC)
+        """,
+    ),
+    3: (
+        """
+        CREATE TABLE IF NOT EXISTS source_files (
+            id TEXT PRIMARY KEY,
+            centre_code TEXT NOT NULL CHECK (length(centre_code) BETWEEN 1 AND 100),
+            source_filename TEXT NOT NULL CHECK (length(source_filename) BETWEEN 1 AND 200),
+            sha256 TEXT NOT NULL CHECK (sha256 ~ '^[a-f0-9]{64}$'),
+            mime_type TEXT NOT NULL,
+            storage_key TEXT NOT NULL CHECK (length(storage_key) BETWEEN 1 AND 500),
+            created_by TEXT NOT NULL CHECK (length(created_by) BETWEEN 1 AND 320),
+            created_at TIMESTAMPTZ NOT NULL
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS candidates (
+            sequence BIGINT GENERATED ALWAYS AS IDENTITY UNIQUE,
+            id TEXT PRIMARY KEY,
+            centre_code TEXT NOT NULL CHECK (length(centre_code) BETWEEN 1 AND 100),
+            source_file_id TEXT NOT NULL REFERENCES source_files(id),
+            edc_subject_ref TEXT NOT NULL CHECK (length(edc_subject_ref) BETWEEN 2 AND 64),
+            edc_event_ref TEXT NOT NULL CHECK (length(edc_event_ref) BETWEEN 2 AND 64),
+            field_code TEXT NOT NULL CHECK (length(field_code) BETWEEN 1 AND 64),
+            proposed_value TEXT NOT NULL CHECK (length(proposed_value) BETWEEN 1 AND 200),
+            unit TEXT CHECK (unit IS NULL OR length(unit) <= 100),
+            final_value TEXT NOT NULL CHECK (length(final_value) BETWEEN 1 AND 200),
+            status TEXT NOT NULL CHECK (status IN ('human_confirmed', 'rejected')),
+            ocr_engine_version TEXT NOT NULL,
+            kimi_model TEXT NOT NULL,
+            schema_version TEXT NOT NULL,
+            confidence DOUBLE PRECISION NOT NULL CHECK (confidence BETWEEN 0 AND 1),
+            local_ocr_value TEXT,
+            local_ocr_unit TEXT,
+            extraction_agreement TEXT,
+            evidence_text TEXT,
+            import_batch_id TEXT NOT NULL REFERENCES offline_package_imports(id),
+            origin_type TEXT NOT NULL CHECK (origin_type = 'offline_package'),
+            created_by TEXT NOT NULL CHECK (length(created_by) BETWEEN 1 AND 320),
+            created_at TIMESTAMPTZ NOT NULL,
+            reviewed_by TEXT NOT NULL,
+            reviewed_at TIMESTAMPTZ NOT NULL
+        )
+        """,
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_candidates_active_value_unique
+        ON candidates (
+            centre_code, edc_subject_ref, edc_event_ref, field_code,
+            proposed_value, COALESCE(unit, '')
+        )
+        WHERE status <> 'rejected'
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS audit_events (
+            sequence BIGINT GENERATED ALWAYS AS IDENTITY UNIQUE,
+            id TEXT PRIMARY KEY,
+            candidate_id TEXT REFERENCES candidates(id),
+            centre_code TEXT NOT NULL CHECK (length(centre_code) BETWEEN 1 AND 100),
+            event_type TEXT NOT NULL,
+            actor_username TEXT NOT NULL CHECK (length(actor_username) BETWEEN 1 AND 320),
+            created_at TIMESTAMPTZ NOT NULL,
+            details_json JSONB NOT NULL,
+            prev_hash TEXT NOT NULL CHECK (prev_hash ~ '^[a-f0-9]{64}$'),
+            event_hash TEXT NOT NULL UNIQUE CHECK (event_hash ~ '^[a-f0-9]{64}$')
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS quality_findings (
+            id TEXT PRIMARY KEY,
+            candidate_id TEXT NOT NULL REFERENCES candidates(id),
+            centre_code TEXT NOT NULL CHECK (length(centre_code) BETWEEN 1 AND 100),
+            rule_version TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('PASS', 'WARN', 'BLOCK')),
+            findings_json JSONB NOT NULL CHECK (jsonb_typeof(findings_json) = 'array'),
+            evaluated_value TEXT NOT NULL CHECK (length(evaluated_value) BETWEEN 1 AND 200),
+            evaluated_unit TEXT CHECK (evaluated_unit IS NULL OR length(evaluated_unit) <= 100),
+            evaluated_by TEXT NOT NULL CHECK (length(evaluated_by) BETWEEN 1 AND 320),
+            evaluated_at TIMESTAMPTZ NOT NULL
+        )
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_quality_findings_candidate
+        ON quality_findings (candidate_id, evaluated_at DESC)
         """,
     ),
 }
@@ -242,28 +326,32 @@ class PostgresPackageImportRepository:
     def claim(self, receipt: PackageImportReceipt) -> bool:
         try:
             with self._bootstrap._open_connection() as connection:
-                row = connection.execute(
-                    """
-                    INSERT INTO offline_package_imports (
-                        id, package_id, package_sha256, centre_code,
-                        record_count, created_by, created_at
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT DO NOTHING
-                    RETURNING id
-                    """,
-                    (
-                        receipt.id,
-                        receipt.package_id,
-                        receipt.package_sha256,
-                        receipt.centre_code,
-                        receipt.record_count,
-                        receipt.created_by,
-                        receipt.created_at,
-                    ),
-                ).fetchone()
-            return row is not None
+                return self.claim_in_connection(connection, receipt)
         except psycopg.Error:
             raise PostgresRepositoryError("postgres_package_import_unavailable") from None
+
+    @staticmethod
+    def claim_in_connection(connection, receipt: PackageImportReceipt) -> bool:
+        row = connection.execute(
+            """
+            INSERT INTO offline_package_imports (
+                id, package_id, package_sha256, centre_code,
+                record_count, created_by, created_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT DO NOTHING
+            RETURNING id
+            """,
+            (
+                receipt.id,
+                receipt.package_id,
+                receipt.package_sha256,
+                receipt.centre_code,
+                receipt.record_count,
+                receipt.created_by,
+                receipt.created_at,
+            ),
+        ).fetchone()
+        return row is not None
 
     def find_receipt(
         self,
@@ -290,34 +378,38 @@ class PostgresPackageImportRepository:
     def append_attempt(self, attempt: PackageImportAttempt) -> None:
         try:
             with self._bootstrap._open_connection() as connection:
-                connection.execute(
-                    """
-                    INSERT INTO offline_package_import_logs (
-                        id, package_sha256, package_id, centre_code, source_filename,
-                        dictionary_id, dictionary_version, result, error_code, error_detail,
-                        record_count, created_count, duplicate_count, created_by, created_at
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """,
-                    (
-                        attempt.id,
-                        attempt.package_sha256,
-                        attempt.package_id,
-                        attempt.centre_code,
-                        attempt.source_filename,
-                        attempt.dictionary_id,
-                        attempt.dictionary_version,
-                        attempt.result,
-                        attempt.error_code,
-                        attempt.error_detail,
-                        attempt.record_count,
-                        attempt.created_count,
-                        attempt.duplicate_count,
-                        attempt.created_by,
-                        attempt.created_at,
-                    ),
-                )
+                self.append_attempt_in_connection(connection, attempt)
         except psycopg.Error:
             raise PostgresRepositoryError("postgres_package_import_unavailable") from None
+
+    @staticmethod
+    def append_attempt_in_connection(connection, attempt: PackageImportAttempt) -> None:
+        connection.execute(
+            """
+            INSERT INTO offline_package_import_logs (
+                id, package_sha256, package_id, centre_code, source_filename,
+                dictionary_id, dictionary_version, result, error_code, error_detail,
+                record_count, created_count, duplicate_count, created_by, created_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                attempt.id,
+                attempt.package_sha256,
+                attempt.package_id,
+                attempt.centre_code,
+                attempt.source_filename,
+                attempt.dictionary_id,
+                attempt.dictionary_version,
+                attempt.result,
+                attempt.error_code,
+                attempt.error_detail,
+                attempt.record_count,
+                attempt.created_count,
+                attempt.duplicate_count,
+                attempt.created_by,
+                attempt.created_at,
+            ),
+        )
 
     def list_attempts(self, *, limit: int = 100) -> list[PackageImportAttempt]:
         if not 1 <= limit <= 500:

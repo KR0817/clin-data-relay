@@ -38,6 +38,13 @@ This file is not a substitute for a Git history or an approved project license.
   final SQLite candidate transaction, and successful import logs commit with
   the receipt and candidates. PostgreSQL migration 2 contains metadata only;
   central startup remains fail-closed.
+- Added the first complete PostgreSQL clinical write slice for reviewed centre
+  packages: source metadata, active-candidate deduplication, deterministic
+  quality findings, serialized hash-chain audit and terminal import logging
+  commit atomically. The existing SQLite endpoint now uses the same repository
+  seam; central startup remains fail-closed.
+- Encrypted reviewed packages now require timezone-aware ISO timestamps before
+  either database adapter runs, avoiding SQLite/PostgreSQL drift.
 - Kept the central profile fail-closed pending PostgreSQL, institutional
   identity, HTTPS, worker and operational qualification.
 
