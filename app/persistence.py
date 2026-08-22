@@ -569,6 +569,13 @@ class Database:
                 "CREATE INDEX IF NOT EXISTS idx_candidates_extraction_run ON candidates (extraction_run_id)"
             )
             connection.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_candidates_confirmed_export_scope
+                ON candidates (centre_code, edc_event_ref, edc_subject_ref, created_at)
+                WHERE status = 'human_confirmed'
+                """
+            )
+            connection.execute(
                 "CREATE INDEX IF NOT EXISTS idx_audit_events_review ON audit_events (event_type, created_at)"
             )
             connection.execute(

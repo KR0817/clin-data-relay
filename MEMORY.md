@@ -394,3 +394,22 @@
   skipped on this workstation, plus Python compilation, JavaScript syntax and
   `uv lock --check`. Central readiness remains false because general central
   reads, managed identity and operational qualification are incomplete.
+
+## 2026-08-22 confirmed-data read and export slice
+
+- `app/confirmed_data_repository.py` owns the explicit all-centres or
+  exact-centre scope, immutable confirmed-value projection and SQLite adapter.
+  The reviewed-recognition Excel path now consumes this repository while
+  retaining the existing role scope, workbook shape and Authority aggregation.
+- `app/postgres_confirmed_data_repository.py` implements the same centre,
+  pseudonymous subject and visit filters. It reads only `human_confirmed`
+  values, selects the newest quality metadata and returns deterministic order.
+- PostgreSQL migration 4 adds a partial confirmed-export index only. The
+  PostgreSQL adapter reports imported values as not submitted because transfer
+  and read-back persistence have not moved; it never fabricates LibreClinica
+  state.
+- Local verification passed 215 tests with five PostgreSQL service-backed
+  cases skipped on this workstation, Python compilation, JavaScript syntax and
+  `uv lock --check`. Central HTTP and `clinical_data_ready` remain disabled;
+  institutional identity and remaining central workflows are still release
+  gates.

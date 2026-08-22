@@ -392,6 +392,22 @@ route or enabling `COMPANION_DEPLOYMENT_PROFILE=central`. The repository accepts
 no package bytes, passphrases, images, direct identity fields or external-model
 credentials.
 
+## Confirmed-data read persistence
+
+`GET /api/exports/reviewed-recognition-data.xlsx` keeps its existing public
+contract. Internally, the active SQLite application translates the authenticated
+role into either one exact centre scope or an explicit all-centres scope and
+queries the confirmed-data repository. The repository returns only
+`human_confirmed` values in deterministic order; optional subject and visit
+filters are repository contract inputs, not new HTTP query parameters in this
+slice.
+
+The PostgreSQL adapter is contract-tested for future central composition but is
+not reachable from HTTP. Imported centre-package values report Authority state
+as not submitted because the PostgreSQL transfer/read-back domain has not been
+migrated. `COMPANION_DEPLOYMENT_PROFILE=central` remains fail-closed and the
+repository status remains `clinical_data_ready=false`.
+
 ## Errors
 
 Stable detail codes include:

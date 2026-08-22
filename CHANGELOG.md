@@ -45,9 +45,21 @@ This file is not a substitute for a Git history or an approved project license.
   seam; central startup remains fail-closed.
 - Encrypted reviewed packages now require timezone-aware ISO timestamps before
   either database adapter runs, avoiding SQLite/PostgreSQL drift.
-- Kept the central profile fail-closed pending PostgreSQL, institutional
-  identity, HTTPS, worker and operational qualification.
+- Added an explicit confirmed-data read repository with exact-centre or
+  all-centres scope, pseudonymous subject/visit filters, deterministic order
+  and latest-quality projection for SQLite and PostgreSQL. The existing
+  reviewed-recognition workbook now uses this seam without changing its HTTP
+  or workbook contract.
+- PostgreSQL migration 4 adds only a partial confirmed-read index. Imported
+  centre-package values remain `not_submitted` until transfer/read-back
+  persistence is qualified, and central HTTP remains fail-closed.
+- Kept the central profile fail-closed pending institutional identity, HTTPS,
+  remaining workflow repositories, workers and operational qualification.
 
 ### Release blockers
 
-- Qualified PostgreSQL and institutional-identity implementations.
+- Institutional identity and the remaining qualified central repositories.
+- Verification passed Python compilation, JavaScript syntax checking,
+  `uv lock --check`, 215 tests with five PostgreSQL-only cases skipped locally,
+  and focused reviewed-export regression checks. The upstream Starlette/httpx
+  deprecation warning remains.

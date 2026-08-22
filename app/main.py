@@ -78,6 +78,10 @@ from app.reviewed_import_repository import (
     ReviewedPackageImportCommand,
     SQLiteReviewedImportRepository,
 )
+from app.confirmed_data_repository import (
+    ConfirmedDataScope,
+    SQLiteConfirmedDataRepository,
+)
 from app.runtime_config import RuntimeConfig
 from app.upload_validation import ImageUploadError, validate_image_upload
 from app.pdf_safety import PdfSafetyError, validate_pdf_structure
@@ -825,6 +829,7 @@ def create_app(
     database.initialise()
     package_import_repository = SQLitePackageImportRepository(database)
     reviewed_import_repository = SQLiteReviewedImportRepository(database)
+    confirmed_data_repository = SQLiteConfirmedDataRepository(database)
     if database_existed_before_initialise and os.getenv("COMPANION_AUTO_BACKUP", "false").lower() == "true":
         backup_directory = Path(
             os.getenv("COMPANION_BACKUP_DIRECTORY", str(resolved_database_path.parent / ".runtime" / "backups"))
@@ -889,6 +894,7 @@ def create_app(
     app.state.database = database
     app.state.package_import_repository = package_import_repository
     app.state.reviewed_import_repository = reviewed_import_repository
+    app.state.confirmed_data_repository = confirmed_data_repository
     app.state.environment = resolved_environment
     app.state.product_mode = resolved_product_mode
     app.state.runtime_config = runtime_config
@@ -1363,29 +1369,17 @@ def create_app(
         }
 
     def reviewed_recognition_export_payload(user: UserContext) -> dict[str, object]:
+        scope = (
+            ConfirmedDataScope.for_all_centres()
+            if user.role in CENTRAL_ROLES
+            else ConfirmedDataScope.for_centre(str(user.centre_code))
+        )
+        reviewed_rows = confirmed_data_repository.list_confirmed(scope)
         with database.connect() as connection:
-            query = """
-                SELECT candidates.centre_code, candidates.edc_subject_ref,
-                       candidates.edc_event_ref, candidates.field_code,
-                       candidates.final_value, candidates.created_at,
-                       CASE WHEN EXISTS (
-                           SELECT 1 FROM transfer_requests AS authority_transfer
-                           WHERE authority_transfer.candidate_id = candidates.id
-                             AND authority_transfer.status IN ('submitted', 'reconciled')
-                       ) THEN 1 ELSE 0 END AS authority_submitted
-                FROM candidates
-                WHERE candidates.status = 'human_confirmed'
-            """
-            parameters: tuple[object, ...] = ()
-            if user.role not in CENTRAL_ROLES:
-                query += " AND candidates.centre_code = ?"
-                parameters = (user.centre_code,)
-            query += " ORDER BY candidates.created_at, candidates.rowid"
-            reviewed_rows = connection.execute(query, parameters).fetchall()
             dictionary_snapshot = field_dictionary_payload(connection)
 
         used_keys = {
-            (str(row["edc_event_ref"]), str(row["field_code"]))
+            (row.edc_event_ref, row.field_code)
             for row in reviewed_rows
         }
         exported_headers = [
@@ -1409,23 +1403,21 @@ def create_app(
             event_ref: {} for event_ref in event_columns
         }
         for row in reviewed_rows:
-            event_ref = str(row["edc_event_ref"])
+            event_ref = row.edc_event_ref
             if event_ref not in grouped_rows:
                 continue
-            key = (str(row["centre_code"]), str(row["edc_subject_ref"]))
+            key = (row.centre_code, row.edc_subject_ref)
             subject_row = grouped_rows[event_ref].setdefault(
                 key,
                 {
-                    "centre_code": row["centre_code"],
-                    "edc_subject_ref": row["edc_subject_ref"],
+                    "centre_code": row.centre_code,
+                    "edc_subject_ref": row.edc_subject_ref,
                     "values": {},
                     "authority_by_field": {},
                 },
             )
-            subject_row["values"][row["field_code"]] = row["final_value"]
-            subject_row["authority_by_field"][row["field_code"]] = bool(
-                row["authority_submitted"]
-            )
+            subject_row["values"][row.field_code] = row.final_value
+            subject_row["authority_by_field"][row.field_code] = row.authority_submitted
 
         events: dict[str, dict[str, object]] = {}
         for event_ref, columns in event_columns.items():

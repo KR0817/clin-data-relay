@@ -600,6 +600,28 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   audit events and quality findings required only by this vertical slice.
   Missing central reads and managed identity keep readiness false.
 
+## Confirmed-data read repository
+
+- `app/confirmed_data_repository.py` owns `ConfirmedDataScope`, the immutable
+  `ConfirmedDataRow` projection, the repository protocol and the SQLite
+  adapter. A scope always states whether all centres are allowed; a site caller
+  passes one exact centre code rather than relying on SQL assembled in an HTTP
+  handler.
+- `app/postgres_confirmed_data_repository.py` is optional-central code. It uses
+  the same projection and filtering contract without being imported by Centre
+  Lite or the current HTTP composition root.
+- Both adapters select only `human_confirmed` candidates, use the newest
+  quality assessment per candidate and order by stable insertion sequence.
+  PostgreSQL cannot claim an Authority submission because migration 3 has no
+  transfer domain, so it returns `authority_submitted=false`.
+- `reviewed_recognition_export_payload()` remains responsible only for role to
+  repository-scope translation, dictionary/header projection and workbook
+  grouping. It no longer owns clinical-row SQL.
+- PostgreSQL migration 4 adds a partial confirmed-read index covering centre,
+  visit, subject, creation time and sequence. It adds no HTTP route and does
+  not change `clinical_data_ready=false`. SQLite creates the equivalent partial
+  scope index during its existing idempotent initialization path.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

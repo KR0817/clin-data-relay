@@ -13,11 +13,12 @@ from psycopg.rows import dict_row
 from app.package_import_repository import PackageImportAttempt, PackageImportReceipt
 
 
-LATEST_POSTGRES_SCHEMA_VERSION = 3
+LATEST_POSTGRES_SCHEMA_VERSION = 4
 MIGRATION_NAMES = {
     1: "central_repository_bootstrap",
     2: "package_import_ledger",
     3: "reviewed_package_clinical_import",
+    4: "confirmed_data_read_index",
 }
 MIGRATION_STATEMENTS = {
     1: (),
@@ -141,6 +142,15 @@ MIGRATION_STATEMENTS = {
         """
         CREATE INDEX IF NOT EXISTS idx_quality_findings_candidate
         ON quality_findings (candidate_id, evaluated_at DESC)
+        """,
+    ),
+    4: (
+        """
+        CREATE INDEX IF NOT EXISTS idx_candidates_confirmed_export_scope
+        ON candidates (
+            centre_code, edc_event_ref, edc_subject_ref, created_at, sequence
+        )
+        WHERE status = 'human_confirmed'
         """,
     ),
 }

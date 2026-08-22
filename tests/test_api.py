@@ -1275,6 +1275,14 @@ def test_one_click_excel_export_contains_only_submitted_records_in_the_users_sco
             for row in central_payload["events"]["WEEK_0"]["rows"]
         } == {"SITE_A", "SITE_B"}
 
+        reviewed_export = local_client.get(
+            "/api/exports/reviewed-recognition-data.xlsx",
+            headers=site_a_headers,
+        )
+        assert reviewed_export.status_code == 200
+        reviewed_payload = exporter.payloads[-1]
+        assert reviewed_payload["events"]["WEEK_0"]["rows"][0]["authority_status"] == "all_submitted"
+
 
 def test_reviewed_recognition_export_contains_only_actual_confirmed_fields(
     tmp_path: Path,
@@ -1308,14 +1316,33 @@ def test_reviewed_recognition_export_contains_only_actual_confirmed_fields(
                 json={"decision": "accept"},
             ).status_code == 200
 
+        site_b_headers = auth_headers(local_client, "site-b-investigator@example.test")
+        site_b_candidate = create_candidate(
+            local_client,
+            site_b_headers,
+            field_code="AST",
+            proposed_value="24",
+        )
+        assert local_client.post(
+            f"/api/candidates/{site_b_candidate['id']}/review",
+            headers=site_b_headers,
+            json={"decision": "accept"},
+        ).status_code == 200
+
         exported = local_client.get(
             "/api/exports/reviewed-recognition-data.xlsx",
             headers=headers,
         )
+        site_payload = exporter.payloads[-1]
+        central_exported = local_client.get(
+            "/api/exports/reviewed-recognition-data.xlsx",
+            headers=auth_headers(local_client, "central-data-manager@example.test"),
+        )
+        central_payload = exporter.payloads[-1]
 
     assert exported.status_code == 200
     assert exported.content == b"synthetic-xlsx"
-    payload = exporter.payloads[-1]
+    payload = site_payload
     assert payload["export_kind"] == "reviewed_recognition"
     assert payload["reviewed_value_count"] == 2
     assert list(payload["events"]) == ["WEEK_0"]
@@ -1327,6 +1354,12 @@ def test_reviewed_recognition_export_contains_only_actual_confirmed_fields(
     assert {
         item["field_code"] for item in payload["field_mapping"]
     } == {"ALT", "PFT_FVC"}
+    assert central_exported.status_code == 200
+    assert central_payload["scope"] == "ALL_CENTRES"
+    assert central_payload["reviewed_value_count"] == 3
+    assert {
+        row["centre_code"] for row in central_payload["events"]["WEEK_0"]["rows"]
+    } == {"SITE_A", "SITE_B"}
 
 
 def test_historical_simulation_transfer_cannot_drift_into_live_adapter(tmp_path: Path) -> None:

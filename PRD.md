@@ -685,3 +685,28 @@ Acceptance criteria:
   required central reads, identity and operational controls are qualified.
 - The evidence contract is persisted and returned with candidates; a repeated extraction returns the same candidates and run without a second candidate set.
 - A PDF inspection response distinguishes usable text-layer pages from scanned pages before extraction. Scanned pages remain fail-closed until an approved local OCR adapter is enabled.
+
+## 2026-08-22 confirmed-data read and export slice
+
+The next central slice exposes human-confirmed values through one explicit,
+database-neutral read boundary. It supports the current role-scoped reviewed
+Excel export and future central read composition without enabling PostgreSQL
+HTTP traffic, candidate mutation or Authority EDC submission.
+
+Acceptance criteria:
+
+- Callers must choose either one exact centre code or an explicit all-centres
+  scope; optional pseudonymous subject and visit filters narrow that scope.
+- SQLite and PostgreSQL adapters return the same immutable confirmed-value
+  projection, deterministic order and latest quality metadata.
+- Only `human_confirmed` rows are eligible. Rejected or pending candidates are
+  never returned by this repository.
+- The existing `GET /api/exports/reviewed-recognition-data.xlsx` request,
+  response, role scope, headers and workbook shape remain unchanged while its
+  clinical rows come from the SQLite adapter.
+- SQLite preserves the actual aggregate Authority-submission state. PostgreSQL
+  returns `authority_submitted=false` until a qualified transfer/read-back
+  persistence slice exists; it must not infer or fabricate Authority state.
+- PostgreSQL migration 4 adds only a partial read index. Central startup and
+  `clinical_data_ready` remain fail-closed pending institutional identity,
+  remaining workflow repositories and operational qualification.
