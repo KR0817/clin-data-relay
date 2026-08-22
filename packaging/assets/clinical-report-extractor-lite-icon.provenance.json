@@ -1,0 +1,19 @@
+{
+  "provider": "Dreamina CLI",
+  "operation": "text2image",
+  "model_version": "5.0",
+  "submit_id": "4508187f-4dca-4b86-a13f-1b777e27460f",
+  "credit_count": 3,
+  "prompt_sha256": "2210CBBCA0F5F2C7E8604C30EF1F485B083365E1C6F33554E28798B811F15CB7",
+  "source_output_sha256": "B30C2F8DD3C70882110D5AA12F1F31335BD9C182FCB5020EC8768DB503F4A4AD",
+  "source_ai_label_present": true,
+  "source_review_decision": "accept_as_concept_reference",
+  "delivery_derivatives": {
+    "clinical-report-extractor-lite-icon.svg": "A616FF09793121F13601363495EBBFDAF37643536D224FBA21BE807160A79EFE",
+    "clinical-report-extractor-lite-icon.png": "1FBD3B08659F49481C1E8DA4ECB1D4E3D4878EB6F6A97A16D26F9BF000681F5A",
+    "clinical-report-extractor-lite-icon.ico": "6F752AD02490E9BC8B1BE6574B8114142AEB36ABE803B26BB4C89021433E9783"
+  },
+  "derivative_reason": "Simplified vector geometry preserves the generated composition while improving legibility at Windows icon sizes.",
+  "contains_credentials": false,
+  "contains_patient_content": false
+}

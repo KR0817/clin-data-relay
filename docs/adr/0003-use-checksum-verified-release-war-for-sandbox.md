@@ -1,0 +1,3 @@
+# Use the checksum-verified official release WAR for the synthetic sandbox
+
+**Status: accepted.** The upstream `lc-develop` source at the pinned commit builds successfully but its Dockerfile fails because it expects an unversioned web WAR while Maven produces `LibreClinica-web-1.4.0rc1.war`. The synthetic sandbox therefore deploys LibreClinica 1.4.0 from the official release URL only after SHA-256 verification, while retaining the public source snapshot only for its stock sandbox configuration. This prevents an unreviewed source edit or release-candidate deployment from being misrepresented as the official stable EDC.

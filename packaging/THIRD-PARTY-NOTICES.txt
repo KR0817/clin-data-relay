@@ -1,0 +1,20 @@
+ClinData Relay third-party notices
+===========================================
+
+This package includes open-source runtime components. The build copies the
+available license texts for the bundled components into third-party-licenses/.
+
+- PyInstaller bootloader and runtime: GPL-2.0-or-later with the PyInstaller
+  bootloader exception. https://pyinstaller.org/
+- openpyxl: MIT. https://openpyxl.readthedocs.io/
+- Tesseract OCR: Apache-2.0. https://github.com/tesseract-ocr/tesseract
+- LibreClinica 1.4.0: LGPL-3.0-or-later. https://github.com/LibreClinica/LibreClinica
+- Apache Tomcat: Apache-2.0. https://tomcat.apache.org/
+- PostgreSQL: PostgreSQL License. https://www.postgresql.org/about/licence/
+- MailCrab: Apache-2.0. https://github.com/tweedegolf/mailcrab
+
+Docker Desktop is not included. Its use is governed separately by the Docker
+Subscription Service Agreement and may require a paid organizational license.
+
+This notice is not a complete institutional SBOM or legal review. Run the
+organization's dependency, license and malware review before production use.

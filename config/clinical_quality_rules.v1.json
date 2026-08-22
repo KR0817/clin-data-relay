@@ -1,0 +1,90 @@
+{
+  "version": "clinical-quality-v1",
+  "default": {
+    "data_type": "text",
+    "max_length": 200
+  },
+  "fields": {
+    "WBC": {
+      "data_type": "number",
+      "units": ["10^9/L", "10E9/L"],
+      "warn_min": 2.0,
+      "warn_max": 20.0,
+      "block_min": 0.0,
+      "block_max": 100.0
+    },
+    "RBC": {
+      "data_type": "number",
+      "units": ["10^12/L", "10E12/L"],
+      "warn_min": 2.0,
+      "warn_max": 8.0,
+      "block_min": 0.0,
+      "block_max": 20.0
+    },
+    "HB": {
+      "data_type": "number",
+      "units": ["g/L"],
+      "warn_min": 60.0,
+      "warn_max": 220.0,
+      "block_min": 0.0,
+      "block_max": 400.0
+    },
+    "PLT": {
+      "data_type": "number",
+      "units": ["10^9/L", "10E9/L"],
+      "warn_min": 30.0,
+      "warn_max": 1000.0,
+      "block_min": 0.0,
+      "block_max": 3000.0
+    },
+    "ALT": {
+      "data_type": "number",
+      "units": ["U/L"],
+      "warn_min": 0.0,
+      "warn_max": 500.0,
+      "block_min": 0.0,
+      "block_max": 5000.0
+    },
+    "AST": {
+      "data_type": "number",
+      "units": ["U/L"],
+      "warn_min": 0.0,
+      "warn_max": 500.0,
+      "block_min": 0.0,
+      "block_max": 5000.0
+    },
+    "K": {
+      "data_type": "number",
+      "units": ["mmol/L"],
+      "warn_min": 2.0,
+      "warn_max": 7.0,
+      "block_min": 0.0,
+      "block_max": 15.0
+    },
+    "NA": {
+      "data_type": "number",
+      "units": ["mmol/L"],
+      "warn_min": 110.0,
+      "warn_max": 170.0,
+      "block_min": 50.0,
+      "block_max": 250.0
+    },
+    "CR": {
+      "data_type": "number",
+      "units": ["μmol/L", "umol/L"],
+      "warn_min": 10.0,
+      "warn_max": 1000.0,
+      "block_min": 0.0,
+      "block_max": 5000.0
+    },
+    "CRP": {
+      "data_type": "number",
+      "units": ["mg/L"],
+      "warn_min": 0.0,
+      "warn_max": 300.0,
+      "block_min": 0.0,
+      "block_max": 1000.0,
+      "allow_inequality": true
+    }
+  }
+}

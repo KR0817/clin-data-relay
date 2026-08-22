@@ -1,0 +1,12 @@
+Clinical Report Extractor Lite third-party notices
+===================================================
+
+This package includes open-source runtime components. Available license texts
+for PyInstaller, openpyxl, pypdf and Tesseract are included under
+third-party-licenses/. This notice is not a complete institutional SBOM or
+legal review.
+
+- PyInstaller: GPL-2.0-or-later with the bootloader exception.
+- openpyxl: MIT.
+- pypdf: BSD-3-Clause.
+- Tesseract OCR: Apache-2.0.

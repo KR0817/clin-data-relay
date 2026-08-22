@@ -1,0 +1,34 @@
+# Synthetic-only LibreClinica 1.4.0 sandbox.
+# Uses the checksum-verified official release WAR pinned in upstream.lock.md,
+# binds only to localhost, and never mounts project or patient-data folders.
+name: libreclinica-synthetic-sandbox
+
+services:
+  libreclinica:
+    build:
+      context: ../..
+      dockerfile: infrastructure/libreclinica/Dockerfile.release.sandbox
+    ports:
+      - "127.0.0.1:${LIBRECLINICA_HOST_PORT:-8081}:8080"
+    volumes:
+      - ./artifacts/LibreClinica-ws-1.4.0rc1.war:/usr/local/tomcat/webapps/LibreClinica-ws.war:ro
+      - ../../vendor/LibreClinica/docker/config:/usr/local/tomcat/libreclinica-ws.config:ro
+    depends_on:
+      - db
+
+  db:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: clinica
+      POSTGRES_USER: clinica
+      POSTGRES_DB: libreclinica
+    volumes:
+      - libreclinica-synthetic-postgres:/var/lib/postgresql/data
+
+  smtp:
+    image: docker.io/marlonb/mailcrab:v1.1.0
+    ports:
+      - "127.0.0.1:${LIBRECLINICA_SMTP_HOST_PORT:-1081}:1080"
+
+volumes:
+  libreclinica-synthetic-postgres:

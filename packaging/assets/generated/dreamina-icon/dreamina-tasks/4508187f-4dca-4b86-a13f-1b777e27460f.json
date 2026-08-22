@@ -1,0 +1,74 @@
+{
+  "created_at": "2026-08-14T06:02:54+00:00",
+  "submit_id": "4508187f-4dca-4b86-a13f-1b777e27460f",
+  "operation": "text2image",
+  "episode_id": "clinical-edc-companion",
+  "scene_id": "windows-lite-icon",
+  "purpose": "Windows Lite application icon",
+  "model_version": "5.0",
+  "session_id": 0,
+  "ratio": "1:1",
+  "resolution_type": "2k",
+  "generate_num": 1,
+  "approved_max_images": 1,
+  "counts_toward_allowance": true,
+  "authorization_mode": "default_four_submission_allowance",
+  "allowance_limit": 4,
+  "allowance_submission_number": 1,
+  "prompt": "Create a premium square application icon for a privacy-first clinical report data extractor. Center one bold, simple geometric emblem: a dark navy rounded document silhouette containing three clean cyan data lines and one small emerald verification node, enclosed by a subtle protective shield arc. Futuristic clinical data aesthetic, precise vector-like edges, restrained glass depth, deep midnight navy background, cyan-to-teal highlights, one emerald accent, high contrast, generous clear padding, symmetric balance, legible at 16 pixels, suitable for a Windows desktop application icon. No text, no letters, no numbers, no medical cross, no human body, no patient, no face, no hospital logo, no chart axes, no watermark, no mockup, no border frame, no photorealism, no tiny decorative details. Single centered icon only, flat front view, 1:1 composition.",
+  "prompt_file": "C:\\Users\\glah1\\Documents\\Codex\\2026-08-08\\wo-x\\clinical-edc-companion\\packaging\\assets\\prompts\\clinical-report-extractor-lite-icon.txt",
+  "prompt_sha256": "2210CBBCA0F5F2C7E8604C30EF1F485B083365E1C6F33554E28798B811F15CB7",
+  "source_images": [],
+  "conceptual_only": true,
+  "automatic_resubmit": false,
+  "command": [
+    "D:\\Study\\Git\\bin\\bash.exe",
+    "-lc",
+    "dreamina text2image --prompt 'Create a premium square application icon for a privacy-first clinical report data extractor. Center one bold, simple geometric emblem: a dark navy rounded document silhouette containing three clean cyan data lines and one small emerald verification node, enclosed by a subtle protective shield arc. Futuristic clinical data aesthetic, precise vector-like edges, restrained glass depth, deep midnight navy background, cyan-to-teal highlights, one emerald accent, high contrast, generous clear padding, symmetric balance, legible at 16 pixels, suitable for a Windows desktop application icon. No text, no letters, no numbers, no medical cross, no human body, no patient, no face, no hospital logo, no chart axes, no watermark, no mockup, no border frame, no photorealism, no tiny decorative details. Single centered icon only, flat front view, 1:1 composition.' --session 0 --model_version 5.0 --ratio 1:1 --resolution_type 2k --generate_num 1 --poll 45"
+  ],
+  "forced_termination_after_output": false,
+  "submission_response": {
+    "submit_id": "4508187f-4dca-4b86-a13f-1b777e27460f",
+    "gen_status": "success",
+    "result_json": {
+      "images": [
+        {
+          "image_url": "https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/0b26eed1dde84614a194e3c8ce034ac2~tplv-tb4s082cfz-aigc_resize_mark:0:0.png?lk3s=7c3bb0db&x-expires=1786694400&x-signature=ezPFNn%2FBycd55i6TSjoi17zu%2BBg%3D&format=.png",
+          "width": 2048,
+          "height": 2048
+        }
+      ],
+      "videos": []
+    },
+    "credit_count": 3,
+    "queue_info": {
+      "queue_idx": 0,
+      "priority": 1,
+      "queue_status": "Generating",
+      "queue_length": 0,
+      "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+    }
+  },
+  "latest_response": {
+    "submit_id": "4508187f-4dca-4b86-a13f-1b777e27460f",
+    "gen_status": "success",
+    "result_json": {
+      "images": [
+        {
+          "path": "C:\\Users\\glah1\\Documents\\Codex\\2026-08-08\\wo-x\\clinical-edc-companion\\packaging\\assets\\generated\\dreamina-icon\\4508187f-4dca-4b86-a13f-1b777e27460f_image_1.png",
+          "width": 2048,
+          "height": 2048
+        }
+      ],
+      "videos": []
+    },
+    "credit_count": 3,
+    "queue_info": {
+      "queue_idx": 0,
+      "priority": 1,
+      "queue_status": "Finish",
+      "queue_length": 0,
+      "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+    }
+  }
+}

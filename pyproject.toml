@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clinical-edc-companion"
+dynamic = ["version"]
+description = "Synthetic-data MVP for a human-reviewed OCR/Kimi clinical data companion"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1.0",
+  "uvicorn[standard]>=0.30,<1.0",
+  "python-multipart>=0.0.9,<1.0",
+  "pillow>=11.0,<12.0",
+  "openpyxl>=3.1.5,<4.0",
+  "pypdf>=6.0,<7.0",
+  "cryptography>=45.0,<46.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.28,<1.0",
+  "pillow>=11.0,<12.0",
+  "pytest>=8.0,<9.0",
+  "pyinstaller>=6.21,<7.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "app.version.__version__"}
+
+[tool.setuptools.package-data]
+app = [
+  "static/index.html",
+  "static/css/*.css",
+  "static/js/*.js",
+  "static/img/*.webp",
+]

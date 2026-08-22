@@ -1,0 +1,842 @@
+{
+  "mapping_id": "libreclinica-synthetic-rct-full-odm-map",
+  "mapping_version": "v0.2-installed-2026-08-10",
+  "data_boundary": "synthetic_only",
+  "study_identifier": "SYNTHETIC-OCR-LAB-2026-08",
+  "study_oid": "S_SYNTHETI",
+  "source_dictionary_id": "iit-pss-rct-full-header-map",
+  "source_dictionary_version": "v0.2-synthetic-sandbox",
+  "events": {
+    "WEEK_0": {
+      "event_oid": "SE_SYNTHETICWEEK0FULLVALIDATION",
+      "repeat_key": "1"
+    },
+    "WEEK_4": {
+      "event_oid": "SE_SYNTHETICWEEK4VALIDATION",
+      "repeat_key": "1"
+    },
+    "WEEK_8": {
+      "event_oid": "SE_SYNTHETICWEEK8VALIDATION",
+      "repeat_key": "1"
+    },
+    "WEEK_12": {
+      "event_oid": "SE_SYNTHETICWEEK12VALIDATION",
+      "repeat_key": "1"
+    }
+  },
+  "field_mappings": {
+    "WEEK_0": {
+      "DRUG_CLASS": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DRUG_CLASS"
+      },
+      "AGE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_AGE"
+      },
+      "SEX": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SEX"
+      },
+      "OCCUPATION": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_OCCUPATION"
+      },
+      "ETHNICITY": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ETHNICITY"
+      },
+      "MARITAL_STATUS": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_MARITAL_STATUS"
+      },
+      "SMOKING_HISTORY": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SMOKING_HISTORY"
+      },
+      "ALCOHOL_HISTORY": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ALCOHOL_HISTORY"
+      },
+      "PSS_FAMILY_HISTORY": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_PSS_FAMILY_HISTORY"
+      },
+      "AGE_AT_ONSET": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_AGE_AT_ONSET"
+      },
+      "DISEASE_DURATION_MONTHS": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DISEASE_DURATION_MON"
+      },
+      "RISK_FACTORS_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_RISK_FACTORS_FLAG"
+      },
+      "ALLERGY_HISTORY_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ALLERGY_HISTORY_FLAG"
+      },
+      "MEDICATION_HISTORY_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_MEDICATION_HISTORY_F"
+      },
+      "MEDICATION_HISTORY_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_MEDICATION_HISTORY_T"
+      },
+      "CONCOMITANT_MEDICATION_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_CONCOMITANT_MEDICATI"
+      },
+      "PAST_MEDICAL_HISTORY_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_PAST_MEDICAL_HISTORY"
+      },
+      "TEMPERATURE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_TEMPERATURE"
+      },
+      "HEART_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_HEART_RATE"
+      },
+      "PULSE_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_PULSE_RATE"
+      },
+      "SYSTOLIC_BP": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SYSTOLIC_BP"
+      },
+      "DIASTOLIC_BP": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DIASTOLIC_BP"
+      },
+      "HEIGHT_CM": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_HEIGHT_CM"
+      },
+      "WEIGHT_KG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_WEIGHT_KG"
+      },
+      "WBC": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_WBC"
+      },
+      "NEUT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_NEUT"
+      },
+      "LYMPH": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_LYMPH"
+      },
+      "MONO": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_MONO"
+      },
+      "RBC": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_RBC"
+      },
+      "HB": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_HB"
+      },
+      "PLT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_PLT"
+      },
+      "ALT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ALT"
+      },
+      "AST": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_AST"
+      },
+      "TBIL": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_TBIL"
+      },
+      "GGT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_GGT"
+      },
+      "ALB": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ALB"
+      },
+      "CR": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_CR"
+      },
+      "BUN": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_BUN"
+      },
+      "K": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_K"
+      },
+      "NA": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_NA"
+      },
+      "SOURCE_CI": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SOURCE_CI"
+      },
+      "CA": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_CA"
+      },
+      "ESR": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ESR"
+      },
+      "CRP": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_CRP"
+      },
+      "IGG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_IGG"
+      },
+      "IGA": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_IGA"
+      },
+      "IGM": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_IGM"
+      },
+      "RF": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_RF"
+      },
+      "C3": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_C3"
+      },
+      "C4": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_C4"
+      },
+      "DRY_MOUTH_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DRY_MOUTH_VAS"
+      },
+      "DRY_EYE_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DRY_EYE_VAS"
+      },
+      "ESSPRI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ESSPRI_SCORE"
+      },
+      "DRYNESS_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_DRYNESS_SCORE"
+      },
+      "FATIGUE_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_FATIGUE_SCORE"
+      },
+      "LIMB_PAIN_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_LIMB_PAIN_SCORE"
+      },
+      "ESSDAI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ESSDAI_SCORE"
+      },
+      "SCHIRMER_LEFT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SCHIRMER_LEFT"
+      },
+      "SCHIRMER_RIGHT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SCHIRMER_RIGHT"
+      },
+      "SALIVARY_FLOW_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SALIVARY_FLOW_RATE"
+      },
+      "VISUAL_FIELD_ABNORMAL_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_VISUAL_FIELD_ABNORMA"
+      },
+      "ECG_ABNORMAL_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ECG_ABNORMAL_FLAG"
+      },
+      "ECG_ABNORMAL_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_ECG_ABNORMAL_TEXT"
+      },
+      "SF36_PHYSICAL_FUNCTIONING": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_PHYSICAL_FUNCTI"
+      },
+      "SF36_SOCIAL_FUNCTIONING": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_SOCIAL_FUNCTION"
+      },
+      "SF36_ROLE_PHYSICAL": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_ROLE_PHYSICAL"
+      },
+      "SF36_ROLE_EMOTIONAL": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_ROLE_EMOTIONAL"
+      },
+      "SF36_BODILY_PAIN": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_BODILY_PAIN"
+      },
+      "SF36_MENTAL_HEALTH": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_MENTAL_HEALTH"
+      },
+      "SF36_GENERAL_HEALTH": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_GENERAL_HEALTH"
+      },
+      "SF36_VITALITY": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_VITALITY"
+      },
+      "SF36_HEALTH_CHANGE": {
+        "form_oid": "F_RCT_FULL_WEE_1675_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W0_GRP",
+        "item_oid": "I_RCT_F_RCT_W0_SF36_HEALTH_CHANGE"
+      }
+    },
+    "WEEK_4": {
+      "DRY_MOUTH_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_DRY_MOUTH_VAS"
+      },
+      "DRY_EYE_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_DRY_EYE_VAS"
+      },
+      "ESSPRI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_ESSPRI_SCORE"
+      },
+      "DRYNESS_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_DRYNESS_SCORE"
+      },
+      "FATIGUE_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_FATIGUE_SCORE"
+      },
+      "LIMB_PAIN_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_LIMB_PAIN_SCORE"
+      },
+      "MISSED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_MISSED_MEDICATION_CO"
+      },
+      "PRESCRIBED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_PRESCRIBED_MEDICATIO"
+      },
+      "MEDICATION_ADHERENCE": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_MEDICATION_ADHERENCE"
+      },
+      "ADVERSE_REACTION_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_ADVERSE_REACTION_FLA"
+      },
+      "ADVERSE_REACTION_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W4_GRP",
+        "item_oid": "I_RCT_F_RCT_W4_ADVERSE_REACTION_TEX"
+      }
+    },
+    "WEEK_8": {
+      "DRY_MOUTH_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_DRY_MOUTH_VAS"
+      },
+      "DRY_EYE_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_DRY_EYE_VAS"
+      },
+      "ESSPRI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_ESSPRI_SCORE"
+      },
+      "DRYNESS_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_DRYNESS_SCORE"
+      },
+      "FATIGUE_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_FATIGUE_SCORE"
+      },
+      "LIMB_PAIN_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_LIMB_PAIN_SCORE"
+      },
+      "MISSED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_MISSED_MEDICATION_CO"
+      },
+      "PRESCRIBED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_PRESCRIBED_MEDICATIO"
+      },
+      "MEDICATION_ADHERENCE": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_MEDICATION_ADHERENCE"
+      },
+      "ADVERSE_REACTION_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_ADVERSE_REACTION_FLA"
+      },
+      "ADVERSE_REACTION_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_3895_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W8_GRP",
+        "item_oid": "I_RCT_F_RCT_W8_ADVERSE_REACTION_TEX"
+      }
+    },
+    "WEEK_12": {
+      "FOLLOWUP_STATUS": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_FOLLOWUP_STATUS"
+      },
+      "RISK_FACTORS_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_RISK_FACTORS_FLAG"
+      },
+      "ALLERGY_HISTORY_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ALLERGY_HISTORY_FLA"
+      },
+      "MEDICATION_HISTORY_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_MEDICATION_HISTORY_"
+      },
+      "MEDICATION_HISTORY_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_MEDICATION_HISTORY_3561"
+      },
+      "CONCOMITANT_MEDICATION_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_CONCOMITANT_MEDICAT"
+      },
+      "CONCOMITANT_MEDICATION_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_CONCOMITANT_MEDICAT_9185"
+      },
+      "TEMPERATURE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_TEMPERATURE"
+      },
+      "HEART_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_HEART_RATE"
+      },
+      "PULSE_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_PULSE_RATE"
+      },
+      "SYSTOLIC_BP": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SYSTOLIC_BP"
+      },
+      "DIASTOLIC_BP": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_DIASTOLIC_BP"
+      },
+      "WBC": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_WBC"
+      },
+      "NEUT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_NEUT"
+      },
+      "LYMPH": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_LYMPH"
+      },
+      "MONO": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_MONO"
+      },
+      "RBC": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_RBC"
+      },
+      "HB": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_HB"
+      },
+      "PLT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_PLT"
+      },
+      "ALT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ALT"
+      },
+      "AST": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_AST"
+      },
+      "TBIL": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_TBIL"
+      },
+      "GGT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_GGT"
+      },
+      "ALB": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ALB"
+      },
+      "CR": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_CR"
+      },
+      "BUN": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_BUN"
+      },
+      "K": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_K"
+      },
+      "NA": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_NA"
+      },
+      "SOURCE_CI": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SOURCE_CI"
+      },
+      "CA": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_CA"
+      },
+      "ESR": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ESR"
+      },
+      "CRP": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_CRP"
+      },
+      "IGG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_IGG"
+      },
+      "IGA": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_IGA"
+      },
+      "IGM": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_IGM"
+      },
+      "RF": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_RF"
+      },
+      "C3": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_C3"
+      },
+      "C4": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_C4"
+      },
+      "DRY_MOUTH_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_DRY_MOUTH_VAS"
+      },
+      "DRY_EYE_VAS": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_DRY_EYE_VAS"
+      },
+      "ESSPRI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ESSPRI_SCORE"
+      },
+      "DRYNESS_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_DRYNESS_SCORE"
+      },
+      "FATIGUE_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_FATIGUE_SCORE"
+      },
+      "LIMB_PAIN_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_LIMB_PAIN_SCORE"
+      },
+      "ESSDAI_SCORE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ESSDAI_SCORE"
+      },
+      "SCHIRMER_LEFT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SCHIRMER_LEFT"
+      },
+      "SCHIRMER_RIGHT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SCHIRMER_RIGHT"
+      },
+      "SALIVARY_FLOW_RATE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SALIVARY_FLOW_RATE"
+      },
+      "VISUAL_FIELD_ABNORMAL_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_VISUAL_FIELD_ABNORM"
+      },
+      "ECG_ABNORMAL_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ECG_ABNORMAL_FLAG"
+      },
+      "ECG_ABNORMAL_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ECG_ABNORMAL_TEXT"
+      },
+      "MISSED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_MISSED_MEDICATION_C"
+      },
+      "PRESCRIBED_MEDICATION_COUNT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_PRESCRIBED_MEDICATI"
+      },
+      "MEDICATION_ADHERENCE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_MEDICATION_ADHERENC"
+      },
+      "ADVERSE_REACTION_FLAG": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ADVERSE_REACTION_FL"
+      },
+      "ADVERSE_REACTION_TEXT": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_ADVERSE_REACTION_TE"
+      },
+      "SF36_PHYSICAL_FUNCTIONING": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_PHYSICAL_FUNCT"
+      },
+      "SF36_SOCIAL_FUNCTIONING": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_SOCIAL_FUNCTIO"
+      },
+      "SF36_ROLE_PHYSICAL": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_ROLE_PHYSICAL"
+      },
+      "SF36_ROLE_EMOTIONAL": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_ROLE_EMOTIONAL"
+      },
+      "SF36_BODILY_PAIN": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_BODILY_PAIN"
+      },
+      "SF36_MENTAL_HEALTH": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_MENTAL_HEALTH"
+      },
+      "SF36_GENERAL_HEALTH": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_GENERAL_HEALTH"
+      },
+      "SF36_VITALITY": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_VITALITY"
+      },
+      "SF36_HEALTH_CHANGE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_HEALTH_CHANGE"
+      },
+      "SF36_VITALITY_DUP_C163": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_VITALITY_DUP_C"
+      },
+      "SF36_SCORING_NOTE": {
+        "form_oid": "F_RCT_FULL_WEE_6099_V01",
+        "item_group_oid": "IG_RCT_F_RCT_W12_GRP",
+        "item_oid": "I_RCT_F_RCT_W12_SF36_SCORING_NOTE"
+      }
+    }
+  }
+}

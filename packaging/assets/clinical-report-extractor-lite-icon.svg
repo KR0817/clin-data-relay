@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
+  <title id="title">Clinical Report Extractor Lite icon</title>
+  <description id="description">A protected clinical report with structured data lines and a verification node.</description>
+  <defs>
+    <linearGradient id="background" x1="120" y1="80" x2="880" y2="944" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B2340"/>
+      <stop offset="1" stop-color="#050D1F"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="270" y1="210" x2="790" y2="810" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#31ECF1"/>
+      <stop offset="0.58" stop-color="#19A9D3"/>
+      <stop offset="1" stop-color="#137195"/>
+    </linearGradient>
+    <linearGradient id="document" x1="355" y1="318" x2="695" y2="804" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#123454"/>
+      <stop offset="1" stop-color="#081A35"/>
+    </linearGradient>
+  </defs>
+  <rect x="28" y="28" width="968" height="968" rx="220" fill="url(#background)"/>
+  <rect x="44" y="44" width="936" height="936" rx="204" fill="none" stroke="#17476A" stroke-width="12"/>
+  <path d="M512 150C610 224 712 250 820 270V505C820 695 702 832 512 890C322 832 204 695 204 505V270C312 250 414 224 512 150Z" fill="url(#shield)"/>
+  <path d="M512 222C594 278 674 302 750 318V505C750 644 668 749 512 807C356 749 274 644 274 505V318C350 302 430 278 512 222Z" fill="#0A1D36" opacity="0.88"/>
+  <rect x="342" y="306" width="340" height="492" rx="68" fill="url(#document)" stroke="#3AF2F1" stroke-width="10"/>
+  <rect x="410" y="418" width="204" height="24" rx="12" fill="#38E7F2"/>
+  <rect x="410" y="502" width="204" height="24" rx="12" fill="#31CAE9"/>
+  <rect x="410" y="586" width="138" height="24" rx="12" fill="#25AAD8"/>
+  <circle cx="598" cy="678" r="52" fill="#24E68A"/>
+  <path d="M573 678L590 695L623 658" fill="none" stroke="#062237" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

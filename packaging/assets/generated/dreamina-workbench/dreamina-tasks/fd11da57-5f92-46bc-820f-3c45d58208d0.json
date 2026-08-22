@@ -1,0 +1,14 @@
+{
+  "provider": "Dreamina official CLI",
+  "submit_id": "fd11da57-5f92-46bc-820f-3c45d58208d0",
+  "model_version": "5.0",
+  "ratio": "21:9",
+  "resolution_type": "2k",
+  "generate_num": 1,
+  "credit_count": 3,
+  "status": "success",
+  "source_dimensions": [3024, 1296],
+  "prompt_path": "packaging/assets/prompts/workbench-site-context.txt",
+  "prompt_sha256": "963c1a44b4dc02e83f83113bf6d1ae8cd9918e03b54266c03af83894f04263c2",
+  "generated_on": "2026-08-22"
+}

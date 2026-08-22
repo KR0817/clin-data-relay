@@ -1,0 +1,18 @@
+FROM tomcat:9-jdk11
+
+RUN set -eux; \
+    mkdir /usr/local/tomcat/webapps/ROOT; \
+    echo '<html><head><meta http-equiv="refresh" content="0; URL=LibreClinica/" /></head></html>' \
+        > /usr/local/tomcat/webapps/ROOT/index.html
+
+VOLUME \
+    /usr/local/tomcat/libreclinica.data \
+    /usr/local/tomcat/logs
+
+# The configuration directory is copied from the separately pinned public source
+# snapshot only to supply the stock, synthetic sandbox configuration. The deployed
+# application artifact below is the checksum-verified official 1.4.0 release WAR.
+COPY vendor/LibreClinica/docker/config/ /usr/local/tomcat/libreclinica.config/
+COPY vendor/LibreClinica/docker/config/ /usr/local/tomcat/libreclinica-ws.config/
+COPY infrastructure/libreclinica/artifacts/LibreClinica-web-1.4.0.war /usr/local/tomcat/webapps/LibreClinica.war
+COPY infrastructure/libreclinica/artifacts/LibreClinica-ws-1.4.0rc1.war /usr/local/tomcat/webapps/LibreClinica-ws.war

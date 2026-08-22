@@ -1,0 +1,54 @@
+{
+  "dictionary_id": "pulmonary-function-workbook-headers",
+  "dictionary_version": "v1.0-2026-08-11",
+  "data_boundary": "local_candidate_only",
+  "source": {
+    "filename": "肺功能.xlsx",
+    "sheet": "Sheet1",
+    "header_count": 21
+  },
+  "events": ["WEEK_0", "WEEK_4", "WEEK_8", "WEEK_12"],
+  "identifier_headers": [
+    {
+      "column": 1,
+      "source_header": "姓名",
+      "target_kind": "excluded_direct_identifier",
+      "uploadable": false,
+      "exclusion_reason": "direct_identifier_name"
+    },
+    {
+      "column": 2,
+      "source_header": "住院号",
+      "target_kind": "excluded_direct_identifier",
+      "uploadable": false,
+      "exclusion_reason": "direct_identifier_hospital_number"
+    },
+    {
+      "column": 3,
+      "source_header": "测试号",
+      "target_kind": "excluded_source_identifier",
+      "uploadable": false,
+      "exclusion_reason": "source_report_identifier"
+    }
+  ],
+  "fields": [
+    {"column": 4, "source_header": "FEV1", "field_code": "PFT_FEV1", "report_labels": ["FEV 1", "FEV1"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 5, "source_header": "FVC", "field_code": "PFT_FVC", "report_labels": ["FVC"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 6, "source_header": "FEV1实/预", "field_code": "PFT_FEV1_MEASURED_PREDICTED_PERCENT", "report_labels": ["FEV 1", "FEV1"], "value_selector": "measured_predicted_percent", "unit": "%", "data_type": "REAL"},
+    {"column": 7, "source_header": "VT", "field_code": "PFT_VT", "report_labels": ["VT"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 8, "source_header": "BF", "field_code": "PFT_BF", "report_labels": ["BF"], "value_selector": "measured", "unit": "1/min", "data_type": "REAL"},
+    {"column": 9, "source_header": "MV", "field_code": "PFT_MV", "report_labels": ["MV"], "value_selector": "measured", "unit": "L/min", "data_type": "REAL"},
+    {"column": 10, "source_header": "VC MAX", "field_code": "PFT_VC_MAX", "report_labels": ["VC MAX", "VCMAX"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 11, "source_header": "IC", "field_code": "PFT_IC", "report_labels": ["IC"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 12, "source_header": "REF", "field_code": "PFT_PEF", "report_labels": ["PEF", "REF"], "value_selector": "measured", "unit": "L/s", "data_type": "REAL"},
+    {"column": 13, "source_header": "MEF 75", "field_code": "PFT_MEF75", "report_labels": ["MEF 75", "MEF75"], "value_selector": "measured", "unit": "L/s", "data_type": "REAL"},
+    {"column": 14, "source_header": "MEF 50", "field_code": "PFT_MEF50", "report_labels": ["MEF 50", "MEF50"], "value_selector": "measured", "unit": "L/s", "data_type": "REAL"},
+    {"column": 15, "source_header": "MEF 25", "field_code": "PFT_MEF25", "report_labels": ["MEF 25", "MEF25"], "value_selector": "measured", "unit": "L/s", "data_type": "REAL"},
+    {"column": 16, "source_header": "VBEex", "field_code": "PFT_VBEEX", "report_labels": ["VBEEX"], "value_selector": "single", "unit": "L", "data_type": "REAL"},
+    {"column": 17, "source_header": "MVV", "field_code": "PFT_MVV", "report_labels": ["MVV"], "value_selector": "measured", "unit": "L/min", "data_type": "REAL"},
+    {"column": 18, "source_header": "TLC-SB", "field_code": "PFT_TLC_SB", "report_labels": ["TLC-SB", "TLCSB"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 19, "source_header": "RV-SB", "field_code": "PFT_RV_SB", "report_labels": ["RV-SB", "RVSB"], "value_selector": "measured", "unit": "L", "data_type": "REAL"},
+    {"column": 20, "source_header": "DLCOSB", "field_code": "PFT_DLCOSB", "report_labels": ["DLCOSB", "DLCO-SB"], "value_selector": "measured", "unit": "mmol/(min*kPa)", "data_type": "REAL"},
+    {"column": 21, "source_header": "KCO", "field_code": "PFT_KCO", "report_labels": ["KCO"], "value_selector": "measured", "unit": "mmol/(min*kPa*L)", "data_type": "REAL"}
+  ]
+}

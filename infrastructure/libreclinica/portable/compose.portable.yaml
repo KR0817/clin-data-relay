@@ -1,0 +1,43 @@
+name: ${COMPOSE_PROJECT_NAME:-clinical-edc-portable}
+
+services:
+  libreclinica:
+    image: clinical-edc-companion/libreclinica:1.4.0-sandbox
+    pull_policy: never
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${LIBRECLINICA_HOST_PORT:-8081}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - libreclinica-data:/usr/local/tomcat/libreclinica.data
+
+  db:
+    image: postgres:16-alpine
+    pull_policy: never
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: clinica
+      POSTGRES_USER: clinica
+      POSTGRES_DB: libreclinica
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinica -d libreclinica"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - libreclinica-postgres:/var/lib/postgresql/data
+      - ./init/10-restore.sh:/docker-entrypoint-initdb.d/10-restore.sh:ro
+      - ./seed/libreclinica-portable-synthetic.dump:/seed/libreclinica-portable-synthetic.dump:ro
+
+  smtp:
+    image: marlonb/mailcrab:v1.1.0
+    pull_policy: never
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${LIBRECLINICA_SMTP_HOST_PORT:-1081}:1080"
+
+volumes:
+  libreclinica-data:
+  libreclinica-postgres:

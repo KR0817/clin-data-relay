@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f6fb">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a1730'/%3E%3Cpath d='M16 5 26 10.7v10.6L16 27 6 21.3V10.7L16 5Z' fill='none' stroke='%237dd3fc' stroke-width='1.7'/%3E%3Cpath d='M10.5 16h11M16 10.5v11' stroke='%237dd3fc' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <title>临床数据采集工作台</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <main id="main-content" class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16 3.5 27 9.8v12.4L16 28.5 5 22.2V9.8L16 3.5Z" stroke="currentColor" stroke-width="1.8"/><path d="M10 16h12M16 10v12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <div>
+          <p id="brand-kicker" class="brand-kicker">ClinData Relay</p>
+          <h1 id="app-title">临床数据采集工作台</h1>
+        </div>
+      </div>
+      <span id="environment-chip" class="environment-chip">合成数据沙箱</span>
+    </header>
+
+    <section id="setup-card" class="card login-card hidden">
+      <h2>首次设置中心账号</h2>
+      <p id="setup-profile" class="brand-subtitle"></p>
+      <div id="setup-form">
+        <label for="setup-password">新密码</label>
+        <input id="setup-password" type="text" minlength="16" maxlength="128" autocomplete="new-password" spellcheck="false">
+        <label for="setup-password-confirmation">再次输入密码</label>
+        <input id="setup-password-confirmation" type="password" minlength="16" maxlength="128" autocomplete="new-password">
+        <div class="actions">
+          <button id="generate-setup-password" class="secondary" type="button">生成随机密码</button>
+          <button id="complete-setup" type="button">保存并显示一次性凭证</button>
+        </div>
+        <p class="brand-subtitle">系统只保存加盐哈希；提交后请先保存一次性凭证。</p>
+      </div>
+      <section id="setup-credential-receipt" class="credential-receipt hidden" aria-labelledby="setup-credential-title">
+        <h3 id="setup-credential-title">一次性登录凭证</h3>
+        <p>账号：<strong id="setup-receipt-username" class="credential-value"></strong></p>
+        <p>密码：<strong id="setup-receipt-password" class="credential-value"></strong></p>
+        <p class="brand-subtitle">密码仅在本页内存中显示。保存到获批的密码管理器后再进入工作台。</p>
+        <div class="actions">
+          <button id="copy-setup-credential" class="secondary" type="button">复制账号和密码</button>
+          <button id="download-setup-credential" class="secondary" type="button">下载一次性凭证</button>
+          <button id="continue-after-setup" type="button">已保存，进入工作台</button>
+        </div>
+      </section>
+      <p id="setup-status" class="status" role="alert" aria-live="assertive"></p>
+    </section>
+
+    <section id="login-card" class="card login-card">
+      <h2>登录工作台</h2>
+      <p id="login-subtitle" class="brand-subtitle">选择演示研究者账号进入对应中心的数据范围。</p>
+      <label for="username">账号</label>
+      <input id="username" list="demo-usernames" value="site-a-investigator@example.test" autocomplete="username">
+      <datalist id="demo-usernames">
+        <option value="site-a-investigator@example.test">SITE_A 研究者</option>
+        <option value="site-b-investigator@example.test">SITE_B 研究者</option>
+        <option value="central-data-manager@example.test">中央数据管理员</option>
+      </datalist>
+      <label id="password-label" for="password">演示密码</label>
+      <input id="password" value="demo-password" type="password" autocomplete="current-password">
+      <button id="login" type="button">登录</button>
+      <p id="login-status" class="status" role="alert" aria-live="assertive"></p>
+    </section>
+
+    <section id="workbench" class="workbench hidden">
+      <section class="card session-bar" aria-label="当前会话">
+        <div class="session-copy">
+          <p id="identity" class="status" aria-live="polite"></p>
+          <p id="edc-status" class="status lite-full-only" aria-live="polite"></p>
+          <p id="production-status" class="status lite-full-only" aria-live="polite"></p>
+          <p id="export-status" class="status" aria-live="polite"></p>
+        </div>
+        <div class="session-actions">
+          <div class="kimi-control" aria-label="Kimi 识别设置">
+            <span class="kimi-control-copy"><strong>Kimi K3 增强</strong><span id="kimi-toggle-help">正在检查服务状态</span></span>
+            <button id="kimi-toggle" class="switch-button" type="button" role="switch" aria-checked="false" disabled>不可用</button>
+            <button id="show-kimi-settings" class="text-button hidden" type="button" aria-controls="kimi-settings-card" aria-expanded="false">配置密钥</button>
+          </div>
+          <button id="download-submitted-excel" class="secondary" type="button">导出已确认识别 Excel</button>
+          <details class="session-tools">
+            <summary>数据交换</summary>
+            <div class="session-tools-menu">
+              <label class="package-passphrase">数据包密码<input id="offline-package-passphrase" type="password" minlength="12" maxlength="256" autocomplete="off" placeholder="至少 12 位"></label>
+              <button id="download-reviewed-package" class="secondary" type="button">生成加密中心包</button>
+              <label id="offline-package-import-control" class="secondary file-button hidden" for="offline-package-file">批量导入中心包<input id="offline-package-file" class="visually-hidden-file" type="file" accept="application/json,.json" multiple></label>
+            </div>
+          </details>
+          <button id="logout" class="secondary" type="button">退出登录</button>
+        </div>
+      </section>
+
+      <section id="workspace-context" class="card workspace-context" aria-labelledby="workspace-context-title">
+        <img id="workspace-context-art" class="workspace-context-art" src="/static/img/workbench-site-context.webp" alt="" aria-hidden="true" width="1680" height="720" decoding="async">
+        <div class="workspace-context-main">
+          <span id="workspace-mode-badge" class="workspace-mode-badge">研究工作区</span>
+          <div>
+            <p id="workspace-context-eyebrow" class="workspace-context-eyebrow">正在载入中心范围</p>
+            <h2 id="workspace-context-title">临床研究工作台</h2>
+            <p id="workspace-context-summary">正在根据账号权限准备工作区。</p>
+          </div>
+        </div>
+        <dl class="workspace-context-facts">
+          <div>
+            <dt>中心范围</dt>
+            <dd id="workspace-context-centre">正在载入</dd>
+          </div>
+          <div>
+            <dt>当前重点</dt>
+            <dd id="workspace-context-focus">正在载入</dd>
+          </div>
+          <div>
+            <dt>权限边界</dt>
+            <dd id="workspace-context-boundary">正在载入</dd>
+          </div>
+        </dl>
+        <a id="workspace-primary-action" class="workspace-primary-action" href="#intake-section">
+          <span id="workspace-primary-action-label">开始报告录入</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+        </a>
+      </section>
+
+      <section id="kimi-settings-card" class="card compact-settings hidden" aria-labelledby="kimi-settings-title">
+        <div>
+          <h2 id="kimi-settings-title">Kimi K3 本机密钥</h2>
+          <p class="brand-subtitle">密钥只保存在本中心电脑，不会显示在页面、日志或导出文件中。</p>
+        </div>
+        <label for="kimi-key">API key
+          <input id="kimi-key" type="password" minlength="16" maxlength="512" autocomplete="off" spellcheck="false" placeholder="输入新的 Kimi API key">
+        </label>
+        <button id="save-kimi-key" type="button">保存并启用</button>
+        <p id="kimi-settings-status" class="status" role="alert" aria-live="assertive"></p>
+      </section>
+
+      <nav class="workspace-nav" aria-label="工作台快捷导航">
+        <a class="lite-full-only" href="#operations-section" data-workspace-visible="central,site,oversight" data-central-label="中央总览" data-site-label="中心总览" data-oversight-label="监督总览">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7M3 19.5h18"/></svg>
+          <span>运营总览</span>
+        </a>
+        <a href="#intake-section" data-workspace-visible="central,site" data-workspace-roles="central_data_manager,site_investigator" data-central-label="报告补录" data-site-label="报告录入">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15.5v3A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg>
+          <span>报告录入</span>
+        </a>
+        <a href="#review-section" data-workspace-visible="central,site,oversight" data-central-label="跨中心审核" data-site-label="候选审核" data-oversight-label="候选证据">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5.5H6.5A1.5 1.5 0 0 0 5 7v12a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19V7a1.5 1.5 0 0 0-1.5-1.5H15M9 4h6v4H9V4Zm0 10 2 2 4-4"/></svg>
+          <span>候选审核</span>
+        </a>
+        <a href="#confirmed-section" data-workspace-visible="central,site,oversight" data-central-label="汇总数据" data-site-label="已确认数据" data-oversight-label="数据查看">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16M4 11.5h16M4 16.5h9M17 16.5l1.5 1.5L21 15.5"/></svg>
+          <span>已确认数据</span>
+        </a>
+        <a id="dictionary-nav-link" class="lite-full-only hidden" href="#field-dictionary-section" data-workspace-visible="central" data-workspace-roles="central_data_manager" data-central-label="字段字典">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.5h10A2.5 2.5 0 0 1 17.5 7v12H7.5A2.5 2.5 0 0 1 5 16.5v-12Zm2.5 9h10M8.5 8h6"/></svg>
+          <span>字段字典</span>
+        </a>
+      </nav>
+
+      <ol class="stepper workspace-write-only" aria-label="数据录入流程">
+        <li id="step-upload" class="active"><span class="step-number">1</span><span>上传并识别</span></li>
+        <li id="step-review"><span class="step-number">2</span><span>审核候选值</span></li>
+        <li id="step-freeze" class="lite-full-only"><span class="step-number">3</span><span>冻结传输包</span></li>
+        <li id="step-submit" class="lite-full-only"><span class="step-number">4</span><span>写入并对账</span></li>
+      </ol>
+
+      <details id="operations-section" class="card workflow-card lite-full-only" aria-labelledby="operations-title">
+        <summary class="section-head">
+          <div>
+            <h2 id="operations-title">运营总览与待办</h2>
+            <p>查看待办、数据问题与中央管理工具。</p>
+          </div>
+          <span class="section-count">按需展开</span>
+        </summary>
+        <div class="section-body">
+          <div class="operations-toolbar"><button id="refresh-operations" class="secondary" type="button">刷新运营状态</button></div>
+          <div id="operations-metrics" class="operations-grid" aria-live="polite"></div>
+          <div class="operations-columns">
+            <section class="ops-panel" aria-labelledby="tasks-title">
+              <div class="ops-panel-head"><h3 id="tasks-title">当前待办</h3><span id="tasks-count" class="section-count">0 项</span></div>
+              <div id="operations-tasks" class="ops-list"></div>
+            </section>
+            <section class="ops-panel" aria-labelledby="issues-title">
+              <div class="ops-panel-head"><h3 id="issues-title">伴随模块数据问题</h3><span id="issues-count" class="section-count">0 项</span></div>
+              <p class="brand-subtitle">正式 Query、SDV、签名、冻结与锁定仍在 LibreClinica 完成。</p>
+              <div id="operations-issues" class="ops-list"></div>
+            </section>
+          </div>
+          <section id="central-operations-controls" class="ops-panel ops-divider hidden" aria-labelledby="central-controls-title">
+            <div class="ops-panel-head"><h3 id="central-controls-title">中央数据管理控制</h3><span class="section-count">仅中央管理员</span></div>
+            <div class="compact-form">
+              <label for="hold-scope">暂停范围
+                <select id="hold-scope"><option value="visit">访视</option><option value="subject">受试者</option><option value="centre">中心</option><option value="dataset">全数据集</option></select>
+              </label>
+              <label for="hold-centre">中心代码<input id="hold-centre" value="SITE_A" maxlength="32" autocomplete="off"></label>
+              <label for="hold-subject">研究编号<input id="hold-subject" value="SUBJ001" maxlength="64" autocomplete="off"></label>
+              <label for="hold-event">访视<input id="hold-event" value="WEEK_0" maxlength="64" autocomplete="off"></label>
+              <label for="hold-reason">原因<input id="hold-reason" value="Central data review" maxlength="500"></label>
+              <div class="actions"><button id="place-transfer-hold" class="warn" type="button">暂停传输</button><button id="release-transfer-hold" class="secondary" type="button">解除暂停</button></div>
+            </div>
+            <p id="hold-status" class="status" aria-live="polite"></p>
+            <div class="ops-divider">
+              <div class="ops-panel-head"><h3>分析快照</h3><button id="create-analysis-snapshot" class="secondary" type="button">创建不可变快照</button></div>
+              <div id="analysis-snapshots" class="ops-list"></div>
+              <p id="snapshot-status" class="status" aria-live="polite"></p>
+            </div>
+            <div class="ops-divider">
+              <div class="ops-panel-head"><h3>研究账号</h3><span class="brand-subtitle">生产环境须接入获批身份提供方</span></div>
+              <div class="compact-form">
+                <label for="account-username">邮箱账号<input id="account-username" type="email" placeholder="researcher@example.test" autocomplete="off"></label>
+                <label for="account-role">角色<select id="account-role"><option value="site_investigator">中心研究者</option><option value="monitor">监查员（只读）</option><option value="auditor">审计员（只读）</option></select></label>
+                <label for="account-centre">中心代码<input id="account-centre" value="SITE_A" maxlength="32" autocomplete="off"></label>
+                <button id="create-user-account" class="secondary" type="button">创建合成环境账号</button>
+              </div>
+              <div class="compact-form">
+                <label for="centre-account-batch">批量中心账号
+                  <textarea id="centre-account-batch" rows="3" placeholder="SITE_C, researcher-c@example.test&#10;SITE_D, researcher-d@example.test"></textarea>
+                </label>
+                <button id="create-centre-accounts" class="secondary" type="button">生成独立中心账号</button>
+              </div>
+              <p id="account-status" class="status" aria-live="polite"></p>
+              <div id="user-accounts" class="ops-list"></div>
+            </div>
+            <div class="ops-divider">
+              <div class="ops-panel-head"><h3>中心包导入日志</h3><button id="refresh-package-import-logs" class="secondary" type="button">刷新日志</button></div>
+              <div id="package-import-logs" class="ops-list"></div>
+            </div>
+          </section>
+          <p id="operations-status" class="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <section id="intake-section" class="card workflow-card" aria-labelledby="intake-title">
+        <header class="section-head">
+          <div>
+            <h2 id="intake-title">按病人批量上传检查报告</h2>
+            <p>依次填写病人编号并加入检查报告，最后统一上传、识别和审核。</p>
+          </div>
+          <span class="section-count">步骤 1</span>
+        </header>
+        <div class="section-body">
+          <div class="intake-grid">
+            <label for="subject-ref">病人研究编号 <span class="required" aria-hidden="true">*</span>
+              <input id="subject-ref" placeholder="例如 SUBJ001" maxlength="64" autocomplete="off" spellcheck="false">
+              <span class="field-help">使用去标识化研究代码，不得填写姓名或住院号。</span>
+            </label>
+            <label for="event-ref">访视 <span class="required" aria-hidden="true">*</span>
+              <select id="event-ref">
+                <option value="WEEK_0">WEEK_0（0 周）</option>
+                <option value="WEEK_4">WEEK_4（4 周）</option>
+                <option value="WEEK_8">WEEK_8（8 周）</option>
+                <option value="WEEK_12">WEEK_12（12 周）</option>
+              </select>
+            </label>
+          </div>
+          <details id="recognition-field-scope" class="recognition-scope">
+            <summary>选择本批次识别项目 · <span id="recognition-field-summary">正在加载</span></summary>
+            <div class="recognition-scope-body">
+              <div class="recognition-scope-controls">
+                <label for="recognition-field-search">搜索项目
+                  <input id="recognition-field-search" type="search" placeholder="输入表头或字段代码" autocomplete="off">
+                </label>
+                <div class="recognition-scope-actions">
+                  <button id="select-all-recognition-fields" class="secondary" type="button">全选</button>
+                  <button id="select-pulmonary-fields" class="secondary" type="button">仅肺功能</button>
+                  <button id="clear-recognition-fields" class="secondary" type="button">清空</button>
+                </div>
+              </div>
+              <div id="recognition-field-options" class="recognition-field-options" role="group" aria-label="本批次识别项目"></div>
+              <p id="recognition-field-status" class="status" aria-live="polite"></p>
+            </div>
+          </details>
+          <label id="image-dropzone" class="upload-dropzone" for="image-file">
+            <input id="image-file" class="visually-hidden-file" type="file" accept="image/png,image/jpeg,application/pdf,.pdf" multiple>
+            <span class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M20 15v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-4"/></svg>
+            </span>
+            <span class="upload-copy"><strong>检查报告 <span class="required" aria-hidden="true">*</span></strong><span>点击选择或拖入图片、肺功能 PDF；PDF 不会发送给 Kimi。</span></span>
+            <span id="file-selection-summary" class="file-selection">尚未选择文件</span>
+          </label>
+          <div class="queue-builder-actions">
+            <p>为当前编号选择一张或多张报告，然后加入队列；可继续填写下一名病人。</p>
+            <button id="add-patient-reports" class="secondary" type="button">加入病人队列</button>
+          </div>
+          <section class="intake-queue" aria-labelledby="patient-upload-queue-title">
+            <div class="intake-queue-head">
+              <h3 id="patient-upload-queue-title">待上传病人队列</h3>
+              <span id="patient-upload-queue-count" class="section-count">0 名病人 · 0 份报告</span>
+            </div>
+            <div id="patient-upload-queue" class="patient-upload-queue">
+              <p class="empty-state">尚未加入报告。</p>
+            </div>
+          </section>
+          <label class="checkbox-row" for="synthetic-attestation">
+            <input id="synthetic-attestation" type="checkbox">
+            <span>我确认资料为合成数据，或已获批仅在本机处理的研究资料。<span class="required">必选</span></span>
+          </label>
+          <div class="primary-flow-action">
+            <p class="privacy-note">每张图都会先在本机生成遮盖衍生预览。Kimi 启用时，仅发送人工确认后的去标识化衍生图与本地 OCR 证据；原图不会发送，Kimi 结果仍需逐项人工确认。</p>
+            <button id="upload-and-recognize" type="button" disabled>上传队列并准备识别</button>
+          </div>
+          <p id="source-status" class="status" aria-live="polite"></p>
+          <p id="recognition-status" class="status" aria-live="polite"></p>
+          <div id="batch-progress" class="batch-progress hidden" role="status" aria-live="polite">
+            <div class="batch-progress-head">
+              <span id="batch-progress-label">准备批次</span>
+              <span id="batch-progress-count">0 / 0</span>
+            </div>
+            <progress id="batch-progress-bar" value="0" max="1">0%</progress>
+            <ul id="batch-file-statuses" class="batch-file-statuses"></ul>
+          </div>
+
+          <section id="recognition-job-panel" class="recognition-job-panel hidden" aria-labelledby="recognition-job-title">
+            <div class="intake-queue-head">
+              <h3 id="recognition-job-title">本批次识别任务</h3>
+              <span id="recognition-job-state" class="tag queued">未创建</span>
+            </div>
+            <p id="recognition-job-status" class="status" aria-live="polite"></p>
+            <ul id="recognition-job-items" class="recognition-job-items"></ul>
+            <div class="recognition-job-actions">
+              <button id="refresh-recognition-job" class="secondary" type="button">刷新状态</button>
+              <button id="run-recognition-job" type="button">继续识别</button>
+              <button id="retry-recognition-job" class="secondary" type="button">重试失败项</button>
+              <button id="cancel-recognition-job" class="danger" type="button">取消任务</button>
+            </div>
+          </section>
+
+          <section id="deidentification-panel" class="deidentification-panel hidden" aria-labelledby="deidentification-title">
+            <h3 id="deidentification-title">统一确认本批次本地处理</h3>
+            <p class="brand-subtitle">本地处理不会修改或删除原图。图片需逐张核对遮盖预览；PDF 只读取本机文本层，姓名、住院号和测试号不会创建候选。</p>
+            <div id="deidentification-previews" class="batch-preview-grid"></div>
+            <div class="deidentification-controls">
+              <p id="deidentification-status" class="status" aria-live="polite"></p>
+              <label class="checkbox-row" for="deidentification-review-attestation">
+                <input id="deidentification-review-attestation" type="checkbox" disabled>
+                <span>我已核对全部图片遮盖，并确认 PDF 仅在本机解析。</span>
+              </label>
+              <button id="confirm-deidentification-draft" class="warn" type="button" disabled>确认并批量识别</button>
+            </div>
+          </section>
+          <details class="structured-import lite-full-only">
+            <summary>结构化检验 CSV 导入（无需 OCR）</summary>
+            <div class="structured-import-body">
+              <p class="brand-subtitle">仅接受 UTF-8 CSV：<code>subject_ref,event_ref,field_code,value,unit</code>。全部行先校验，再进入同一候选审核与质量规则流程。</p>
+              <div class="structured-import-grid">
+                <label for="structured-csv-file">CSV 文件
+                  <input id="structured-csv-file" type="file" accept=".csv,text/csv">
+                </label>
+                <button id="upload-structured-csv" class="secondary" type="button">导入为待审核候选</button>
+              </div>
+              <label class="checkbox-row" for="structured-csv-attestation"><input id="structured-csv-attestation" type="checkbox"><span>我确认文件仅含合成或获批的去标识化研究数据。</span></label>
+              <p id="structured-import-status" class="status" aria-live="polite"></p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section id="review-section" class="card workflow-card" aria-labelledby="review-title">
+        <header class="section-head">
+          <div>
+            <h2 id="review-title">审核 OCR 候选值</h2>
+            <p>接受可直接确认；修改或拒绝时审核说明为可选。所有决定仍记录审核人和时间。</p>
+          </div>
+          <span id="candidate-count" class="section-count">0 条待审核</span>
+        </header>
+        <div class="section-body">
+          <div class="review-toolbar">
+            <p id="bulk-accept-summary">完成识别后，本地证据项可批量确认；冲突和仅 Kimi 识别项需逐项核对。</p>
+            <div class="review-toolbar-actions">
+              <button id="accept-recommended-batch" class="success" data-bulk-accept-group="recommended" type="button">批量接受本地证据项</button>
+              <button id="accept-reviewable-batch" class="secondary" data-bulk-accept-group="reviewable" type="button">查看需逐项审核项</button>
+            </div>
+          </div>
+          <p id="workflow-status" class="status" aria-live="polite"></p>
+          <div id="candidates" class="card-list"></div>
+        </div>
+      </section>
+
+      <section id="confirmed-section" class="card workflow-card" aria-labelledby="confirmed-title">
+        <header class="section-head">
+          <div>
+            <h2 id="confirmed-title">已确认数据与 LibreClinica 提交</h2>
+          </div>
+          <span id="confirmed-count" class="section-count">0 条已确认</span>
+        </header>
+        <div class="section-body">
+          <div class="batch-submit-toolbar lite-full-only">
+            <p id="batch-submit-summary">当前没有待提交的已接受数据。</p>
+            <button id="submit-all-confirmed" class="success" type="button" disabled>冻结并提交全部已接受数据</button>
+          </div>
+          <p id="batch-submit-status" class="status lite-full-only" aria-live="polite"></p>
+          <ol id="batch-submit-results" class="batch-submit-results lite-full-only hidden"></ol>
+          <p id="confirmed-records-status" class="status" aria-live="polite"></p>
+          <div id="confirmed-records" class="confirmed-list" role="list"></div>
+          <div class="confirmed-list-footer">
+            <button id="toggle-confirmed-records" class="secondary confirmed-list-toggle hidden" type="button" aria-controls="confirmed-records" aria-expanded="false">展开其余 0 条</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="field-dictionary-section" class="card workflow-card lite-full-only hidden" aria-labelledby="field-dictionary-title">
+        <header class="section-head">
+          <div>
+            <h2 id="field-dictionary-title">数据字典与表头管理</h2>
+            <p>仅中央数据管理员可查看和修改识别显示表头。</p>
+          </div>
+          <span id="field-dictionary-count" class="section-count">0 个表头</span>
+        </header>
+        <div class="section-body">
+          <p class="boundary-note"><strong>结构边界：</strong>修改只影响工作台显示与后续 Kimi 字段标签；字段代码、LibreClinica OID、既有提交值和原始 Excel 表头不变。姓名、缩写等直接身份字段只读且不会上传。</p>
+          <div class="release-toolbar">
+            <label for="dictionary-release-select">版本发布历史
+              <select id="dictionary-release-select"></select>
+            </label>
+            <button id="create-dictionary-draft" class="secondary" type="button">创建 / 打开草稿</button>
+            <button id="publish-dictionary-draft" class="success" type="button" disabled>发布草稿</button>
+            <button id="rollback-dictionary-release" class="warn" type="button">回滚到所选版本</button>
+          </div>
+          <p id="dictionary-release-status" class="status" aria-live="polite"></p>
+          <div class="dictionary-controls">
+            <label for="field-dictionary-search">搜索表头或字段代码
+              <input id="field-dictionary-search" type="search" placeholder="例如 WBC、白细胞" autocomplete="off">
+            </label>
+            <label for="field-dictionary-event">访视筛选
+              <select id="field-dictionary-event">
+                <option value="">全部访视与排除字段</option>
+                <option value="WEEK_0">WEEK_0</option>
+                <option value="WEEK_4">WEEK_4</option>
+                <option value="WEEK_8">WEEK_8</option>
+                <option value="WEEK_12">WEEK_12</option>
+                <option value="EXCLUDED">排除/非 CRF 字段</option>
+              </select>
+            </label>
+            <button id="refresh-field-dictionary" class="secondary" type="button">刷新表头</button>
+          </div>
+          <p id="field-dictionary-status" class="status" aria-live="polite"></p>
+          <div class="table-scroll" tabindex="0" aria-label="当前数据字典表头">
+            <table class="dictionary-table">
+              <thead><tr><th>原始列</th><th>访视</th><th>字段代码</th><th>原始 Excel 表头</th><th>当前显示/识别表头</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody id="field-dictionary-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <details id="transfer-panel" class="card foldout lite-full-only hidden">
+        <summary>当前冻结传输包与完整性</summary>
+        <div class="foldout-body">
+          <p id="transfer-integrity" class="status" aria-live="polite"></p>
+          <pre id="transfer-package"></pre>
+          <div class="actions">
+            <button id="verify-active-transfer" class="secondary" type="button">重新校验 SHA-256</button>
+            <button id="download-active-receipt" class="secondary" type="button">下载传输请求回执</button>
+            <button id="submit-active-transfer" type="button">提交当前冻结包</button>
+          </div>
+        </div>
+      </details>
+
+      <details class="card foldout lite-full-only">
+        <summary>传输记录与人工对账</summary>
+        <div class="foldout-body">
+          <p class="brand-subtitle">只有 <code>submitted</code> 且带 LibreClinica 权威引用的记录才表示接口已确认写入。</p>
+          <p id="ledger-status" class="status" aria-live="polite"></p>
+          <div id="transfers" class="card-list"></div>
+          <div class="actions" style="margin-top: 12px;">
+            <button id="refresh-transfers" class="secondary" type="button">刷新传输记录</button>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+    <script src="/static/js/workbench.js?v=20260822-dreamina-assets-v1"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Changelog
+
+All notable changes are recorded here before a versioned release is created.
+This file is not a substitute for a Git history or an approved project license.
+
+## Unreleased
+
+### Changed
+
+- Defined `C:\ClinData Relay` as the canonical clean source root and prepared a
+  private Git baseline that excludes runtime data, secrets and build outputs.
+- Adopted `ClinData Relay` as the user-facing product name while retaining
+  compatibility-sensitive package, API and launcher filenames.
+- Established `app.version.__version__` as the package and runtime version source.
+- Included the closed workbench HTML, CSS, JavaScript and approved WebP assets
+  in Python package builds.
+- Began the modular-monolith extraction for separate centre Lite and central
+  web deployment shapes.
+- Moved local credential and bearer-session persistence behind a framework-free
+  authentication service while preserving the existing HTTP contract.
+- Added a local schema migration ledger and exposed non-sensitive application
+  and database schema versions through health diagnostics.
+- Kept the central profile fail-closed pending PostgreSQL, institutional
+  identity, HTTPS, worker and operational qualification.
+
+### Release blockers
+
+- Project owner license decision and root `LICENSE`.
+- Approved Git baseline and version tag.
+- Qualified PostgreSQL and institutional-identity implementations.

@@ -1,0 +1,19 @@
+{
+  "protocol": "clinical-edc-production-evidence-v1",
+  "manifest_version": 1,
+  "study_id": "replace-with-approved-study-id",
+  "gates": {
+    "data_governance": { "status": "pending" },
+    "https": { "status": "pending" },
+    "managed_secrets": { "status": "pending" },
+    "identity_provider": { "status": "pending" },
+    "central_repository": { "status": "pending" },
+    "backup_restore": { "status": "pending" },
+    "validation": { "status": "pending" },
+    "authority_edc": { "status": "pending" },
+    "monitoring": { "status": "pending" },
+    "incident_response": { "status": "pending" },
+    "sop_training": { "status": "pending" },
+    "disaster_recovery": { "status": "pending" }
+  }
+}

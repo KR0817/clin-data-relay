@@ -1,0 +1,43 @@
+name: Build macOS Lite
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install native build dependencies
+        run: brew install tesseract
+      - name: Install project dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -c packaging/macos-build-constraints.txt -e '.[dev]'
+      - name: Build and verify native app
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: bash ./scripts/build_macos_lite.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClinicalReportExtractorLite-macos-${{ matrix.arch }}
+          path: |
+            dist/ClinicalReportExtractorLite-macos-${{ matrix.arch }}.zip
+            dist/ClinicalReportExtractorLite-macos-${{ matrix.arch }}.verification.json
+          if-no-files-found: error

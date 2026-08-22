@@ -1,0 +1,8 @@
+{
+  "case_id": "synthetic-pft-001",
+  "fields": {
+    "PFT_FEV1": {"value": "2.45", "unit": "L"},
+    "PFT_FVC": {"value": "3.20", "unit": "L"},
+    "PFT_PEF": {"value": "6.80", "unit": "L/s"}
+  }
+}

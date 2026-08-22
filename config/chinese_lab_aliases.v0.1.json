@@ -1,0 +1,31 @@
+{
+  "mapping_id": "iit-pss-conservative-chinese-lab-aliases",
+  "mapping_version": "zh-lab-v0.1-exact-labels",
+  "status": "synthetic_fit_gap_only",
+  "field_aliases": [
+    {"field_code": "WBC", "aliases": ["白细胞计数"]},
+    {"field_code": "RBC", "aliases": ["红细胞计数"]},
+    {"field_code": "HB", "aliases": ["血红蛋白测定", "血红蛋白"], "reject_if_contains": ["平均红细胞", "血红蛋白浓度"]},
+    {"field_code": "PLT", "aliases": ["血小板计数"]},
+    {"field_code": "ALT", "aliases": ["丙氨酸氨基转移酶", "谷丙转氨酶"]},
+    {"field_code": "AST", "aliases": ["天门冬氨酸氨基转移酶", "天冬氨酸氨基转移酶", "谷草转氨酶"]},
+    {"field_code": "TBIL", "aliases": ["总胆红素"]},
+    {"field_code": "GGT", "aliases": ["γ谷氨酰转移酶", "谷氨酰转移酶"]},
+    {"field_code": "ALB", "aliases": ["白蛋白定量", "白蛋白测定"]},
+    {"field_code": "CR", "aliases": ["血清肌酐", "肌酐测定", "肌酐"]},
+    {"field_code": "BUN", "aliases": ["尿素氮"]},
+    {"field_code": "K", "aliases": ["血清钾", "血钾"]},
+    {"field_code": "NA", "aliases": ["血清钠", "血钠"], "reject_if_contains": ["钠尿肽"]},
+    {"field_code": "CA", "aliases": ["血清钙", "血钙"], "reject_if_contains": ["肌钙蛋白"]},
+    {"field_code": "ESR", "aliases": ["红细胞沉降率", "血沉"]},
+    {"field_code": "CRP", "aliases": ["全血高敏C反应蛋白", "高敏C反应蛋白", "C反应蛋白"]},
+    {"field_code": "IGG", "aliases": ["免疫球蛋白G"]},
+    {"field_code": "IGA", "aliases": ["免疫球蛋白A"]},
+    {"field_code": "IGM", "aliases": ["免疫球蛋白M"]},
+    {"field_code": "RF", "aliases": ["类风湿因子"]},
+    {"field_code": "C3", "aliases": ["补体C3"]},
+    {"field_code": "C4", "aliases": ["补体C4"]}
+  ],
+  "excluded_ambiguous_codes": ["NEUT", "LYMPH", "MONO"],
+  "notes": "Exact-label, coordinate-based fallback only. Units and reference ranges are not inferred. Percentage/count ambiguities remain excluded pending investigator-approved CRF definitions."
+}

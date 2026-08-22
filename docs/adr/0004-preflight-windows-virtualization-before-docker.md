@@ -1,0 +1,7 @@
+# Preflight Windows virtualization before Docker
+
+**Status: accepted.** The integrated Windows package depends on Docker Desktop's WSL2 Linux engine. A recipient encountered Docker's opaque named-pipe `500 Internal Server Error` after Docker Desktop separately reported that virtualization support was not detected. The launcher will therefore inspect firmware/hypervisor, SLAT, Windows feature, WSL and Docker readiness before any image or Compose operation. It will return stable remediation codes and a credential-free local report. Software repair remains an explicit elevated action; BIOS/UEFI and VDI host settings remain user/IT responsibilities and cannot be changed by the package.
+
+**Amendment (2026-08-11):** Docker Desktop does not start automatically after installation. When the host passes every prerequisite except engine readiness, the product launcher starts Desktop through its supported CLI or documented installation path and waits for the sanitized engine probe. The first-run UI remains visible because accepting Docker's agreement is a recipient action; failure or timeout stays fail-closed under `EDC-HOST-DOCKER-ENGINE-NOT-READY`.
+
+On a clean host, missing Docker images and a not-yet-ready PostgreSQL process are expected probe states. These checks capture native stdout/stderr and consume only the exit code so Windows PowerShell 5.1 cannot promote expected Docker stderr to a terminating `NativeCommandError`; the launcher then loads the verified offline archive or continues polling.
