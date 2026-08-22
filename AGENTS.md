@@ -4,7 +4,7 @@
 
 - Name: ClinData Relay
 - Updated: 2026-08-22
-- Stack: Python 3.12, FastAPI, SQLite, vanilla HTML/CSS/JavaScript, pytest, Node.js Artifact Tool, PowerShell, LibreClinica SOAP/ODM
+- Stack: Python 3.12, FastAPI, SQLite, optional PostgreSQL 16/Psycopg 3 central bootstrap, vanilla HTML/CSS/JavaScript, pytest, Node.js Artifact Tool, PowerShell, LibreClinica SOAP/ODM
 - Package manager: Python virtual environment with `pip`; bundled Node runtime for spreadsheet generation
 
 ## Product boundary

@@ -29,6 +29,10 @@ This file is not a substitute for a Git history or an approved project license.
 - Moved centre-local Kimi key validation, redacted status and settings routes
   behind a dedicated API module. Existing paths, role checks and audit behavior
   are unchanged; credential material remains local file state only.
+- Added the first central PostgreSQL bootstrap slice with strict TLS policy,
+  transaction-locked schema ledger, redacted preflight output and a real
+  PostgreSQL 16 CI contract. It creates no clinical tables and does not enable
+  central application startup.
 - Kept the central profile fail-closed pending PostgreSQL, institutional
   identity, HTTPS, worker and operational qualification.
 

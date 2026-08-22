@@ -4,6 +4,28 @@
 **Date:** 2026-08-11  
 **Environment:** synthetic localhost qualification only
 
+## 2026-08-22 PostgreSQL repository bootstrap
+
+The first central-database slice establishes a real PostgreSQL connection and
+migration seam without moving clinical records or enabling the central web
+profile. It is an infrastructure tracer bullet, not a production repository.
+
+Acceptance criteria:
+
+- PostgreSQL support is an optional dependency and does not change the Centre
+  Lite installation or SQLite behavior.
+- One module owns connection-policy validation, transactional migration
+  locking, the migration ledger and a redacted capability result.
+- Non-local environments require hostname-verifying TLS. Development or test
+  connections may disable TLS only for a loopback or local Unix-socket host.
+- Repeated preparation is idempotent and rejects a database schema newer than
+  the application understands.
+- Errors and status never expose the DSN, password, host, database user or raw
+  provider exception.
+- A real PostgreSQL 16 service runs the public module interface in CI.
+- `COMPANION_DEPLOYMENT_PROFILE=central` remains fail-closed because no
+  clinical-data repository adapter or institutional identity exists yet.
+
 ## 2026-08-22 production-software architecture tranche 1
 
 The product will keep one codebase but support two explicit deployment shapes:

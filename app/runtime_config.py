@@ -43,7 +43,8 @@ class RuntimeConfig:
         profile = os.getenv("COMPANION_DEPLOYMENT_PROFILE", "local").strip().lower()
         if profile != "local":
             raise RuntimeConfigurationError(
-                "central deployment requires a qualified postgresql repository adapter; "
+                "central clinical repository and institutional identity are incomplete; "
+                "the postgresql bootstrap preflight does not enable central mode; "
                 "refusing to fall back to sqlite"
             )
 

@@ -18,6 +18,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+central = [
+  "psycopg[binary]>=3.3,<4.0",
+]
 dev = [
   "httpx>=0.28,<1.0",
   "pillow>=11.0,<12.0",
@@ -28,6 +31,9 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+  "postgres: requires CLINDATA_TEST_POSTGRES_DSN and a real PostgreSQL service",
+]
 
 [tool.setuptools.packages.find]
 include = ["app*"]

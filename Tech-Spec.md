@@ -2,6 +2,28 @@
 
 **Date:** 2026-08-11
 
+## PostgreSQL repository bootstrap
+
+- `app/postgres_repository.py` is the first PostgreSQL seam. Its public
+  interface prepares the repository bootstrap and returns a redacted immutable
+  status containing only backend, server major version, schema version,
+  migration count and `clinical_data_ready=false`.
+- `COMPANION_POSTGRES_DSN` is runtime secret material. It is read only at the
+  module boundary and must never be stored in settings payloads, logs, audit
+  rows, health responses or project files.
+- The bootstrap uses one transaction-scoped PostgreSQL advisory lock and a
+  `companion_schema_migrations` ledger. Version 1 proves connection,
+  transactional DDL and migration privileges; it creates no clinical table.
+- Unknown future migration versions fail closed. Repeated preparation does not
+  duplicate a migration row.
+- Production-like environments require `sslmode=verify-full`. `development`
+  and `test` may use non-verifying modes only over localhost or a Unix socket.
+- Psycopg is a `central` optional dependency. The Centre Lite build does not
+  import or require it. The CI integration job uses PostgreSQL 16 and an
+  ephemeral run-specific credential.
+- Central application startup remains disabled until clinical repository and
+  institutional identity adapters satisfy their contract tests.
+
 ## Modular-monolith extraction and future repository seam
 
 - `app/api/static_delivery.py` owns the public browser files and a closed image

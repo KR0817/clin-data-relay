@@ -28,6 +28,12 @@ validation, Lite centre-investigator restriction, redacted response fields and
 `kimi_credential_configured` audit event. The credential value remains local
 file state and is never a response or database field.
 
+The PostgreSQL repository bootstrap adds no HTTP route and does not enable the
+central deployment profile. Its interface is an operator/development preflight;
+all existing HTTP paths continue to use the local SQLite profile until the
+clinical repository and institutional identity slices are complete. No DSN or
+connection metadata is added to `/api/health`.
+
 ## Runtime and static assets
 
 - `GET /static/css/app.css` — versioned browser stylesheet for the workbench. It

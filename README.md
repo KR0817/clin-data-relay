@@ -52,6 +52,24 @@ Run the verified behavior tests with:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
+The future central repository now has a non-clinical PostgreSQL bootstrap
+preflight. Install the optional development dependency, provide the DSN through
+the runtime environment, and run:
+
+```powershell
+uv sync --extra central --extra dev --frozen
+.\.venv\Scripts\python.exe .\scripts\check_postgres_repository.py
+```
+
+Configure `COMPANION_ENV` and `COMPANION_POSTGRES_DSN` through the approved
+runtime secret-injection process before running the preflight. For development,
+a non-verifying TLS mode is accepted only for localhost. A
+non-local or production-like environment requires `sslmode=verify-full`. A
+successful result verifies the connection and migration ledger only; central
+application startup remains blocked until the clinical repository and
+institutional identity adapters are complete. Never put the DSN in source,
+documentation, command history, logs or GitHub workflow files.
+
 The automated suite covers the candidate, PDF/image intake, privacy, dictionary, quality, transfer and portable-runtime boundaries. Transfer creation accepts an optional bounded `Idempotency-Key`; without one, the server derives a deterministic candidate/package/target key. An exact retry returns the original transfer with HTTP 200 and `replayed: true`, while conflicting reuse returns HTTP 409. A historical simulation request can never be submitted through a later live adapter; a new target-specific request must be created instead. The transfer and reconciliation endpoints are:
 
 - `GET /api/transfers` — list current authorised-centre transfer state, reconciliation metadata, and successful Authority-EDC references;

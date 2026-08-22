@@ -329,3 +329,24 @@
   rights to participant data.
 - Third-party components retain their own licenses. A future public source
   release requires an explicit relicensing decision and a new release review.
+
+## 2026-08-22 PostgreSQL repository bootstrap
+
+- `app/postgres_repository.py` is the first executable PostgreSQL seam. It owns
+  DSN policy, connection handling, a transaction-scoped advisory migration
+  lock, the `companion_schema_migrations` ledger and a redacted immutable
+  status. It deliberately creates no clinical or participant-data table.
+- Psycopg 3 is isolated in the optional `central` dependency group. Centre Lite
+  and the current SQLite application do not import it or gain a PostgreSQL
+  runtime prerequisite.
+- Production-like environments require `sslmode=verify-full`; development and
+  test may use non-verifying TLS only on localhost or a Unix socket. Provider
+  exceptions and connection material are reduced to bounded error codes.
+- `scripts/check_postgres_repository.py` is the operator/developer preflight.
+  Success proves connection, PostgreSQL 16-or-newer compatibility and migration
+  privileges only; `clinical_data_ready` stays false and central application
+  startup remains fail-closed.
+- The source-quality workflow has a separate Ubuntu/PostgreSQL 16 contract job
+  with a run-specific ephemeral credential. Local verification passed 207
+  tests with the two service-backed cases skipped because the workstation
+  Docker engine and PostgreSQL client were unavailable.
