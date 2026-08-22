@@ -268,10 +268,9 @@
   live localhost health/page checks. The live service reported Kimi ready and
   the LibreClinica SOAP adapter selected. The upstream Starlette/httpx
   deprecation warning remains.
-- Formal source release is still blocked on an owner-selected root `LICENSE`
-  and an approved Git baseline/tag. PostgreSQL migration tooling must be added
-  only with the first executable central repository slice, not as an unused
-  parallel schema source.
+- The root license and Git baseline were completed in the subsequent governance
+  tranches. PostgreSQL migration tooling must be added only with the first
+  executable central repository slice, not as an unused parallel schema source.
 
 ## 2026-08-22 canonical root and private Git baseline
 
@@ -283,9 +282,9 @@
   virtual environments, build output, distributions, scratch work, bundled
   third-party binaries and Docker release artifacts.
 - The private GitHub repository is
-  `https://github.com/KR0817/clin-data-relay`. Private version control does not
-  resolve the missing source license; public source distribution remains
-  blocked until the owner selects and records a root `LICENSE`.
+  `https://github.com/KR0817/clin-data-relay`. It remains private under the
+  later owner-approved proprietary license; any public source release requires
+  explicit relicensing and a separate release review.
 - A fresh Python 3.12 environment was created from `uv.lock` in the canonical
   root. Python compilation, JavaScript syntax checking and 205 tests passed;
   `uv.lock` was refreshed to record the dynamic `0.2.0.dev0` package version.
@@ -318,3 +317,15 @@
 - Verification passed Python compilation, JavaScript syntax checking,
   `uv lock --check`, 205 tests and a live localhost health/page smoke test. The
   existing upstream Starlette/httpx deprecation warning remains.
+
+## 2026-08-22 proprietary source license
+
+- The owner selected the root proprietary license with `Copyright (c) 2026
+  Xinbo Yu`. The private GitHub repository remains private; source access or
+  distribution requires separate written authorization and is not open source.
+- The license permits only the sites, period, systems, protocol and purposes in
+  the owner's written authorization. It does not replace ethics, privacy,
+  security, validation, data-flow or institutional approval and does not grant
+  rights to participant data.
+- Third-party components retain their own licenses. A future public source
+  release requires an explicit relicensing decision and a new release review.

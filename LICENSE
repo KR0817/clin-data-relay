@@ -1,0 +1,82 @@
+CLINDATA RELAY PROPRIETARY SOFTWARE LICENSE
+
+Copyright (c) 2026 Xinbo Yu. All rights reserved.
+
+1. Ownership
+
+ClinData Relay, including its original source code, documentation, user
+interfaces, configuration, and compiled distributions (the "Software"), is
+proprietary to Xinbo Yu (the "Licensor"), except for third-party components
+identified below. No rights are granted except as expressly stated in this
+License or in a separate written agreement signed by the Licensor.
+
+2. Limited Authorized Use
+
+A person or organization that has received the Software with the Licensor's
+written authorization may install and use it only within the authorized sites,
+time period, systems, research protocol, and purposes stated in that
+authorization. Permitted purposes may include internal evaluation, security or
+regulatory review, approved research, and protocol-bound clinical-data
+operations.
+
+3. Restrictions
+
+Without the Licensor's prior written permission, no person or organization may:
+
+- copy, publish, disclose, sublicense, sell, lease, transfer, distribute, or
+  make the Software available to any third party;
+- modify, adapt, translate, or create derivative works from the Software;
+- remove or alter copyright, attribution, security, audit, or proprietary
+  notices;
+- bypass access controls, audit controls, data-isolation controls, or technical
+  restrictions; or
+- reverse engineer, decompile, or disassemble a compiled distribution, except
+  to the limited extent that applicable law expressly permits despite this
+  restriction.
+
+4. Clinical and Regulatory Boundary
+
+The Software is not licensed as a medical device and must not be used to make
+diagnostic, treatment, dosing, or other direct patient-care decisions. Use with
+real participant data requires the applicable protocol, ethics, privacy,
+security, data-flow, validation, and institutional approvals. The authorized
+organization remains responsible for access governance, data protection,
+operator training, validation, incident response, retention, and compliance
+with applicable law and research requirements.
+
+5. Confidentiality and Data
+
+Source code, non-public technical material, credentials, and security details
+must be protected from unauthorized disclosure. This License grants no rights
+to participant data or other data processed by the Software. Data ownership,
+control, permitted processing, and retention are governed by the applicable
+protocol, authorization, and data agreement.
+
+6. Third-Party Components
+
+Third-party software, models, fonts, images, and other materials remain subject
+to their respective licenses and notices. This License applies only to the
+original portions of ClinData Relay and does not replace or restrict rights
+granted under an applicable third-party license.
+
+7. Disclaimer and Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED
+"AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY,
+AVAILABILITY, OR REGULATORY FITNESS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE
+LICENSOR WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, RESEARCH RESULTS,
+REVENUE, OR BUSINESS OPPORTUNITY, ARISING FROM USE OF THE SOFTWARE.
+
+8. Termination
+
+Any permission granted under this License terminates automatically upon breach.
+After termination, the recipient must stop using the Software and securely
+delete or return all copies as directed by the Licensor, except for copies that
+must be retained under an applicable legal, regulatory, or approved research
+record-retention obligation.
+
+For permissions or licensing inquiries, contact the Licensor through the
+private repository or another verified written channel designated by the
+Licensor.

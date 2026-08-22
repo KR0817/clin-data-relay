@@ -39,8 +39,9 @@
 - `.gitignore` is the enforcement boundary for runtime and generated state.
   A pre-commit inventory must also reject credential-like filenames, SQLite
   files and oversized source artifacts.
-- GitHub hosting is private by default. Absence of a root `LICENSE` blocks
-  public source distribution but does not block private version control.
+- GitHub hosting is private. The root `LICENSE` is proprietary, so source access
+  or distribution requires separate written owner authorization. A future
+  public source release requires explicit relicensing and release review.
 - `.github/workflows/quality.yml` is the source quality gate. It uses Python
   3.12, the pinned uv CLI, `uv sync --all-extras --frozen`, Python compilation,
   Node syntax checking and pytest on a Windows runner. It receives no runtime

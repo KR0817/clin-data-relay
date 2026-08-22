@@ -31,9 +31,9 @@ Acceptance criteria:
   makes no claim of concurrent central readiness.
 - The full regression suite, JavaScript syntax check, Python compilation and
   local startup check pass with unchanged response contracts.
-- Public source distribution remains blocked until the owner selects a project
-  license. A private Git baseline and development tag may preserve provenance,
-  but must not be presented as a licensed public release.
+- The project uses a proprietary root license and the repository remains
+  private. Source access or distribution requires the owner's separate written
+  authorization and must not be presented as an open-source release.
 
 ## 2026-08-22 source repository baseline
 
@@ -43,8 +43,9 @@ Acceptance criteria:
 - Runtime databases, uploaded reports, de-identified derivatives, API keys,
   credentials, backups, virtual environments, generated distributions and
   bundled third-party binaries are local artifacts and must not enter Git.
-- The first remote is private until the project owner approves a source
-  license and a public-release review.
+- The remote remains private under the proprietary license. Any future public
+  source release requires an explicit owner-approved relicensing decision and
+  a new public-release review.
 - The first baseline tag matches the application development version and is
   created only after a clean-root dependency install and complete test run.
 - Every push to `main` and every pull request must recreate the locked Python

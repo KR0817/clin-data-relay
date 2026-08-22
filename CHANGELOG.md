@@ -9,6 +9,8 @@ This file is not a substitute for a Git history or an approved project license.
 
 - Defined `C:\ClinData Relay` as the canonical clean source root and prepared a
   private Git baseline that excludes runtime data, secrets and build outputs.
+- Added the owner-approved proprietary root `LICENSE`; the repository remains
+  private and source distribution requires separate written authorization.
 - Adopted `ClinData Relay` as the user-facing product name while retaining
   compatibility-sensitive package, API and launcher filenames.
 - Added a secret-free Windows CI quality gate for locked installation,
@@ -32,5 +34,4 @@ This file is not a substitute for a Git history or an approved project license.
 
 ### Release blockers
 
-- Project owner license decision and root `LICENSE`.
 - Qualified PostgreSQL and institutional-identity implementations.
