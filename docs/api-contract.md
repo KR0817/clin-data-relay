@@ -34,6 +34,15 @@ all existing HTTP paths continue to use the local SQLite profile until the
 clinical repository and institutional identity slices are complete. No DSN or
 connection metadata is added to `/api/health`.
 
+The PostgreSQL Study Membership repository is also HTTP-transparent. Schema
+version 5 stores only a provider alias and pseudonymous Institutional Principal
+ID with role, centre and lifecycle metadata. No identity-provider subject,
+assertion, token, credential or provider response is an HTTP, membership lookup
+or audit-detail field. The verified principal username is not a membership key;
+existing creator and audit-actor fields still identify the separately
+authorised operator. The slice adds no membership administration endpoint,
+login, callback or session field. Central startup remains fail-closed.
+
 ## Runtime and static assets
 
 - `GET /static/css/app.css` — versioned browser stylesheet for the workbench. It

@@ -13,12 +13,13 @@ from psycopg.rows import dict_row
 from app.package_import_repository import PackageImportAttempt, PackageImportReceipt
 
 
-LATEST_POSTGRES_SCHEMA_VERSION = 4
+LATEST_POSTGRES_SCHEMA_VERSION = 5
 MIGRATION_NAMES = {
     1: "central_repository_bootstrap",
     2: "package_import_ledger",
     3: "reviewed_package_clinical_import",
     4: "confirmed_data_read_index",
+    5: "study_membership_authorization",
 }
 MIGRATION_STATEMENTS = {
     1: (),
@@ -151,6 +152,58 @@ MIGRATION_STATEMENTS = {
             centre_code, edc_event_ref, edc_subject_ref, created_at, sequence
         )
         WHERE status = 'human_confirmed'
+        """,
+    ),
+    5: (
+        """
+        CREATE TABLE IF NOT EXISTS study_memberships (
+            sequence BIGINT GENERATED ALWAYS AS IDENTITY UNIQUE,
+            id TEXT PRIMARY KEY,
+            provider_id TEXT NOT NULL
+                CHECK (provider_id ~ '^[a-z][a-z0-9._-]{1,63}$'),
+            principal_id TEXT NOT NULL
+                CHECK (principal_id ~ '^institutional:[a-f0-9]{64}$'),
+            role TEXT NOT NULL CHECK (role IN (
+                'site_investigator', 'principal_investigator',
+                'central_data_manager', 'monitor', 'auditor'
+            )),
+            centre_code TEXT,
+            active BOOLEAN NOT NULL,
+            valid_from TIMESTAMPTZ NOT NULL,
+            expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > valid_from),
+            created_by TEXT NOT NULL CHECK (length(created_by) BETWEEN 3 AND 320),
+            created_at TIMESTAMPTZ NOT NULL,
+            deactivated_by TEXT CHECK (
+                deactivated_by IS NULL OR length(deactivated_by) BETWEEN 3 AND 320
+            ),
+            deactivated_at TIMESTAMPTZ,
+            deactivation_reason TEXT CHECK (
+                deactivation_reason IS NULL
+                OR length(deactivation_reason) BETWEEN 3 AND 500
+            ),
+            CHECK (
+                (role = 'site_investigator'
+                 AND centre_code IS NOT NULL
+                 AND centre_code ~ '^[A-Z][A-Z0-9_-]{1,31}$')
+                OR (role <> 'site_investigator' AND centre_code IS NULL)
+            ),
+            CHECK (
+                (active AND deactivated_by IS NULL AND deactivated_at IS NULL
+                 AND deactivation_reason IS NULL)
+                OR (NOT active AND deactivated_by IS NOT NULL
+                    AND deactivated_at IS NOT NULL
+                    AND deactivation_reason IS NOT NULL)
+            )
+        )
+        """,
+        """
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_study_memberships_one_active_principal
+        ON study_memberships (principal_id)
+        WHERE active
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_study_memberships_principal_lookup
+        ON study_memberships (principal_id, active)
         """,
     ),
 }

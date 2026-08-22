@@ -743,3 +743,31 @@ Acceptance criteria:
 - Production readiness requires an actually ready identity adapter in addition
   to approved runtime configuration and unexpired identity-provider evidence;
   environment variables and evidence alone can never mark the gate passed.
+
+## 2026-08-22 PostgreSQL study-membership persistence
+
+This slice persists application-owned study authorization without storing the
+identity provider's raw subject and without exposing a login or administration
+route. It is an internal repository contract for the future qualified central
+composition root.
+
+Acceptance criteria:
+
+- A Study Membership stores a configured provider alias and a namespaced
+  pseudonymous principal ID derived from the verified provider/subject pair.
+  Raw provider subjects, assertions, tokens and provider responses are not
+  persisted in the membership or audit detail. The separately authorised
+  operator identifier remains in existing creator/audit actor fields.
+- At most one active membership exists for one pseudonymous principal. A
+  deactivated membership remains historical and a later replacement may be
+  granted.
+- Grant and deactivation commit atomically with append-only events in the
+  existing PostgreSQL global hash chain. Concurrent writers serialize the
+  audit-chain tail.
+- Deactivation requires a bounded actor and reason. Repeating deactivation is
+  idempotent and does not append a duplicate audit event.
+- Repository failures use stable bounded error codes and never echo connection
+  material or identity input.
+- PostgreSQL schema version 5 adds only the membership lifecycle. It adds no
+  browser route, stores no credential and does not make
+  `clinical_data_ready` or the central runtime ready.

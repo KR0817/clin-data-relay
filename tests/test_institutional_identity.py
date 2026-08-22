@@ -10,6 +10,7 @@ from app.institutional_identity import (
     StudyMembership,
     VerifiedInstitutionalPrincipal,
     authorize_institutional_principal,
+    institutional_principal_id,
 )
 
 
@@ -23,7 +24,7 @@ def test_mfa_verified_principal_receives_only_the_matching_study_membership() ->
     )
     membership = StudyMembership(
         provider_id="hospital-a",
-        subject_id="employee-001",
+        principal_id=institutional_principal_id(principal),
         role="site_investigator",
         centre_code="SITE_A",
         active=True,
@@ -45,6 +46,7 @@ def test_mfa_verified_principal_receives_only_the_matching_study_membership() ->
     assert user.role == "site_investigator"
     assert user.centre_code == "SITE_A"
     assert principal.subject_id not in repr(user)
+    assert principal.subject_id not in repr(membership)
 
 
 def principal() -> VerifiedInstitutionalPrincipal:
@@ -60,7 +62,7 @@ def principal() -> VerifiedInstitutionalPrincipal:
 def membership() -> StudyMembership:
     return StudyMembership(
         provider_id="hospital-a",
-        subject_id="employee-001",
+        principal_id=institutional_principal_id(principal()),
         role="site_investigator",
         centre_code="SITE_A",
         active=True,
@@ -108,7 +110,7 @@ def test_unverified_stale_or_future_authentication_fails_closed(
     ("changed_membership", "expected_code"),
     (
         (
-            replace(membership(), subject_id="employee-002"),
+            replace(membership(), principal_id="institutional:" + "a" * 64),
             "institutional_identity_membership_mismatch",
         ),
         (
@@ -189,6 +191,21 @@ def test_structural_claim_errors_are_bounded_and_do_not_echo_identity_values() -
 
     assert str(raised.value) == "institutional_identity_claim_invalid"
     assert "invalid username" not in str(raised.value)
+
+
+def test_principal_identifier_is_namespaced_deterministic_and_validated() -> None:
+    first = institutional_principal_id(principal())
+    second = institutional_principal_id(principal())
+
+    assert first == second
+    assert first.startswith("institutional:")
+    assert len(first) == len("institutional:") + 64
+
+    with pytest.raises(
+        InstitutionalIdentityError,
+        match="^institutional_identity_membership_invalid$",
+    ):
+        replace(membership(), principal_id="employee-001")
 
 
 def test_authorization_rejects_naive_clock_input() -> None:

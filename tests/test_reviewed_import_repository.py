@@ -43,7 +43,10 @@ def record(field_code: str, value: str) -> ReviewedImportRecord:
     )
 
 
-def command(*records: ReviewedImportRecord) -> ReviewedPackageImportCommand:
+def command(
+    *records: ReviewedImportRecord,
+    created_at: str = "2026-08-22T08:00:00+00:00",
+) -> ReviewedPackageImportCommand:
     receipt = PackageImportReceipt(
         id=str(uuid4()),
         package_id=str(uuid4()),
@@ -51,7 +54,7 @@ def command(*records: ReviewedImportRecord) -> ReviewedPackageImportCommand:
         centre_code="SITE_A",
         record_count=len(records),
         created_by="central-data-manager@example.test",
-        created_at="2026-08-22T08:00:00+00:00",
+        created_at=created_at,
     )
     return ReviewedPackageImportCommand(
         receipt=receipt,
@@ -86,7 +89,11 @@ def exercise_reviewed_import_contract(repository: ReviewedImportRepository) -> N
     assert repeated.created_count == 0
     assert repeated.candidate_ids == ()
 
-    second_command = command(record("ALT", "31"), record("K", "4.6"))
+    second_command = command(
+        record("ALT", "31"),
+        record("K", "4.6"),
+        created_at="2026-08-22T16:01:00+08:00",
+    )
     second = repository.import_package(second_command)
     assert second.status == "imported"
     assert second.created_count == 1

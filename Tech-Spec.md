@@ -631,9 +631,11 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   verifies the provider assertion. It carries provider ID, opaque subject,
   username, timezone-aware authentication time and normalized MFA status; it
   deliberately has no application role or centre field.
-- `StudyMembership` is application-controlled authorization. It matches the
-  provider/subject pair, has one supported study role, optional exact centre,
-  active flag and timezone-aware effective interval.
+- `StudyMembership` is application-controlled authorization. It matches a
+  configured provider alias and namespaced pseudonymous principal ID, has one
+  supported study role, optional exact centre, active flag and timezone-aware
+  effective interval. The raw provider subject remains transient in the
+  verified principal and is never stored by the membership repository.
 - `authorize_institutional_principal()` requires MFA, permits five minutes of
   positive clock skew, limits authentication age to eight hours, checks exact
   membership identity/effectivity and enforces role/centre invariants. It
@@ -650,6 +652,31 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   composition. The current application and operator script pass `False`
   because no assertion-verifying adapter exists. The identity gate requires
   that capability plus approved configuration and unexpired evidence.
+
+## PostgreSQL study-membership persistence
+
+- `institutional_principal_id()` is the single derivation function for the
+  namespaced SHA-256 principal identifier. Authorization and persistence use
+  the same value; neither exposes or stores the raw subject.
+- `PostgresStudyMembershipRepository` owns `grant`, `find_active`,
+  `deactivate` and `verify_audit_chain`. It is an internal adapter and is not
+  imported by Centre Lite or the current HTTP composition root.
+- Migration 5 creates `study_memberships` with database checks for role/centre
+  shape, timezone-aware effective intervals and complete deactivation
+  metadata. A partial unique index enforces one active row per principal ID.
+- Grant and deactivation take the same PostgreSQL transaction advisory lock as
+  reviewed-package audit writers. They append `study_membership_granted` or
+  `study_membership_deactivated` to the shared `audit_events` chain before
+  commit. Shared audit timestamps are canonicalized to UTC before hashing and
+  insertion so connection timezone settings cannot change verification. Audit
+  detail contains the membership ID, provider alias, role, centre and lifecycle
+  reason only.
+- An already inactive membership is returned unchanged and does not create a
+  second event. Unknown membership IDs, duplicate active grants and invalid
+  input return stable repository error codes.
+- This schema slice leaves `clinical_data_ready=false`. A qualified provider
+  adapter, HTTP session composition, remaining repositories and operational
+  evidence are still required before central startup can pass.
 
 ## Windows host preflight
 

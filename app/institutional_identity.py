@@ -10,6 +10,7 @@ from datetime import UTC, datetime, timedelta
 
 PROVIDER_ID_RE = re.compile(r"^[a-z][a-z0-9._-]{1,63}$")
 CENTRE_CODE_RE = re.compile(r"^[A-Z][A-Z0-9_-]{1,31}$")
+PRINCIPAL_ID_RE = re.compile(r"^institutional:[a-f0-9]{64}$")
 STUDY_ROLES = frozenset(
     {
         "site_investigator",
@@ -68,10 +69,18 @@ class VerifiedInstitutionalPrincipal:
         )
 
 
+def institutional_principal_id(principal: VerifiedInstitutionalPrincipal) -> str:
+    """Derive the sole persisted identity link from a verified principal."""
+    digest = hashlib.sha256(
+        f"{principal.provider_id}\0{principal.subject_id}".encode("utf-8")
+    ).hexdigest()
+    return f"institutional:{digest}"
+
+
 @dataclass(frozen=True)
 class StudyMembership:
     provider_id: str
-    subject_id: str
+    principal_id: str
     role: str
     centre_code: str | None
     active: bool
@@ -82,7 +91,8 @@ class StudyMembership:
         if (
             not isinstance(self.provider_id, str)
             or not PROVIDER_ID_RE.fullmatch(self.provider_id)
-            or not _bounded_opaque(self.subject_id, minimum=1, maximum=255)
+            or not isinstance(self.principal_id, str)
+            or not PRINCIPAL_ID_RE.fullmatch(self.principal_id)
             or not isinstance(self.active, bool)
             or self.role not in STUDY_ROLES
         ):
@@ -133,7 +143,7 @@ def authorize_institutional_principal(
         raise InstitutionalIdentityError("institutional_identity_authentication_stale")
     if (
         principal.provider_id != membership.provider_id
-        or principal.subject_id != membership.subject_id
+        or institutional_principal_id(principal) != membership.principal_id
     ):
         raise InstitutionalIdentityError("institutional_identity_membership_mismatch")
     if not membership.active:
@@ -142,11 +152,8 @@ def authorize_institutional_principal(
         raise InstitutionalIdentityError(
             "institutional_identity_membership_not_effective"
         )
-    digest = hashlib.sha256(
-        f"{principal.provider_id}\0{principal.subject_id}".encode("utf-8")
-    ).hexdigest()
     return InstitutionalUser(
-        id=f"institutional:{digest}",
+        id=membership.principal_id,
         username=principal.username,
         role=membership.role,
         centre_code=membership.centre_code,

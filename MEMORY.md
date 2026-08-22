@@ -435,3 +435,26 @@
   persistence are qualified.
 - Local verification passed 228 tests with five PostgreSQL-only cases skipped,
   plus Python compilation, JavaScript syntax and `uv lock --check`.
+
+## 2026-08-22 PostgreSQL study-membership persistence
+
+- Study Memberships now persist a namespaced pseudonymous principal ID derived
+  by `institutional_principal_id()` rather than the raw identity-provider
+  subject. The raw subject remains transient in the verified principal and is
+  absent from membership records and audit details.
+- PostgreSQL schema version 5 adds role/centre and lifecycle checks plus a
+  partial unique index allowing only one active membership per principal.
+  Deactivation requires an actor and bounded reason, is idempotent when already
+  inactive and permits a later replacement grant.
+- `app/postgres_audit.py` is the shared global hash-chain writer/verifier. Both
+  reviewed-package imports and membership lifecycle changes acquire the same
+  transaction advisory lock and commit their audit event atomically with the
+  domain write. Timestamps are normalized to UTC before both hashing and
+  insertion so PostgreSQL session timezone rendering cannot break verification.
+- The membership repository is internal only; there is no administration
+  endpoint, OIDC/SAML callback or central session composition. Centre Lite is
+  unchanged and central readiness remains fail-closed.
+- Local verification passed 230 tests with six PostgreSQL service tests skipped,
+  Python compilation, JavaScript syntax and `uv lock --check`. The PostgreSQL
+  16 CI job is the production-equivalent service contract and now includes the
+  membership and confirmed-read test modules.

@@ -56,18 +56,26 @@ This file is not a substitute for a Git history or an approved project license.
 - Added a provider-independent institutional identity authorization contract.
   Institution-verified MFA identity is separated from application-controlled
   study membership; only the latter supplies role and centre.
+- Added PostgreSQL Study Membership persistence using a pseudonymous principal
+  identifier instead of the raw identity-provider subject. One active grant per
+  principal, idempotent reasoned deactivation and the shared serialized audit
+  hash chain now commit atomically under schema version 5.
+- Extracted the PostgreSQL audit-chain writer/verifier so reviewed-package and
+  membership lifecycle events extend one global chain under the same advisory
+  lock. The real PostgreSQL 16 CI contract now runs confirmed-read and
+  membership lifecycle tests as well as bootstrap/import tests.
 - Production readiness now requires an actually ready identity adapter as well
   as approved configuration and unexpired evidence. The current runtime passes
   no such capability and remains fail-closed.
 - Kept the central profile fail-closed pending a selected and qualified
-  OIDC/SAML adapter, membership persistence, HTTPS, remaining workflow
-  repositories, workers and operational qualification.
+  OIDC/SAML adapter, membership administration/session composition, HTTPS,
+  remaining workflow repositories, workers and operational qualification.
 
 ### Release blockers
 
-- Qualified institutional OIDC/SAML verification, membership persistence and
-  the remaining central repositories.
+- Qualified institutional OIDC/SAML verification, membership administration,
+  session composition and the remaining central repositories.
 - Verification passed Python compilation, JavaScript syntax checking,
-  `uv lock --check`, 228 tests with five PostgreSQL-only cases skipped locally,
-  and focused identity/readiness checks. The upstream Starlette/httpx
+  `uv lock --check`, 230 tests with six PostgreSQL-only cases skipped locally,
+  and focused identity/membership checks. The upstream Starlette/httpx
   deprecation warning remains.

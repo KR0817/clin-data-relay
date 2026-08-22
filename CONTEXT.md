@@ -43,3 +43,7 @@ _Avoid_: local account, request-header user, study role
 **Study Membership**:
 The Companion-controlled authorization that assigns one Institutional Principal to one active study role and, for a site investigator, one Centre.
 _Avoid_: identity-provider group, login claim, account
+
+**Institutional Principal ID**:
+A pseudonymous Companion identifier derived from the configured provider alias and the provider-normalized opaque subject. It links a verified principal to a Study Membership without persisting the raw provider subject.
+_Avoid_: username, employee number, reversible identifier

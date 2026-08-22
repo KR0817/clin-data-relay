@@ -68,3 +68,5 @@ jobs:
           tests/test_postgres_repository.py
           tests/test_package_import_repository.py
           tests/test_reviewed_import_repository.py
+          tests/test_confirmed_data_repository.py
+          tests/test_study_membership_repository.py

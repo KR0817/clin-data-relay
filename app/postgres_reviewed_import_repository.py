@@ -9,12 +9,12 @@ from uuid import uuid4
 import psycopg
 from psycopg.types.json import Jsonb
 
-from app.audit_chain import (
-    GENESIS_PREV_HASH,
-    ChainVerification,
-    compute_event_hash,
-    event_payload,
-    verify_chain,
+from app.audit_chain import ChainVerification
+from app.postgres_audit import (
+    append_audit_event,
+    audit_head,
+    lock_audit_chain,
+    verify_postgres_audit_chain,
 )
 from app.postgres_repository import (
     PostgresPackageImportRepository,
@@ -29,9 +29,6 @@ from app.reviewed_import_repository import (
     ReviewedPackageImportCommand,
     imported_attempt,
 )
-
-
-AUDIT_APPEND_LOCK_ID = 0x4344524155444954
 
 
 def _timestamp_text(value: object) -> str:
@@ -71,7 +68,7 @@ class PostgresReviewedImportRepository:
                         audit_head_hash=self._audit_head(connection),
                     )
 
-                connection.execute("SELECT pg_advisory_xact_lock(%s)", (AUDIT_APPEND_LOCK_ID,))
+                lock_audit_chain(connection)
                 connection.execute(
                     """
                     INSERT INTO source_files (
@@ -219,13 +216,10 @@ class PostgresReviewedImportRepository:
         event_type: str,
         details: dict[str, object],
     ) -> None:
-        previous_row = connection.execute(
-            "SELECT event_hash FROM audit_events ORDER BY sequence DESC LIMIT 1"
-        ).fetchone()
-        previous = str(previous_row["event_hash"]) if previous_row is not None else GENESIS_PREV_HASH
         event_id = str(uuid4())
         created_at = command.receipt.created_at
-        payload = event_payload(
+        append_audit_event(
+            connection,
             event_id=event_id,
             candidate_id=candidate_id,
             centre_code=command.receipt.centre_code,
@@ -234,33 +228,10 @@ class PostgresReviewedImportRepository:
             created_at=created_at,
             details=details,
         )
-        event_hash = compute_event_hash(previous, payload)
-        connection.execute(
-            """
-            INSERT INTO audit_events (
-                id, candidate_id, centre_code, event_type, actor_username,
-                created_at, details_json, prev_hash, event_hash
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                event_id,
-                candidate_id,
-                command.receipt.centre_code,
-                event_type,
-                command.receipt.created_by,
-                created_at,
-                Jsonb(details),
-                previous,
-                event_hash,
-            ),
-        )
 
     @staticmethod
     def _audit_head(connection) -> str:
-        row = connection.execute(
-            "SELECT event_hash FROM audit_events ORDER BY sequence DESC LIMIT 1"
-        ).fetchone()
-        return str(row["event_hash"]) if row is not None else GENESIS_PREV_HASH
+        return audit_head(connection)
 
     @staticmethod
     def _result(
@@ -321,30 +292,6 @@ class PostgresReviewedImportRepository:
     def verify_audit_chain(self) -> ChainVerification:
         try:
             with self._bootstrap._open_connection() as connection:
-                rows = connection.execute(
-                    """
-                    SELECT id, candidate_id, centre_code, event_type, actor_username,
-                           created_at, details_json, prev_hash, event_hash
-                    FROM audit_events
-                    ORDER BY sequence
-                    """
-                ).fetchall()
-            events = [
-                {
-                    "prev_hash": str(row["prev_hash"]),
-                    "event_hash": str(row["event_hash"]),
-                    "payload": event_payload(
-                        event_id=str(row["id"]),
-                        candidate_id=str(row["candidate_id"]) if row["candidate_id"] is not None else None,
-                        centre_code=str(row["centre_code"]),
-                        event_type=str(row["event_type"]),
-                        actor_username=str(row["actor_username"]),
-                        created_at=_timestamp_text(row["created_at"]),
-                        details=dict(row["details_json"]),
-                    ),
-                }
-                for row in rows
-            ]
-            return verify_chain(events)
+                return verify_postgres_audit_chain(connection)
         except (psycopg.Error, TypeError, ValueError):
             raise PostgresRepositoryError("postgres_reviewed_import_unavailable") from None
