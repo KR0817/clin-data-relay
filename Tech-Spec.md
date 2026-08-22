@@ -622,7 +622,7 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   not change `clinical_data_ready=false`. SQLite creates the equivalent partial
   scope index during its existing idempotent initialization path.
 
-## Institutional identity authorization contract
+## Verified-principal authorization contract
 
 - `app/institutional_identity.py` is a pure post-verification authorization
   boundary. It does not parse JWT/SAML, perform discovery, fetch keys, expose a
@@ -630,7 +630,8 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - `VerifiedInstitutionalPrincipal` is constructed only after a future adapter
   verifies the provider assertion. It carries provider ID, opaque subject,
   username, timezone-aware authentication time and normalized MFA status; it
-  deliberately has no application role or centre field.
+  deliberately has no application role or centre field. Its class name is a
+  legacy compatibility name and does not assert hospital affiliation.
 - `StudyMembership` is application-controlled authorization. It matches a
   configured provider alias and namespaced pseudonymous principal ID, has one
   supported study role, optional exact centre, active flag and timezone-aware
@@ -644,7 +645,7 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - Failures are `InstitutionalIdentityError` instances whose string value is one
   closed error code. No provider response, assertion, username or raw identity
   value is included.
-- The module is not wired into `create_auth_module()` until a specific hospital
+- The module is not wired into `create_auth_module()` until a specific approved
   OIDC/SAML adapter and membership repository are selected and contract-tested.
   Local SQLite login and Centre Lite remain unchanged; central startup remains
   fail-closed.
@@ -699,6 +700,33 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   successful no-op and does not extend the audit chain.
 - Migration 6 adds session metadata only. Centre Lite and local SQLite login are
   unchanged; no institutional callback or central HTTP composition is added.
+
+## Project-owned OIDC verified-claim boundary
+
+- `app/project_oidc_identity.py` is a pure post-verification adapter. Its public
+  seam is `principal_from_verified_oidc_claims(policy, claims)`; callers must
+  supply an ID-token claim mapping already verified by an OIDC library for
+  signature, discovery/JWKS, state, nonce, expiry and token integrity.
+- `ProjectOidcPolicy` contains only non-secret configuration: provider alias,
+  exact HTTPS issuer, confidential client identifier, required MFA ACR and the
+  exact username claim name. It never contains a client secret.
+- The adapter rechecks issuer and audience, requires the configured ACR,
+  converts OIDC `auth_time` NumericDate to UTC and constructs the existing
+  post-verification principal without role or centre fields. A multi-valued
+  audience is accepted only when it contains the configured client and `azp`
+  equals that client.
+- Provider `groups`, `realm_access`, `resource_access`, role, centre and email
+  claims are ignored. Study Membership remains the sole authorization source.
+- `ProjectOidcIdentityError` exposes only closed error codes. Structural
+  principal errors are translated to a bounded OIDC claim error rather than
+  leaking values.
+- The name `VerifiedInstitutionalPrincipal` remains a legacy internal type for
+  compatibility. It represents a verified provider principal and does not
+  assert hospital affiliation when produced by this adapter.
+- This module does not add Authlib or an HTTP callback. The next integration
+  slice must use Authorization Code Flow, exact redirect URIs, state/nonce,
+  short provider-token lifetime and an out-of-URL Companion session exchange.
+  Central HTTP and `identity_provider_ready` remain fail-closed.
 
 ## Windows host preflight
 

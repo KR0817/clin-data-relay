@@ -478,5 +478,26 @@
   idempotent no-op.
 - Local verification passed 231 tests with eight PostgreSQL-only cases skipped,
   Python compilation, JavaScript syntax, `uv lock --check` and diff checks. A
-  selected hospital identity provider, assertion-verifying adapter, membership
+  selected approved identity provider, assertion-verifying adapter, membership
   administration and central HTTP composition remain release blockers.
+
+## 2026-08-23 project-owned investigator identity alternative
+
+- No hospital identity provider is available. ADR 0016 selects a
+  project-controlled, invitation-only Keycloak realm as the first integration
+  target and limits the assurance claim to project-verified investigator
+  identity. It must not be described as hospital or institutional identity.
+- `app/project_oidc_identity.py` is a pure boundary for claims already verified
+  by a qualified OIDC client. It rechecks exact HTTPS issuer, client audience,
+  required MFA ACR and `auth_time`, then produces the existing identity-only
+  principal. It never parses raw JWTs or contains provider credentials.
+- Keycloak groups, realm roles, email domains and centre-like claims remain
+  untrusted for authorization. Role and centre still come only from the
+  application-controlled Study Membership.
+- The research comparison is in
+  `docs/research/project-owned-identity-provider-options-2026-08.md`. Actual
+  Authlib Authorization Code callback, one-time application-session exchange,
+  Keycloak deployment/operations and production qualification remain separate
+  release gates; central HTTP stays fail-closed.
+- Local verification passed 243 tests with eight PostgreSQL-only cases skipped,
+  Python compilation, JavaScript syntax, `uv lock --check` and diff checks.

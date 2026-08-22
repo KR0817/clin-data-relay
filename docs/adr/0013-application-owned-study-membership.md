@@ -5,23 +5,24 @@
 
 ## Context
 
-Hospital identity providers can prove a person's institutional identity and MFA
-event, but their group names and lifecycle do not inherently express this
-study's approved roles or centre boundaries. Directly trusting a browser header
-or provider group would couple clinical authorization to external naming and
-could broaden access when provider administration changes.
+An approved identity provider can prove control of an enrolled account and an
+MFA event, but its group names and lifecycle do not inherently express this
+study's approved roles or centre boundaries. A project-owned provider also does
+not prove hospital employment or study delegation. Directly trusting a browser
+header or provider group would couple clinical authorization to external naming
+and could broaden access when provider administration changes.
 
 ## Decision
 
-A future qualified OIDC/SAML adapter will produce a verified Institutional
-Principal. The Companion will derive its pseudonymous Institutional Principal
-ID and separately match that identifier to one application-controlled Study
-Membership. Only that membership supplies the study role and centre. Provider
-group/role claims cannot directly authorize a Companion session.
+A future qualified OIDC/SAML adapter will produce a verified principal. The
+Companion will derive its pseudonymous Principal ID and separately match that
+identifier to one application-controlled Study Membership. Only that
+membership supplies the study role and centre. Provider group/role claims
+cannot directly authorize a Companion session.
 
 ## Consequences
 
-- Institution identity lifecycle and MFA remain provider responsibilities.
+- Account identity lifecycle and MFA remain provider responsibilities.
 - Study assignment, least privilege and centre isolation remain explicit
   Companion responsibilities with their own audit/approval lifecycle.
 - Provider selection can change without redefining clinical roles.

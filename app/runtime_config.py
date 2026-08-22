@@ -43,7 +43,7 @@ class RuntimeConfig:
         profile = os.getenv("COMPANION_DEPLOYMENT_PROFILE", "local").strip().lower()
         if profile != "local":
             raise RuntimeConfigurationError(
-                "central clinical repository and institutional identity are incomplete; "
+                "central clinical repository and approved project identity are incomplete; "
                 "the postgresql bootstrap preflight does not enable central mode; "
                 "refusing to fall back to sqlite"
             )

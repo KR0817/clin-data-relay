@@ -708,20 +708,20 @@ Acceptance criteria:
   returns `authority_submitted=false` until a qualified transfer/read-back
   persistence slice exists; it must not infer or fabricate Authority state.
 - PostgreSQL migration 4 adds only a partial read index. Central startup and
-  `clinical_data_ready` remain fail-closed pending institutional identity,
+  `clinical_data_ready` remain fail-closed pending approved project identity,
   remaining workflow repositories and operational qualification.
 
-## 2026-08-22 institutional identity authorization contract
+## 2026-08-22 verified-principal authorization contract
 
 The central application needs a provider-independent boundary between an
-institution-verified person and that person's study authorization. This slice
-defines the boundary without accepting browser-supplied identity headers,
-adding an OIDC/SAML callback or enabling the central runtime before a hospital
+identity-provider-verified person and that person's study authorization. This
+slice defines the boundary without accepting browser-supplied identity headers,
+adding an OIDC/SAML callback or enabling the central runtime before an approved
 identity provider is selected and registered.
 
 Acceptance criteria:
 
-- A verified institutional principal contains only a configured provider ID,
+- A verified principal contains only a configured provider ID,
   opaque provider subject, bounded username, authentication time and an MFA
   result produced by a future qualified adapter.
 - Study role and centre come only from an application-controlled active study
@@ -738,7 +738,7 @@ Acceptance criteria:
 - Every failure uses a stable bounded error code without token, assertion,
   username, provider response or membership details.
 - This contract adds no HTTP route, token parser, secret, local-account change
-  or central-runtime enablement. A real OIDC/SAML adapter and institution-owned
+  or central-runtime enablement. A real OIDC/SAML adapter and study-entity-owned
   registration remain required.
 - Production readiness requires an actually ready identity adapter in addition
   to approved runtime configuration and unexpired identity-provider evidence;
@@ -772,12 +772,13 @@ Acceptance criteria:
   browser route, stores no credential and does not make
   `clinical_data_ready` or the central runtime ready.
 
-## 2026-08-23 PostgreSQL institutional sessions
+## 2026-08-23 PostgreSQL verified-principal sessions
 
-This slice composes a verified Institutional Principal with its effective Study
+This slice composes a verified principal with its effective Study
 Membership into a short-lived Companion bearer session. It deliberately stops
 before provider discovery, assertion verification, browser callback or central
-HTTP enablement because no hospital identity provider has been selected.
+HTTP enablement because no approved identity provider was registered in that
+slice.
 
 Acceptance criteria:
 
@@ -797,3 +798,34 @@ Acceptance criteria:
   revocation creates no duplicate event.
 - Schema version 6 and the repository contract add no HTTP route, refresh token,
   identity assertion field, provider dependency or production-readiness claim.
+
+## 2026-08-23 project-owned investigator identity alternative
+
+No hospital identity provider is available. The supported alternative is an
+invitation-only OIDC realm controlled by the accountable study entity. The
+first implementation target is Keycloak, but the product claim is limited to
+project-verified investigator identity; it must never be presented as hospital
+or institutional identity.
+
+Acceptance criteria:
+
+- A provider adapter may establish only account control, recent authentication
+  and the configured MFA assurance. Study role and centre continue to come only
+  from an active Companion Study Membership.
+- The pure application boundary accepts only claims already verified by a
+  qualified OIDC client. It does not parse JWTs, perform discovery, fetch JWKS,
+  handle callbacks, store provider tokens or read client secrets.
+- The boundary requires an exact configured HTTPS issuer, exact client
+  audience, exact configured MFA ACR, bounded opaque subject and username, and
+  a valid timezone-independent OIDC `auth_time` NumericDate.
+- Provider groups, realm roles, email domains and centre-like claims are
+  ignored and cannot create authorization.
+- Every failure is a stable bounded code and never echoes claims, tokens,
+  usernames, subjects or provider responses.
+- Existing internal `Institutional*` names remain temporarily compatible but
+  do not imply hospital verification. User-facing and governance language uses
+  Project Identity Provider and Verified Principal.
+- This slice adds no OIDC HTTP route, dependency, provider credential,
+  membership administration or central-runtime enablement. Production remains
+  blocked until the complete Authorization Code callback, operational Keycloak
+  controls and qualification evidence pass.

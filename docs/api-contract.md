@@ -425,14 +425,14 @@ as not submitted because the PostgreSQL transfer/read-back domain has not been
 migrated. `COMPANION_DEPLOYMENT_PROFILE=central` remains fail-closed and the
 repository status remains `clinical_data_ready=false`.
 
-## Institutional identity authorization contract
+## Verified-principal authorization contract
 
 This slice is HTTP-transparent. It adds no login, callback, metadata, logout or
 token-refresh route and does not accept identity assertions through ordinary
 request headers. Existing local `POST /api/auth/login` behavior is unchanged.
 
 The internal authorization contract accepts only a principal already verified
-by a future qualified institutional adapter and one application-controlled
+by a future qualified identity-provider adapter and one application-controlled
 study membership. MFA, authentication freshness, membership effectiveness and
 role/centre invariants must pass before an existing-compatible user context can
 be produced. Stable failures do not include tokens, assertions, usernames,
@@ -443,6 +443,30 @@ provider payloads or provider subjects.
 adapter or enable central HTTP by itself. `/api/health.production_readiness`
 keeps the existing shape but its `identity_provider` gate now also requires a
 runtime adapter capability; the current runtime reports it as blocked.
+
+### Project-owned OIDC verified claims
+
+When no hospital identity provider exists, an approved project-owned OIDC
+provider may be used to establish project-account control and MFA only. This is
+an internal Python contract, not an HTTP endpoint:
+
+```python
+principal_from_verified_oidc_claims(policy, verified_claims)
+```
+
+`verified_claims` must already have passed qualified OIDC Authorization Code
+validation. The function requires exact `iss`, the configured `aud`, the
+configured MFA `acr`, opaque `sub`, the configured username claim and numeric
+`auth_time`. If `aud` has multiple values, exact `azp` is also required. It
+returns a verified principal with no role or centre. Provider authorization
+claims are ignored; only Study Membership can supply role and centre.
+
+Stable failures are `project_oidc_policy_invalid`,
+`project_oidc_claims_invalid`, `project_oidc_issuer_mismatch`,
+`project_oidc_audience_mismatch`, `project_oidc_mfa_required` and
+`project_oidc_authentication_time_invalid`. Errors do not include input values.
+No callback, raw JWT, provider token, secret or new browser response is part of
+this contract, and central readiness remains blocked.
 
 ## Errors
 

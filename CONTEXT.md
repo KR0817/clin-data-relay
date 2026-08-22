@@ -36,18 +36,22 @@ _Avoid_: pilot database, production-like database
 One participating study site. Users and candidate records are scoped to exactly one centre unless a centrally authorised role is assigned.
 _Avoid_: tenant, customer
 
-**Institutional Principal**:
-A person whose identity and MFA event have already been verified by an institution-approved identity provider adapter.
-_Avoid_: local account, request-header user, study role
+**Project Identity Provider**:
+An OIDC provider approved and operated by the accountable study entity when no hospital identity provider is available. It proves control of an enrolled project account and an MFA event; it does not prove hospital employment, professional status, study delegation, role, or centre assignment.
+_Avoid_: hospital SSO, institutional identity, investigator registry
+
+**Verified Principal**:
+A person whose project account and MFA event have already been verified by an approved identity-provider adapter. Existing internal `Institutional*` type and table names are legacy implementation names and do not assert hospital affiliation.
+_Avoid_: local account, request-header user, study role, hospital-verified user
 
 **Study Membership**:
-The Companion-controlled authorization that assigns one Institutional Principal to one active study role and, for a site investigator, one Centre.
+The Companion-controlled authorization that assigns one Verified Principal to one active study role and, for a site investigator, one Centre.
 _Avoid_: identity-provider group, login claim, account
 
-**Institutional Principal ID**:
+**Principal ID**:
 A pseudonymous Companion identifier derived from the configured provider alias and the provider-normalized opaque subject. It links a verified principal to a Study Membership without persisting the raw provider subject.
 _Avoid_: username, employee number, reversible identifier
 
-**Institutional Session**:
-A short-lived Companion session issued only after an Institutional Principal and an effective Study Membership have both been verified.
+**Companion Session**:
+A short-lived Companion session issued only after a Verified Principal and an effective Study Membership have both been verified.
 _Avoid_: identity-provider token, permanent login, local account
