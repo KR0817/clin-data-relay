@@ -458,3 +458,25 @@
   Python compilation, JavaScript syntax and `uv lock --check`. The PostgreSQL
   16 CI job is the production-equivalent service contract and now includes the
   membership and confirmed-read test modules.
+
+## 2026-08-23 PostgreSQL institutional sessions
+
+- `app/postgres_institutional_session_repository.py` composes an already
+  verified Institutional Principal with its active Study Membership. It does
+  not parse OIDC/SAML assertions and is not wired into HTTP or Centre Lite.
+- PostgreSQL schema version 6 stores one SHA-256 bearer-token digest,
+  membership reference, bounded operator username and lifecycle timestamps.
+  The high-entropy `cdrs_` bearer token is returned once and hidden from the
+  session object's representation; plaintext tokens and token digests never
+  enter audit details.
+- Session expiry is the earliest of eight hours after issue, eight hours after
+  provider authentication and membership expiry. Resolution always joins the
+  still-active/effective membership, so membership deactivation invalidates
+  every linked session without a separate revocation race.
+- Session creation and first self-revocation extend the shared serialized
+  PostgreSQL audit chain in the domain transaction. Repeated revocation is an
+  idempotent no-op.
+- Local verification passed 231 tests with eight PostgreSQL-only cases skipped,
+  Python compilation, JavaScript syntax, `uv lock --check` and diff checks. A
+  selected hospital identity provider, assertion-verifying adapter, membership
+  administration and central HTTP composition remain release blockers.

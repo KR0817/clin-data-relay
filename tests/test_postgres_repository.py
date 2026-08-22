@@ -57,14 +57,14 @@ def test_postgres_bootstrap_is_idempotent_and_returns_only_redacted_status() -> 
     assert first == second
     assert first.backend == "postgresql"
     assert first.server_major >= 16
-    assert first.schema_version == LATEST_POSTGRES_SCHEMA_VERSION == 5
-    assert first.migration_count == 5
+    assert first.schema_version == LATEST_POSTGRES_SCHEMA_VERSION == 6
+    assert first.migration_count == 6
     assert first.clinical_data_ready is False
     assert first.public_payload() == {
         "backend": "postgresql",
         "server_major": 16,
-        "schema_version": 5,
-        "migration_count": 5,
+        "schema_version": 6,
+        "migration_count": 6,
         "clinical_data_ready": False,
     }
     assert "postgresql://" not in str(first.public_payload())

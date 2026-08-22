@@ -678,6 +678,28 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   adapter, HTTP session composition, remaining repositories and operational
   evidence are still required before central startup can pass.
 
+## PostgreSQL institutional-session persistence
+
+- `PostgresInstitutionalSessionRepository` exposes only `create_session`,
+  `resolve_session`, `revoke_session` and `verify_audit_chain`. It receives an
+  already verified principal and does not parse or retain an OIDC/SAML token.
+- Creation locks the matching active Study Membership for the transaction,
+  reuses `authorize_institutional_principal()` and inserts a session plus
+  `institutional_session_created` audit event atomically. A concurrent
+  membership deactivation cannot create an authorization race.
+- Bearer tokens use standard-library cryptographic randomness. Only a lowercase
+  SHA-256 digest is persisted and indexed; the returned session object excludes
+  the plaintext token from its representation.
+- Effective expiry is `min(issued + 8h, provider authentication + 8h,
+  membership expiry)`. Resolution joins the membership and fails closed for an
+  inactive, not-yet-effective or expired membership even when the session row
+  itself has not expired.
+- First revocation writes `revoked_at` and an
+  `institutional_session_revoked` event atomically. Repeated revocation is a
+  successful no-op and does not extend the audit chain.
+- Migration 6 adds session metadata only. Centre Lite and local SQLite login are
+  unchanged; no institutional callback or central HTTP composition is added.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

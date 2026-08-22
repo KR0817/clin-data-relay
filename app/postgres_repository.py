@@ -13,13 +13,14 @@ from psycopg.rows import dict_row
 from app.package_import_repository import PackageImportAttempt, PackageImportReceipt
 
 
-LATEST_POSTGRES_SCHEMA_VERSION = 5
+LATEST_POSTGRES_SCHEMA_VERSION = 6
 MIGRATION_NAMES = {
     1: "central_repository_bootstrap",
     2: "package_import_ledger",
     3: "reviewed_package_clinical_import",
     4: "confirmed_data_read_index",
     5: "study_membership_authorization",
+    6: "institutional_sessions",
 }
 MIGRATION_STATEMENTS = {
     1: (),
@@ -204,6 +205,26 @@ MIGRATION_STATEMENTS = {
         """
         CREATE INDEX IF NOT EXISTS idx_study_memberships_principal_lookup
         ON study_memberships (principal_id, active)
+        """,
+    ),
+    6: (
+        """
+        CREATE TABLE IF NOT EXISTS institutional_sessions (
+            sequence BIGINT GENERATED ALWAYS AS IDENTITY UNIQUE,
+            id TEXT PRIMARY KEY,
+            token_sha256 TEXT NOT NULL UNIQUE
+                CHECK (token_sha256 ~ '^[a-f0-9]{64}$'),
+            membership_id TEXT NOT NULL REFERENCES study_memberships(id),
+            username TEXT NOT NULL CHECK (length(username) BETWEEN 3 AND 320),
+            issued_at TIMESTAMPTZ NOT NULL,
+            expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > issued_at),
+            revoked_at TIMESTAMPTZ,
+            CHECK (revoked_at IS NULL OR revoked_at >= issued_at)
+        )
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_institutional_sessions_membership
+        ON institutional_sessions (membership_id, expires_at DESC)
         """,
     ),
 }

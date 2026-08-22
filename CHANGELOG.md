@@ -64,18 +64,24 @@ This file is not a substitute for a Git history or an approved project license.
   membership lifecycle events extend one global chain under the same advisory
   lock. The real PostgreSQL 16 CI contract now runs confirmed-read and
   membership lifecycle tests as well as bootstrap/import tests.
+- Added digest-backed PostgreSQL Institutional Sessions under schema version 6.
+  Sessions require the existing MFA and effective-membership authorization,
+  cannot outlive provider authentication or membership expiry, fail immediately
+  after membership deactivation and append atomic create/revoke audit events.
+  Plaintext bearer tokens are returned once and excluded from persistence and
+  object representations.
 - Production readiness now requires an actually ready identity adapter as well
   as approved configuration and unexpired evidence. The current runtime passes
   no such capability and remains fail-closed.
 - Kept the central profile fail-closed pending a selected and qualified
-  OIDC/SAML adapter, membership administration/session composition, HTTPS,
+  OIDC/SAML adapter, membership administration/HTTP composition, HTTPS,
   remaining workflow repositories, workers and operational qualification.
 
 ### Release blockers
 
 - Qualified institutional OIDC/SAML verification, membership administration,
-  session composition and the remaining central repositories.
+  HTTP composition and the remaining central repositories.
 - Verification passed Python compilation, JavaScript syntax checking,
-  `uv lock --check`, 230 tests with six PostgreSQL-only cases skipped locally,
-  and focused identity/membership checks. The upstream Starlette/httpx
+  `uv lock --check`, 231 tests with eight PostgreSQL-only cases skipped locally,
+  and focused identity/membership/session checks. The upstream Starlette/httpx
   deprecation warning remains.

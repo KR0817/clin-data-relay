@@ -47,3 +47,7 @@ _Avoid_: identity-provider group, login claim, account
 **Institutional Principal ID**:
 A pseudonymous Companion identifier derived from the configured provider alias and the provider-normalized opaque subject. It links a verified principal to a Study Membership without persisting the raw provider subject.
 _Avoid_: username, employee number, reversible identifier
+
+**Institutional Session**:
+A short-lived Companion session issued only after an Institutional Principal and an effective Study Membership have both been verified.
+_Avoid_: identity-provider token, permanent login, local account

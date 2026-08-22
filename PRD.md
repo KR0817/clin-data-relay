@@ -771,3 +771,29 @@ Acceptance criteria:
 - PostgreSQL schema version 5 adds only the membership lifecycle. It adds no
   browser route, stores no credential and does not make
   `clinical_data_ready` or the central runtime ready.
+
+## 2026-08-23 PostgreSQL institutional sessions
+
+This slice composes a verified Institutional Principal with its effective Study
+Membership into a short-lived Companion bearer session. It deliberately stops
+before provider discovery, assertion verification, browser callback or central
+HTTP enablement because no hospital identity provider has been selected.
+
+Acceptance criteria:
+
+- Session creation succeeds only when the existing MFA, authentication-age,
+  membership identity, role, centre and effective-period checks all pass.
+- A generated high-entropy bearer token is returned once. PostgreSQL stores
+  only its SHA-256 digest; the token is absent from audit details, errors and
+  record representations.
+- Session expiry is the earliest of eight hours after issue, eight hours after
+  the provider authentication event and the Study Membership expiry.
+- Session resolution returns the existing-compatible institutional user only
+  while the session is unrevoked/unexpired and its membership remains active
+  and effective. Deactivating a membership therefore invalidates its sessions
+  without waiting for token expiry.
+- Self-revocation is idempotent. Creation and first revocation extend the
+  serialized PostgreSQL audit hash chain in the same transaction; repeated
+  revocation creates no duplicate event.
+- Schema version 6 and the repository contract add no HTTP route, refresh token,
+  identity assertion field, provider dependency or production-readiness claim.

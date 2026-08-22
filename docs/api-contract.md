@@ -43,6 +43,14 @@ existing creator and audit-actor fields still identify the separately
 authorised operator. The slice adds no membership administration endpoint,
 login, callback or session field. Central startup remains fail-closed.
 
+The PostgreSQL Institutional Session repository is likewise internal and
+HTTP-transparent. It returns a bearer secret only to its direct caller and
+stores only a token digest, bounded operator username, membership reference and
+lifecycle timestamps. It adds no login, callback, logout, refresh, metadata or
+JWKS endpoint. Existing local `POST /api/auth/login` and bearer resolution are
+unchanged; central HTTP remains fail-closed until a qualified provider adapter
+is selected and composed.
+
 ## Runtime and static assets
 
 - `GET /static/css/app.css` — versioned browser stylesheet for the workbench. It
