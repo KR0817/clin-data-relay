@@ -298,3 +298,23 @@
 - First-party GitHub Actions use major version 7 for checkout, Python, Node and
   artifact upload. The initial v4/v5 run passed but emitted GitHub's Node 20
   deprecation warning, so those majors must not be restored.
+
+## 2026-08-22 Kimi settings module extraction
+
+- `app/api/kimi_settings.py` owns the validated local-key payload, redacted
+  capability status and `GET|PUT /api/settings/kimi` router. `app/main.py`
+  remains the composition root and reuses the same status projection for
+  `/api/health`; the clinical extraction pipeline is intentionally unchanged.
+- Eligibility is unchanged: only the authenticated investigator bound to the
+  Lite centre profile can use the settings interface. The API key is written to
+  the configured local credential file and is never stored in SQLite, audit
+  details, logs or HTTP responses.
+- The `kimi_credential_configured` audit event records only the selected model.
+  Its test now asserts both the exact audit payload and absence of credential
+  material.
+- Router-factory dependencies use explicit `Depends(current_user)` defaults.
+  With postponed annotations, an `Annotated` dependency referring to the local
+  factory parameter cannot be resolved by FastAPI when routes are registered.
+- Verification passed Python compilation, JavaScript syntax checking,
+  `uv lock --check`, 205 tests and a live localhost health/page smoke test. The
+  existing upstream Starlette/httpx deprecation warning remains.

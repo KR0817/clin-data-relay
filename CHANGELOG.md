@@ -24,11 +24,13 @@ This file is not a substitute for a Git history or an approved project license.
   authentication service while preserving the existing HTTP contract.
 - Added a local schema migration ledger and exposed non-sensitive application
   and database schema versions through health diagnostics.
+- Moved centre-local Kimi key validation, redacted status and settings routes
+  behind a dedicated API module. Existing paths, role checks and audit behavior
+  are unchanged; credential material remains local file state only.
 - Kept the central profile fail-closed pending PostgreSQL, institutional
   identity, HTTPS, worker and operational qualification.
 
 ### Release blockers
 
 - Project owner license decision and root `LICENSE`.
-- Approved Git baseline and version tag.
 - Qualified PostgreSQL and institutional-identity implementations.

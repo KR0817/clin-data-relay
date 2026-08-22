@@ -51,6 +51,22 @@ Acceptance criteria:
   environment and pass Python compilation, workbench JavaScript syntax and the
   full automated test suite before the change is considered mergeable.
 
+## 2026-08-22 Kimi settings module extraction
+
+The centre-local Kimi configuration flow is the next modular-monolith slice.
+The application composition root must register one router that owns eligibility,
+key validation, credential-file selection, atomic write, client reload, redacted
+status and audit behavior.
+
+Acceptance criteria:
+
+- Existing `GET|PUT /api/settings/kimi` paths, payloads, status codes and role
+  restrictions remain unchanged.
+- Only the bound Lite centre investigator can configure the key.
+- The key never enters SQLite, audit details, logs or any HTTP response.
+- Health and settings responses use the same redacted Kimi status projection.
+- `app/main.py` no longer owns the Kimi key payload or settings route bodies.
+
 ## 2026-08-22 Dreamina-assisted workbench visual assets
 
 The workbench may use a small set of development-time Dreamina illustrations

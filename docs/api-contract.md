@@ -22,6 +22,12 @@ source checkout, excluding local runtime state and creating a private remote do
 not change routes, request or response fields, roles, session lifetime, storage
 semantics or the Authority EDC boundary.
 
+The Kimi settings module extraction is also HTTP-transparent. It preserves
+`GET /api/settings/kimi` and `PUT /api/settings/kimi`, the existing bounded key
+validation, Lite centre-investigator restriction, redacted response fields and
+`kimi_credential_configured` audit event. The credential value remains local
+file state and is never a response or database field.
+
 ## Runtime and static assets
 
 - `GET /static/css/app.css` — versioned browser stylesheet for the workbench. It

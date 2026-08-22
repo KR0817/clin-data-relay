@@ -46,6 +46,17 @@
   Node syntax checking and pytest on a Windows runner. It receives no runtime
   or provider secrets.
 
+## Kimi settings module
+
+- `app/api/kimi_settings.py` owns the validated key payload, redacted Kimi
+  status projection and the centre-local settings router.
+- Its router-factory interface receives the existing database, Kimi client,
+  product mode, centre profile and authenticated-user dependency. It adds no
+  provider abstraction and never returns or audits credential material.
+- `app/main.py` registers the router and reuses the same status projection for
+  health. Kimi extraction remains in the clinical extraction flow and is not
+  moved by this slice.
+
 ## Dreamina static visual-asset pipeline
 
 - Dreamina is a development-time provider only. The official local CLI creates

@@ -153,6 +153,17 @@ def test_centre_user_can_configure_kimi_without_the_key_entering_http_responses(
         assert placeholder_key not in configured.text
         assert credential_path.read_text(encoding="utf-8") == placeholder_key
         assert client.get("/api/health").json()["kimi_integration"] == "ready"
+        with Database(tmp_path / "centre-kimi.db").connect() as connection:
+            audit_row = connection.execute(
+                """
+                SELECT details_json FROM audit_events
+                WHERE event_type = 'kimi_credential_configured'
+                ORDER BY rowid DESC LIMIT 1
+                """
+            ).fetchone()
+        assert audit_row is not None
+        assert json.loads(audit_row["details_json"]) == {"model": "kimi-k3"}
+        assert placeholder_key not in audit_row["details_json"]
 
 
 def test_local_centre_password_reset_revokes_sessions_and_rotates_the_hash(tmp_path: Path) -> None:

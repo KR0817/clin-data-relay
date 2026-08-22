@@ -14,7 +14,7 @@ from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, 
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
-from app.kimi import KimiClient, KimiConfigurationError, KimiServiceError, write_local_api_key
+from app.kimi import KimiClient, KimiConfigurationError, KimiServiceError
 from app.edc_adapter import (
     AuthorityEdcAdapter,
     DisabledEdcAdapter,
@@ -85,6 +85,7 @@ from app.api.authentication import (
     create_auth_module,
 )
 from app.api.static_delivery import create_static_delivery_router
+from app.api.kimi_settings import create_kimi_settings_router, kimi_status_payload
 from app.version import __version__
 SHA256_RE = re.compile(r"^[a-f0-9]{64}$")
 IDEMPOTENCY_KEY_RE = re.compile(r"^[A-Za-z0-9._:-]{8,128}$")
@@ -105,17 +106,6 @@ LAB_RESULT_LINE_RE = re.compile(
 class SetupCompletePayload(BaseModel):
     password: str = Field(min_length=16, max_length=128)
     password_confirmation: str = Field(min_length=16, max_length=128)
-
-
-class KimiKeyPayload(BaseModel):
-    key: str = Field(min_length=16, max_length=512)
-
-    @field_validator("key")
-    @classmethod
-    def validate_key(cls, value: str) -> str:
-        if value != value.strip() or any(not 33 <= ord(character) <= 126 for character in value):
-            raise ValueError("key must contain visible non-whitespace ASCII characters")
-        return value
 
 
 class SourceFileCreate(BaseModel):
@@ -898,6 +888,15 @@ def create_app(
     )
     app.include_router(auth_module.router)
     current_user = auth_module.current_user
+    app.include_router(
+        create_kimi_settings_router(
+            database,
+            kimi_client=resolved_kimi_client,
+            product_mode=resolved_product_mode,
+            centre_profile=resolved_centre_profile,
+            current_user=current_user,
+        )
+    )
 
     def centre_setup_required() -> bool:
         if resolved_centre_profile is None:
@@ -2036,26 +2035,11 @@ def create_app(
             "meaning": "localhost qualification does not establish production validation",
         }
 
-    def kimi_configuration_payload() -> dict[str, object]:
-        if getattr(resolved_kimi_client, "ready", False):
-            kimi_integration = "ready"
-        elif not resolved_kimi_client.enabled:
-            kimi_integration = "disabled"
-        elif not resolved_kimi_client.settings.api_key:
-            kimi_integration = "key_required"
-        else:
-            kimi_integration = "misconfigured"
-        return {
-            "configured": kimi_integration == "ready",
-            "status": kimi_integration,
-            "model": resolved_kimi_client.settings.model,
-        }
-
     @app.get("/api/health")
     def health() -> dict[str, object]:
         with database.connect() as connection:
             release = active_dictionary_release(connection)
-        kimi_configuration = kimi_configuration_payload()
+        kimi_configuration = kimi_status_payload(resolved_kimi_client)
         return {
             "status": "ok",
             "application_version": __version__,
@@ -2190,51 +2174,6 @@ def create_app(
             "username": resolved_centre_profile.username,
             "centre_code": resolved_centre_profile.centre_code,
         }
-
-    def require_centre_kimi_configuration(user: UserContext) -> Path:
-        require_workflow_write_role(user)
-        if resolved_product_mode != "lite" or resolved_centre_profile is None:
-            raise HTTPException(status_code=409, detail="centre_kimi_configuration_unavailable")
-        if (
-            user.username != resolved_centre_profile.username
-            or user.centre_code != resolved_centre_profile.centre_code
-        ):
-            raise HTTPException(status_code=403, detail="centre_kimi_configuration_forbidden")
-        configured_path = os.getenv("KIMI_API_KEY_FILE", "").strip()
-        if not configured_path:
-            raise HTTPException(status_code=409, detail="centre_kimi_configuration_unavailable")
-        return Path(configured_path)
-
-    @app.get("/api/settings/kimi")
-    def kimi_settings(
-        user: Annotated[UserContext, Depends(current_user)],
-    ) -> dict[str, object]:
-        require_centre_kimi_configuration(user)
-        return kimi_configuration_payload()
-
-    @app.put("/api/settings/kimi")
-    def configure_kimi(
-        payload: KimiKeyPayload,
-        user: Annotated[UserContext, Depends(current_user)],
-    ) -> dict[str, object]:
-        credential_path = require_centre_kimi_configuration(user)
-        try:
-            write_local_api_key(credential_path, payload.key)
-            resolved_kimi_client.reload_from_environment()
-        except (OSError, ValueError) as error:
-            raise HTTPException(status_code=500, detail="kimi_credential_write_failed") from error
-        if not resolved_kimi_client.ready:
-            raise HTTPException(status_code=409, detail="kimi_configuration_invalid")
-        with database.connect() as connection:
-            audit(
-                connection,
-                candidate_id=None,
-                centre_code=user.centre_code or "CENTRAL",
-                event_type="kimi_credential_configured",
-                actor_username=user.username,
-                details={"model": resolved_kimi_client.settings.model},
-            )
-        return kimi_configuration_payload()
 
     @app.get("/api/admin/users")
     def list_users(
