@@ -13,6 +13,8 @@ This file is not a substitute for a Git history or an approved project license.
   compatibility-sensitive package, API and launcher filenames.
 - Added a secret-free Windows CI quality gate for locked installation,
   compilation, workbench syntax and the full test suite.
+- Updated first-party GitHub Actions to their current Node 24-based major
+  releases after the initial remote run exposed the Node 20 deprecation.
 - Established `app.version.__version__` as the package and runtime version source.
 - Included the closed workbench HTML, CSS, JavaScript and approved WebP assets
   in Python package builds.

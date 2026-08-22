@@ -295,3 +295,6 @@
 - `.github/workflows/quality.yml` is the required source CI gate for pushes and
   pull requests. It recreates the frozen Python 3.12 environment and runs
   compilation, JavaScript syntax and the full pytest suite without secrets.
+- First-party GitHub Actions use major version 7 for checkout, Python, Node and
+  artifact upload. The initial v4/v5 run passed but emitted GitHub's Node 20
+  deprecation warning, so those majors must not be restored.
