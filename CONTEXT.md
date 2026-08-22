@@ -35,3 +35,11 @@ _Avoid_: pilot database, production-like database
 **Centre**:
 One participating study site. Users and candidate records are scoped to exactly one centre unless a centrally authorised role is assigned.
 _Avoid_: tenant, customer
+
+**Institutional Principal**:
+A person whose identity and MFA event have already been verified by an institution-approved identity provider adapter.
+_Avoid_: local account, request-header user, study role
+
+**Study Membership**:
+The Companion-controlled authorization that assigns one Institutional Principal to one active study role and, for a site investigator, one Centre.
+_Avoid_: identity-provider group, login claim, account

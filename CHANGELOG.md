@@ -53,13 +53,21 @@ This file is not a substitute for a Git history or an approved project license.
 - PostgreSQL migration 4 adds only a partial confirmed-read index. Imported
   centre-package values remain `not_submitted` until transfer/read-back
   persistence is qualified, and central HTTP remains fail-closed.
-- Kept the central profile fail-closed pending institutional identity, HTTPS,
-  remaining workflow repositories, workers and operational qualification.
+- Added a provider-independent institutional identity authorization contract.
+  Institution-verified MFA identity is separated from application-controlled
+  study membership; only the latter supplies role and centre.
+- Production readiness now requires an actually ready identity adapter as well
+  as approved configuration and unexpired evidence. The current runtime passes
+  no such capability and remains fail-closed.
+- Kept the central profile fail-closed pending a selected and qualified
+  OIDC/SAML adapter, membership persistence, HTTPS, remaining workflow
+  repositories, workers and operational qualification.
 
 ### Release blockers
 
-- Institutional identity and the remaining qualified central repositories.
+- Qualified institutional OIDC/SAML verification, membership persistence and
+  the remaining central repositories.
 - Verification passed Python compilation, JavaScript syntax checking,
-  `uv lock --check`, 215 tests with five PostgreSQL-only cases skipped locally,
-  and focused reviewed-export regression checks. The upstream Starlette/httpx
+  `uv lock --check`, 228 tests with five PostgreSQL-only cases skipped locally,
+  and focused identity/readiness checks. The upstream Starlette/httpx
   deprecation warning remains.

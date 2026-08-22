@@ -65,6 +65,7 @@ def main() -> int:
         authority_target_kind=authority_kind,
         backup_restore_evidence=_latest_backup_evidence(backup_directory),
         disk_encryption_enabled=disk.get("status") == "enabled",
+        identity_provider_ready=False,
         manifest=manifest,
     )
     report["runtime"] = {

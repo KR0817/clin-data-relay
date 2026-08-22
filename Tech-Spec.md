@@ -622,6 +622,35 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   not change `clinical_data_ready=false`. SQLite creates the equivalent partial
   scope index during its existing idempotent initialization path.
 
+## Institutional identity authorization contract
+
+- `app/institutional_identity.py` is a pure post-verification authorization
+  boundary. It does not parse JWT/SAML, perform discovery, fetch keys, expose a
+  callback or read provider secrets.
+- `VerifiedInstitutionalPrincipal` is constructed only after a future adapter
+  verifies the provider assertion. It carries provider ID, opaque subject,
+  username, timezone-aware authentication time and normalized MFA status; it
+  deliberately has no application role or centre field.
+- `StudyMembership` is application-controlled authorization. It matches the
+  provider/subject pair, has one supported study role, optional exact centre,
+  active flag and timezone-aware effective interval.
+- `authorize_institutional_principal()` requires MFA, permits five minutes of
+  positive clock skew, limits authentication age to eight hours, checks exact
+  membership identity/effectivity and enforces role/centre invariants. It
+  returns `InstitutionalUser`, whose ID is a namespaced SHA-256 of provider ID
+  and subject; the raw subject is not returned.
+- Failures are `InstitutionalIdentityError` instances whose string value is one
+  closed error code. No provider response, assertion, username or raw identity
+  value is included.
+- The module is not wired into `create_auth_module()` until a specific hospital
+  OIDC/SAML adapter and membership repository are selected and contract-tested.
+  Local SQLite login and Centre Lite remain unchanged; central startup remains
+  fail-closed.
+- `evaluate_production_readiness()` receives a runtime capability boolean from
+  composition. The current application and operator script pass `False`
+  because no assertion-verifying adapter exists. The identity gate requires
+  that capability plus approved configuration and unexpired evidence.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

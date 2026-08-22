@@ -710,3 +710,36 @@ Acceptance criteria:
 - PostgreSQL migration 4 adds only a partial read index. Central startup and
   `clinical_data_ready` remain fail-closed pending institutional identity,
   remaining workflow repositories and operational qualification.
+
+## 2026-08-22 institutional identity authorization contract
+
+The central application needs a provider-independent boundary between an
+institution-verified person and that person's study authorization. This slice
+defines the boundary without accepting browser-supplied identity headers,
+adding an OIDC/SAML callback or enabling the central runtime before a hospital
+identity provider is selected and registered.
+
+Acceptance criteria:
+
+- A verified institutional principal contains only a configured provider ID,
+  opaque provider subject, bounded username, authentication time and an MFA
+  result produced by a future qualified adapter.
+- Study role and centre come only from an application-controlled active study
+  membership matched by provider ID and subject. Provider group or role claims
+  are not trusted as study authorization in this slice.
+- Authentication must be MFA-backed, no more than eight hours old and not
+  unreasonably future-dated. Membership must be currently effective.
+- `site_investigator` requires exactly one centre. Principal investigator,
+  central data manager, monitor and auditor memberships are global and cannot
+  carry a centre code.
+- Authorization returns a stable pseudonymous internal user ID plus the
+  username, role and centre required by the existing `UserContext`; it does not
+  return the provider subject.
+- Every failure uses a stable bounded error code without token, assertion,
+  username, provider response or membership details.
+- This contract adds no HTTP route, token parser, secret, local-account change
+  or central-runtime enablement. A real OIDC/SAML adapter and institution-owned
+  registration remain required.
+- Production readiness requires an actually ready identity adapter in addition
+  to approved runtime configuration and unexpired identity-provider evidence;
+  environment variables and evidence alone can never mark the gate passed.

@@ -2025,6 +2025,7 @@ def create_app(
             authority_target_kind=resolved_edc_adapter.target_kind,
             backup_restore_evidence=backup_restore_evidence,
             disk_encryption_enabled=disk_status.get("status") == "enabled",
+            identity_provider_ready=False,
             manifest=manifest,
         )
         with database.connect() as connection:

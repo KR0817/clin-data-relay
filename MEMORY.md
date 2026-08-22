@@ -413,3 +413,25 @@
   `uv lock --check`. Central HTTP and `clinical_data_ready` remain disabled;
   institutional identity and remaining central workflows are still release
   gates.
+
+## 2026-08-22 institutional identity authorization contract
+
+- `app/institutional_identity.py` defines the post-verification boundary only:
+  a provider-normalized principal proves identity/MFA, while a separate active
+  Study Membership supplies the Companion role and centre. Provider groups or
+  browser headers never directly authorize a study session.
+- Institutional authorization requires MFA, an authentication age of at most
+  eight hours with five minutes positive clock skew, exact provider/subject
+  membership matching, current membership effectivity and existing role/centre
+  invariants. Returned pseudonymous user IDs are namespaced SHA-256 values and
+  omit the raw provider subject.
+- The production-readiness identity gate now requires a runtime
+  `identity_provider_ready` capability in addition to approved configuration
+  and unexpired evidence. The current app and operator script pass `False`, so
+  environment flags cannot misrepresent an absent IdP adapter as ready.
+- No login/callback route, JWT/SAML parser, provider dependency, credential or
+  local-account behavior was added. Central runtime remains fail-closed until a
+  hospital IdP is selected and both assertion verification and membership
+  persistence are qualified.
+- Local verification passed 228 tests with five PostgreSQL-only cases skipped,
+  plus Python compilation, JavaScript syntax and `uv lock --check`.

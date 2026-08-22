@@ -142,6 +142,7 @@ def evaluate_production_readiness(
     authority_target_kind: str,
     backup_restore_evidence: bool,
     disk_encryption_enabled: bool,
+    identity_provider_ready: bool,
     manifest: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Return gate booleans and stable blocking reasons without secrets."""
@@ -159,7 +160,12 @@ def evaluate_production_readiness(
         "synthetic_data_only": data_mode == "real_approved" and manifest_gate("data_governance") and _env_true("DATA_GOVERNANCE_APPROVED"),
         "https": _env_true("PRODUCTION_HTTPS_ENABLED") and manifest_gate("https"),
         "managed_secrets": _env_true("MANAGED_SECRETS_CONFIGURED") and secret_provider not in {"", "local_file", "env"} and manifest_gate("managed_secrets"),
-        "identity_provider": _env_true("IDENTITY_PROVIDER_APPROVED") and auth_mode in {"oidc", "saml"} and manifest_gate("identity_provider"),
+        "identity_provider": (
+            identity_provider_ready
+            and _env_true("IDENTITY_PROVIDER_APPROVED")
+            and auth_mode in {"oidc", "saml"}
+            and manifest_gate("identity_provider")
+        ),
         "central_repository": deployment_profile == "central" and database_backend == "postgresql" and manifest_gate("central_repository"),
         "backup_restore_evidence": backup_restore_evidence and manifest_gate("backup_restore"),
         "disk_encryption": disk_encryption_enabled and manifest_gate("data_governance"),
@@ -178,6 +184,8 @@ def evaluate_production_readiness(
             reasons[name] = "qualified_postgresql_repository_required"
         elif strict and name not in approved:
             reasons[name] = "unexpired_evidence_manifest_entry_required"
+        elif name == "identity_provider" and not identity_provider_ready:
+            reasons[name] = "qualified_identity_adapter_required"
         elif name == "managed_secrets":
             reasons[name] = "managed_secret_provider_required"
         elif name == "identity_provider":

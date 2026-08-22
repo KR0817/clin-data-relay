@@ -67,6 +67,7 @@ def test_production_evaluation_requires_real_runtime_controls() -> None:
         authority_target_kind="libreclinica",
         backup_restore_evidence=True,
         disk_encryption_enabled=True,
+        identity_provider_ready=False,
         manifest={"status": "missing", "approved_gates": [], "expired_gates": [], "errors": []},
     )
 
@@ -74,3 +75,41 @@ def test_production_evaluation_requires_real_runtime_controls() -> None:
     assert readiness["gates"]["central_repository"] is False
     assert readiness["blocking_reasons"]["central_repository"] == "qualified_postgresql_repository_required"
     assert readiness["blocking_reasons"]["identity_provider"] == "unexpired_evidence_manifest_entry_required"
+
+
+def test_identity_gate_requires_a_real_runtime_adapter_capability(
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("IDENTITY_PROVIDER_APPROVED", "true")
+    monkeypatch.setenv("COMPANION_AUTH_MODE", "oidc")
+    manifest = {
+        "status": "valid",
+        "approved_gates": ["identity_provider"],
+        "expired_gates": [],
+        "errors": [],
+    }
+    arguments = {
+        "environment": "production",
+        "deployment_profile": "central",
+        "database_backend": "postgresql",
+        "authority_target_kind": "libreclinica",
+        "backup_restore_evidence": True,
+        "disk_encryption_enabled": True,
+        "manifest": manifest,
+    }
+
+    blocked = evaluate_production_readiness(
+        **arguments,
+        identity_provider_ready=False,
+    )
+    ready = evaluate_production_readiness(
+        **arguments,
+        identity_provider_ready=True,
+    )
+
+    assert blocked["gates"]["identity_provider"] is False
+    assert blocked["blocking_reasons"]["identity_provider"] == (
+        "qualified_identity_adapter_required"
+    )
+    assert ready["gates"]["identity_provider"] is True
+    assert "identity_provider" not in ready["blocking_reasons"]

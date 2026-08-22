@@ -408,6 +408,25 @@ as not submitted because the PostgreSQL transfer/read-back domain has not been
 migrated. `COMPANION_DEPLOYMENT_PROFILE=central` remains fail-closed and the
 repository status remains `clinical_data_ready=false`.
 
+## Institutional identity authorization contract
+
+This slice is HTTP-transparent. It adds no login, callback, metadata, logout or
+token-refresh route and does not accept identity assertions through ordinary
+request headers. Existing local `POST /api/auth/login` behavior is unchanged.
+
+The internal authorization contract accepts only a principal already verified
+by a future qualified institutional adapter and one application-controlled
+study membership. MFA, authentication freshness, membership effectiveness and
+role/centre invariants must pass before an existing-compatible user context can
+be produced. Stable failures do not include tokens, assertions, usernames,
+provider payloads or provider subjects.
+
+`COMPANION_DEPLOYMENT_PROFILE=central` remains fail-closed. Setting
+`COMPANION_AUTH_MODE=oidc|saml` or readiness evidence cannot create an identity
+adapter or enable central HTTP by itself. `/api/health.production_readiness`
+keeps the existing shape but its `identity_provider` gate now also requires a
+runtime adapter capability; the current runtime reports it as blocked.
+
 ## Errors
 
 Stable detail codes include:
