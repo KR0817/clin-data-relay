@@ -3076,7 +3076,10 @@ def test_health_reports_key_required_for_the_default_kimi_state(tmp_path: Path, 
     assert health.json()["kimi_default_enabled"] is True
 
 
-def test_site_can_export_reviewed_package_and_central_manager_can_import_once(tmp_path: Path) -> None:
+def test_site_can_export_reviewed_package_and_central_manager_can_import_once(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     site_client = TestClient(create_app(database_path=tmp_path / "site.db", environment="test"))
     site_headers = auth_headers(site_client, "site-a-investigator@example.test")
     candidate = create_candidate(site_client, site_headers, field_code="ALT", proposed_value="31")
@@ -3117,6 +3120,14 @@ def test_site_can_export_reviewed_package_and_central_manager_can_import_once(tm
     assert imported_candidates.status_code == 200
     imported_source_id = imported_candidates.json()[0]["source_file_id"]
     assert (tmp_path / "offline_packages" / "SITE_A" / f"{imported_source_id}.json").is_file()
+
+    # Simulate both requests passing a stale pre-check. The final atomic claim
+    # remains authoritative and must return the stable duplicate response.
+    monkeypatch.setattr(
+        central_client.app.state.package_import_repository,
+        "find_receipt",
+        lambda **_kwargs: None,
+    )
 
     duplicate = central_client.post(
         "/api/imports/reviewed-package",

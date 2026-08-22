@@ -364,6 +364,20 @@ The Lite HTTP contract is platform-neutral. Windows and macOS packages expose th
 
 The Windows host preflight occurs before the HTTP application starts and therefore adds no public endpoint. Its credential-free diagnostic JSON uses stable `EDC-HOST-*` codes and boolean/nullable capability fields; it must not include raw Docker responses, API keys, credential hashes, environment variables or hardware serial numbers. Optional `docker_start` metadata is limited to `attempted`, `method`, `outcome` and `wait_seconds`, where values come from closed enumerations and contain no command output or filesystem path.
 
+## Package-import ledger behavior
+
+The encrypted package endpoints retain their request and response shapes while
+the package receipt and attempt log are accessed through a repository contract.
+Duplicate classification is authoritative only after the final transactional
+receipt claim. Concurrent uploads of the same package therefore yield one
+import and one or more `409 offline_package_already_imported` outcomes rather
+than a server error or duplicate candidate set.
+
+PostgreSQL support in this slice is a service-backed repository contract, not
+an enabled central HTTP profile. No request is routed to PostgreSQL until the
+complete central clinical write path and institutional authentication are
+qualified.
+
 ## Errors
 
 Stable detail codes include:

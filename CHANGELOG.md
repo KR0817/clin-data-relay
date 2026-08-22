@@ -33,6 +33,11 @@ This file is not a substitute for a Git history or an approved project license.
   transaction-locked schema ledger, redacted preflight output and a real
   PostgreSQL 16 CI contract. It creates no clinical tables and does not enable
   central application startup.
+- Added a shared encrypted-package import-ledger contract with SQLite and
+  PostgreSQL adapters. Package ID/SHA-256 claims are now authoritative in the
+  final SQLite candidate transaction, and successful import logs commit with
+  the receipt and candidates. PostgreSQL migration 2 contains metadata only;
+  central startup remains fail-closed.
 - Kept the central profile fail-closed pending PostgreSQL, institutional
   identity, HTTPS, worker and operational qualification.
 

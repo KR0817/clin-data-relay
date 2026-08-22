@@ -67,6 +67,11 @@ from app.offline_package import (
 from app.clock import utc_now
 from app.centre_profile import CentreProfile, CentreProfileError, load_centre_profile
 from app.persistence import Database
+from app.package_import_repository import (
+    PackageImportAttempt,
+    PackageImportReceipt,
+    SQLitePackageImportRepository,
+)
 from app.runtime_config import RuntimeConfig
 from app.upload_validation import ImageUploadError, validate_image_upload
 from app.pdf_safety import PdfSafetyError, validate_pdf_structure
@@ -812,6 +817,7 @@ def create_app(
     database = Database(resolved_database_path, centre_profile=resolved_centre_profile)
     database_existed_before_initialise = resolved_database_path.is_file()
     database.initialise()
+    package_import_repository = SQLitePackageImportRepository(database)
     if database_existed_before_initialise and os.getenv("COMPANION_AUTO_BACKUP", "false").lower() == "true":
         backup_directory = Path(
             os.getenv("COMPANION_BACKUP_DIRECTORY", str(resolved_database_path.parent / ".runtime" / "backups"))
@@ -874,6 +880,7 @@ def create_app(
         return response
 
     app.state.database = database
+    app.state.package_import_repository = package_import_repository
     app.state.environment = resolved_environment
     app.state.product_mode = resolved_product_mode
     app.state.runtime_config = runtime_config
@@ -1544,23 +1551,29 @@ def create_app(
         record_count: int = 0,
         created_count: int = 0,
         duplicate_count: int = 0,
+        connection: sqlite3.Connection | None = None,
     ) -> None:
-        with database.connect() as connection:
-            connection.execute(
-                """
-                INSERT INTO offline_package_import_logs (
-                    id, package_sha256, package_id, centre_code, source_filename,
-                    dictionary_id, dictionary_version, result, error_code, error_detail,
-                    record_count, created_count, duplicate_count, created_by, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    str(uuid4()), package_sha256, package_id, centre_code,
-                    Path(source_filename).name[:200], dictionary_id, dictionary_version,
-                    result, error_code, (error_detail or "")[:500], record_count,
-                    created_count, duplicate_count, user.username, utc_now(),
-                ),
-            )
+        attempt = PackageImportAttempt(
+            id=str(uuid4()),
+            package_sha256=package_sha256,
+            package_id=package_id,
+            centre_code=centre_code,
+            source_filename=source_filename,
+            dictionary_id=dictionary_id,
+            dictionary_version=dictionary_version,
+            result=result,  # type: ignore[arg-type]
+            error_code=error_code,
+            error_detail=error_detail or "",
+            record_count=record_count,
+            created_count=created_count,
+            duplicate_count=duplicate_count,
+            created_by=user.username,
+            created_at=utc_now(),
+        )
+        if connection is None:
+            package_import_repository.append_attempt(attempt)
+        else:
+            package_import_repository.append_attempt_in_connection(connection, attempt)
 
     def audit(
         connection: sqlite3.Connection,
@@ -2967,11 +2980,19 @@ def create_app(
         created_at = utc_now()
         created_count = 0
         duplicate_count = 0
-        with database.connect() as connection:
-            already_imported = connection.execute(
-                "SELECT 1 FROM offline_package_imports WHERE package_sha256 = ? OR package_id = ?",
-                (package_sha256, package_id),
-            ).fetchone() is not None
+        receipt = PackageImportReceipt(
+            id=import_id,
+            package_id=package_id,
+            package_sha256=package_sha256,
+            centre_code=centre_code,
+            record_count=len(records),
+            created_by=user.username,
+            created_at=created_at,
+        )
+        already_imported = package_import_repository.find_receipt(
+            package_sha256=package_sha256,
+            package_id=package_id,
+        ) is not None
         if already_imported:
             write_offline_package_log(
                 user=user,
@@ -3015,7 +3036,9 @@ def create_app(
                 record_count=len(records),
             )
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="transfer_hold_active")
-        with database.connect() as connection:
+
+        def persist_imported_records(connection: sqlite3.Connection) -> None:
+            nonlocal created_count, duplicate_count
             source_file_id = str(uuid4())
             connection.execute(
                 """
@@ -3033,14 +3056,6 @@ def create_app(
                     user.username,
                     created_at,
                 ),
-            )
-            connection.execute(
-                """
-                INSERT INTO offline_package_imports (
-                    id, package_id, package_sha256, centre_code, record_count, created_by, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (import_id, package_id, package_sha256, centre_code, len(records), user.username, created_at),
             )
             package_path = (
                 database.database_path.parent
@@ -3128,19 +3143,42 @@ def create_app(
                     actor_username=user.username,
                 )
                 created_count += 1
-        write_offline_package_log(
-            user=user,
-            source_filename=original_filename,
-            result="imported",
-            package_sha256=package_sha256,
-            package_id=package_id,
-            centre_code=centre_code,
-            dictionary_id=str(package.get("dictionary_id")),
-            dictionary_version=str(package.get("dictionary_version")),
-            record_count=len(records),
-            created_count=created_count,
-            duplicate_count=duplicate_count,
-        )
+
+        with database.connect() as connection:
+            claim_succeeded = package_import_repository.claim_in_connection(connection, receipt)
+            if claim_succeeded:
+                persist_imported_records(connection)
+                write_offline_package_log(
+                    user=user,
+                    source_filename=original_filename,
+                    result="imported",
+                    package_sha256=package_sha256,
+                    package_id=package_id,
+                    centre_code=centre_code,
+                    dictionary_id=str(package.get("dictionary_id")),
+                    dictionary_version=str(package.get("dictionary_version")),
+                    record_count=len(records),
+                    created_count=created_count,
+                    duplicate_count=duplicate_count,
+                    connection=connection,
+                )
+        if not claim_succeeded:
+            write_offline_package_log(
+                user=user,
+                source_filename=original_filename,
+                result="duplicate",
+                package_sha256=package_sha256,
+                package_id=package_id,
+                centre_code=centre_code,
+                dictionary_id=str(package.get("dictionary_id")),
+                dictionary_version=str(package.get("dictionary_version")),
+                error_code="offline_package_already_imported",
+                record_count=len(records),
+            )
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="offline_package_already_imported",
+            )
         return {
             "import_id": import_id,
             "package_id": package_id,
@@ -3194,19 +3232,7 @@ def create_app(
         limit: int = Query(default=100, ge=1, le=500),
     ) -> list[dict[str, object]]:
         require_central_data_manager(user)
-        with database.connect() as connection:
-            rows = connection.execute(
-                """
-                SELECT id, package_sha256, package_id, centre_code, source_filename,
-                       dictionary_id, dictionary_version, result, error_code, error_detail,
-                       record_count, created_count, duplicate_count, created_by, created_at
-                FROM offline_package_import_logs
-                ORDER BY created_at DESC, rowid DESC
-                LIMIT ?
-                """,
-                (limit,),
-            ).fetchall()
-        return [row_to_dict(row) for row in rows]
+        return [attempt.public_payload() for attempt in package_import_repository.list_attempts(limit=limit)]
 
     @app.post("/api/analysis-snapshots", status_code=status.HTTP_201_CREATED)
     def create_analysis_snapshot(

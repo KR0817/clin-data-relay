@@ -556,6 +556,26 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - Without a Developer ID environment value, PyInstaller's ad-hoc signature is accepted only for internal QA. With an installed Developer ID identity, the build uses hardened-runtime signing; optional notarization uses an existing Keychain profile and never accepts credentials on the command line.
 - PyInstaller is not a cross-compiler. Windows can validate source, tests and the build contract, but a distributable macOS artifact is complete only after the script passes on the matching macOS architecture. A CI workflow may run those two native builds and upload the artifacts without storing signing material in source.
 
+## Package-import ledger repository
+
+- `app/package_import_repository.py` defines immutable receipt/log records and
+  the SQLite import-ledger adapter. Receipt claiming uses both package ID and
+  envelope SHA-256 uniqueness and must happen in the caller's final SQLite
+  transaction so candidate creation and idempotency succeed or roll back
+  together. Standalone failure and duplicate logs use the adapter's own short
+  transaction.
+- `app/postgres_repository.py` applies ordered migrations under the existing
+  transaction-scoped advisory lock. Migration 2 creates PostgreSQL receipt and
+  attempt-log tables with equivalent constraints. Its adapter owns connections
+  and transactions; provider errors are reduced to stable repository codes.
+  This slice stores no candidate values and does not change central readiness.
+- Repository input records normalize basenames and bound text before either SQL
+  dialect sees them. Log reads are limited to 1-500 rows and newest-first.
+- In the active SQLite route, the successful `imported` attempt is appended in
+  the same transaction as the receipt and imported candidates. Parse,
+  validation, hold and duplicate failures are logged in independent bounded
+  transactions because no candidate transaction is committed for those paths.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

@@ -626,5 +626,32 @@ The product must improve trial operations without becoming a second authority ED
 - `ClinicalReportExtractorLite-macos-arm64.zip` and `ClinicalReportExtractorLite-macos-x86_64.zip` are built natively on matching macOS runners, contain a double-clickable `.app`, use the same Lite health contract and pass the same PDF-to-review-to-Excel verification.
 - The macOS app contains its Python and Tesseract runtimes, creates no data inside its signed bundle and remains fail closed when optional Kimi configuration is absent.
 - Full automated test suite passes; representative failure cases are tested.
+
+## 2026-08-22 central package-import ledger
+
+The encrypted centre-package import ledger is the first operational central
+domain moved behind a database-neutral repository contract. It records package
+receipts and bounded per-file outcomes only. It does not store package bytes,
+passphrases, images, direct identifiers or clinical values, and it does not
+make the central deployment available before the remaining clinical domains
+and institutional identity are qualified.
+
+Acceptance criteria:
+
+- SQLite and PostgreSQL adapters expose the same receipt lookup, atomic claim,
+  append-only attempt-log and bounded log-list behavior.
+- A package is unique by both canonical package ID and encrypted-envelope
+  SHA-256. Concurrent claims produce exactly one receipt; later claims are
+  classified as duplicates without overwriting the first receipt.
+- The current SQLite HTTP workflow claims the receipt inside the same
+  transaction that creates imported candidates. A lost duplicate race rolls
+  back that package's candidate writes and returns the existing stable 409
+  response.
+- PostgreSQL migration 2 creates only the non-clinical import receipt and log
+  tables. Central application startup remains fail-closed and
+  `clinical_data_ready=false`.
+- Failure detail is capped at 500 characters and source filename at 200
+  characters. Neither adapter may persist ciphertext, passphrases, extracted
+  values or direct identifiers in the ledger.
 - The evidence contract is persisted and returned with candidates; a repeated extraction returns the same candidates and run without a second candidate set.
 - A PDF inspection response distinguishes usable text-layer pages from scanned pages before extraction. Scanned pages remain fail-closed until an approved local OCR adapter is enabled.

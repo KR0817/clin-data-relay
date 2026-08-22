@@ -350,3 +350,24 @@
   with a run-specific ephemeral credential. Local verification passed 207
   tests with the two service-backed cases skipped because the workstation
   Docker engine and PostgreSQL client were unavailable.
+
+## 2026-08-22 atomic package-import ledger
+
+- `app/package_import_repository.py` is the database-neutral domain boundary
+  for encrypted centre-package receipt claims and bounded append-only attempt
+  logs. The active HTTP application composes its SQLite adapter; centre Lite
+  gains no PostgreSQL dependency.
+- The route's early duplicate lookup is only an optimization. The authoritative
+  claim now occurs inside the same SQLite transaction as source metadata,
+  imported candidates, audit/quality rows and the successful import log. A
+  stale pre-check therefore produces the existing 409 duplicate response and
+  cannot create a second candidate set.
+- PostgreSQL schema version 2 adds receipt and attempt-log metadata tables under
+  the existing advisory migration lock. The PostgreSQL adapter has the same
+  claim/find/append/list contract and is exercised by the service-backed CI
+  job. It stores no package bytes, passphrases, images, identifiers or clinical
+  values, so `clinical_data_ready` remains false and central HTTP stays BLOCK.
+- Local verification passed 210 tests with three PostgreSQL service-backed
+  cases skipped on this workstation, plus Python compilation, JavaScript syntax
+  checking and `uv lock --check`. The upstream Starlette/httpx deprecation
+  warning remains.
