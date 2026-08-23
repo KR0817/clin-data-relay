@@ -568,6 +568,9 @@
 - This tranche adds no schema migration, but the bootstrap command calls the
   normal repository prepare step and may apply older pending migrations. It is
   therefore subject to the approved database backup and change-control process.
+- The operator contract documents every allowlisted error and the actual ASCII,
+  length, timestamp and 8 KiB input bounds. Obtaining and dual-verifying the
+  real client-specific OIDC subject remains an external Keycloak SOP blocker.
 - Normal grants now reject memberships already expired at grant time, and
   deactivation timestamps cannot precede creation. Centre Lite and central HTTP
   composition remain unchanged and fail-closed.

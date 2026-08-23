@@ -559,6 +559,13 @@ Bootstrap stdin is one exact JSON object:
 }
 ```
 
+For bootstrap, `subject_id` is 1–255 printable ASCII characters with no
+whitespace, `operator_id` is 3–320 printable ASCII characters with no
+whitespace, and `membership_expires_at` is a timezone-aware ISO-8601 timestamp
+strictly after the server-side grant time. The configured provider alias must
+match `[a-z][a-z0-9._-]{1,63}`. These are deliberate application bounds, not a
+claim that every possible OIDC provider uses ASCII subjects.
+
 Rollback stdin is one exact JSON object:
 
 ```json
@@ -570,6 +577,12 @@ Rollback stdin is one exact JSON object:
   "confirmation": "ROLLBACK_UNUSED_CENTRAL_DATA_MANAGER_BOOTSTRAP"
 }
 ```
+
+For rollback, `membership_id` is an opaque 1–200 character repository ID,
+`operator_id` has the same bound above, and `reason` is trimmed to 3–500
+characters and may contain no control characters. Each action rejects missing,
+additional or duplicate JSON keys, naive timestamps and input larger than
+8 KiB.
 
 The command accepts no subject, DSN, provider alias or operator argument on the
 command line. Bootstrap success returns only `status=granted`, membership ID,
@@ -601,6 +614,31 @@ This slice adds no migration, but the command calls the standard repository
 prepare step before changing membership state. It can therefore apply older
 versioned migrations that are not yet present and must be run under the same
 database backup, migration review and change-control procedure.
+
+Command-local stable error codes are:
+
+- `study_membership_bootstrap_input_invalid`
+- `study_membership_bootstrap_unavailable`
+- `study_membership_bootstrap_invalid`
+- `study_membership_bootstrap_closed`
+- `study_membership_bootstrap_not_found`
+- `study_membership_bootstrap_already_used`
+- `study_membership_actor_invalid`
+- `study_membership_reason_invalid`
+- `study_membership_time_invalid`
+- `study_membership_repository_unavailable`
+- `postgres_dsn_required`
+- `postgres_dsn_invalid`
+- `postgres_tls_verify_full_required`
+- `postgres_nonlocal_unverified_tls_forbidden`
+- `postgres_server_version_unavailable`
+- `postgres_server_version_unsupported`
+- `postgres_schema_too_new`
+- `postgres_migration_ledger_invalid`
+- `postgres_repository_unavailable`
+
+Any unrecognized internal exception is collapsed to
+`study_membership_bootstrap_unavailable`; no exception text is forwarded.
 
 ## Errors
 
