@@ -543,3 +543,34 @@
 - Local verification passed 254 tests with nine PostgreSQL service-backed cases
   skipped, plus Python compilation, JavaScript syntax, `uv lock --check` and
   diff checks.
+
+## 2026-08-24 first Central Data Manager membership bootstrap
+
+- `scripts/bootstrap_central_membership.py` breaks the first-administrator
+  dependency cycle without adding a local password identity. It accepts one
+  strict, bounded JSON document on stdin while the DSN, environment and approved
+  OIDC provider alias remain environment-owned configuration.
+- The exact qualified-client OIDC subject is converted immediately through
+  `institutional_principal_id_from_subject()` and is absent from repository
+  arguments, persistence, audit details and command output. An IdP management
+  identifier must never be assumed to equal this subject.
+- `PostgresStudyMembershipRepository.bootstrap_first_central_data_manager()`
+  serializes the eligibility check, grant and bootstrap-marked audit event under
+  the shared audit advisory lock. Re-bootstrap requires the dedicated rollback
+  audit marker; generic deactivation never reopens the path. A witnessed
+  correction can deactivate only an unused bootstrap grant, and any Companion
+  Session history closes recovery globally.
+- The command does not authenticate its caller-supplied operator label or
+  verify the external issuer/client/subject-mapper mapping. Those facts require
+  versioned qualification evidence and two-person verification outside the
+  application. A supported emergency membership-deactivation path for errors
+  discovered after first login remains a production blocker.
+- This tranche adds no schema migration, but the bootstrap command calls the
+  normal repository prepare step and may apply older pending migrations. It is
+  therefore subject to the approved database backup and change-control process.
+- Normal grants now reject memberships already expired at grant time, and
+  deactivation timestamps cannot precede creation. Centre Lite and central HTTP
+  composition remain unchanged and fail-closed.
+- Local verification passed 274 tests with twelve PostgreSQL/external-service
+  cases skipped. The real concurrent bootstrap/session contract still requires
+  the PostgreSQL 16 CI service before this tranche is accepted.

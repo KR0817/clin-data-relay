@@ -531,6 +531,77 @@ membership identifiers or connection details. Local `POST /api/auth/login` and
 the client-side Lite workflow remain unchanged until a separate composition
 slice explicitly selects central authentication.
 
+### Operator-only first membership bootstrap
+
+This is a local OS/database-operator command contract, not an HTTP endpoint.
+The JSON must be supplied through an approved protected-stdin procedure:
+
+```powershell
+$requestJson | & .\.venv\Scripts\python.exe scripts\bootstrap_central_membership.py
+```
+
+`$requestJson` must be created in a short-lived operator process and removed
+from that process after execution. Do not paste the subject into the command
+line or PowerShell history and do not write it to `.runtime`, the repository or
+an ordinary temporary file. Managed PowerShell/Python strings are released at
+process exit but are not securely erased; terminal recording, endpoint
+monitoring and backup controls remain part of the approved procedure.
+
+Bootstrap stdin is one exact JSON object:
+
+```json
+{
+  "action": "bootstrap",
+  "subject_id": "exact-qualified-oidc-sub",
+  "operator_id": "operator:approved-admin",
+  "membership_expires_at": "2027-08-24T00:00:00Z",
+  "confirmation": "BOOTSTRAP_FIRST_CENTRAL_DATA_MANAGER"
+}
+```
+
+Rollback stdin is one exact JSON object:
+
+```json
+{
+  "action": "rollback_unused_bootstrap",
+  "membership_id": "00000000-0000-0000-0000-000000000000",
+  "operator_id": "operator:approved-admin",
+  "reason": "Correcting the witnessed pre-login subject mapping.",
+  "confirmation": "ROLLBACK_UNUSED_CENTRAL_DATA_MANAGER_BOOTSTRAP"
+}
+```
+
+The command accepts no subject, DSN, provider alias or operator argument on the
+command line. Bootstrap success returns only `status=granted`, membership ID,
+`role=central_data_manager`, `centre_code=null`, `valid_from` and `expires_at`.
+Rollback success returns only `status=rolled_back`, membership ID and
+`active=false`. Failures return `status=error` plus one stable code. The raw
+subject and Principal ID are never output.
+
+The command requires `COMPANION_POSTGRES_DSN`, `COMPANION_ENV` and
+`COMPANION_OIDC_PROVIDER_ID`. The subject must be the exact OIDC `sub` verified
+for that configured client; email, username, IdP role/group and an unqualified
+administration-console identifier are invalid substitutes. Before use, an
+external qualification record must bind provider alias, issuer, client ID and
+subject-mapper mode, demonstrate the mapping with a synthetic account and
+record two-person verification of the real account. The command does not fetch
+or validate this evidence. `operator_id` is a caller-supplied audit label, not
+operator authentication, and neither it nor rollback `reason` may contain the
+subject or other direct identity material.
+
+Only the dedicated rollback event can reopen an unused bootstrap. Generic
+membership deactivation does not. Any Companion Session history permanently
+closes bootstrap recovery. A `granted` response proves only the atomic
+membership/audit write: identity-provider readiness and central clinical-data
+readiness remain false, central HTTP remains unmounted, and production remains
+`BLOCK`. An audited emergency membership-deactivation path for mistakes found
+after first login is still required.
+
+This slice adds no migration, but the command calls the standard repository
+prepare step before changing membership state. It can therefore apply older
+versioned migrations that are not yet present and must be run under the same
+database backup, migration review and change-control procedure.
+
 ## Errors
 
 Stable detail codes include:

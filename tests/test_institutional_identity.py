@@ -13,6 +13,7 @@ from app.institutional_identity import (
     authorize_institutional_principal,
     authorize_verified_principal_link,
     institutional_principal_id,
+    institutional_principal_id_from_subject,
     verified_principal_link,
 )
 
@@ -235,6 +236,43 @@ def test_principal_identifier_is_namespaced_deterministic_and_validated() -> Non
         match="^institutional_identity_membership_invalid$",
     ):
         replace(membership(), principal_id="employee-001")
+
+
+def test_pre_login_subject_derivation_matches_verified_identity_derivation() -> None:
+    expected = (
+        "institutional:"
+        "7fb79e14c5bc8de6673b432c8d00efd3625ce65d965b103181bec2dfb4f41e04"
+    )
+
+    assert institutional_principal_id_from_subject(
+        provider_id="hospital-a",
+        subject_id="employee-001",
+    ) == expected
+    assert institutional_principal_id(principal()) == expected
+
+
+@pytest.mark.parametrize(
+    ("provider_id", "subject_id"),
+    (
+        ("INVALID PROVIDER", "employee-001"),
+        ("hospital-a", ""),
+        ("hospital-a", "private subject"),
+        ("hospital-a", "x" * 256),
+    ),
+)
+def test_pre_login_subject_derivation_rejects_unbounded_identity_values(
+    provider_id: str,
+    subject_id: str,
+) -> None:
+    with pytest.raises(InstitutionalIdentityError) as raised:
+        institutional_principal_id_from_subject(
+            provider_id=provider_id,
+            subject_id=subject_id,
+        )
+
+    assert str(raised.value) == "institutional_identity_claim_invalid"
+    if subject_id:
+        assert subject_id not in str(raised.value)
 
 
 def test_authorization_rejects_naive_clock_input() -> None:

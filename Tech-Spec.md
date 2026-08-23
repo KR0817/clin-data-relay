@@ -787,6 +787,51 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   included by `create_app()`. It introduces no schema or dependency and does
   not enable the central deployment profile.
 
+## First Central Data Manager membership bootstrap
+
+- `institutional_principal_id_from_subject()` is the only pre-login derivation
+  path. It applies the same provider/subject validation and namespaced SHA-256
+  derivation as `institutional_principal_id()` without constructing a falsely
+  verified principal. Existing authenticated derivation delegates to it.
+- `PostgresStudyMembershipRepository.bootstrap_first_central_data_manager()`
+  receives only provider alias, Principal ID, operator and server-side times.
+  It never receives the raw OIDC subject.
+- Under the shared transaction advisory audit lock, bootstrap permits a grant
+  only when no active membership and no institutional-session row exists.
+  Historical rows are acceptable only when they are inactive Central Data
+  Manager bootstrap grants with corresponding
+  `study_membership_bootstrap_rolled_back` events. Generic deactivation and all
+  non-bootstrap membership history close the path. This permits only the
+  dedicated correction workflow and never reopens bootstrap after any session
+  has existed.
+- The inserted `StudyMembership` fixes role to `central_data_manager`, centre
+  to `None`, validity start to the grant time and active to true. The normal
+  `study_membership_granted` audit detail adds `bootstrap: true`.
+- `rollback_unused_central_data_manager_bootstrap()` locks the target row,
+  verifies the bootstrap audit marker and rejects recovery when any
+  institutional session exists. It then writes complete deactivation metadata
+  and one `study_membership_bootstrap_rolled_back` audit event. Repeated
+  rollback is a no-op only when that dedicated event already exists; a generic
+  deactivation is not promoted into a bootstrap rollback.
+- `scripts/bootstrap_central_membership.py` reads at most 8 KiB of strict JSON
+  from stdin. `COMPANION_POSTGRES_DSN`, `COMPANION_ENV` and
+  `COMPANION_OIDC_PROVIDER_ID` are environment-only inputs. Error output is one
+  bounded JSON code and never includes request or connection values.
+- The bootstrap input's `subject_id` must be the exact `sub` emitted for the
+  qualified OIDC client. Keycloak Admin REST identity, email, username and
+  group values are not accepted substitutes. The mapping is an operational
+  qualification gate, not an application inference. The command does not know
+  issuer, client ID or mapper configuration and cannot verify that gate.
+- `operator_id` is a caller-supplied audit label. The fixed confirmation limits
+  accidental execution but is neither operator authentication nor two-person
+  approval; witness and subject-mapping evidence remain in the approved
+  external operations record.
+- This slice adds no migration. The operator command still invokes the normal
+  repository prepare step and can apply previously unapplied versioned
+  migrations; it must run under the same backup and change-control procedure.
+  Central HTTP stays unmounted and Centre Lite is unchanged. A post-login
+  emergency membership-deactivation command/API remains a production blocker.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

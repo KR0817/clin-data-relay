@@ -71,8 +71,26 @@ class VerifiedInstitutionalPrincipal:
 
 def institutional_principal_id(principal: VerifiedInstitutionalPrincipal) -> str:
     """Derive the sole persisted identity link from a verified principal."""
+    return institutional_principal_id_from_subject(
+        provider_id=principal.provider_id,
+        subject_id=principal.subject_id,
+    )
+
+
+def institutional_principal_id_from_subject(
+    *,
+    provider_id: str,
+    subject_id: str,
+) -> str:
+    """Derive a pseudonymous identity link without asserting authentication."""
+    if (
+        not isinstance(provider_id, str)
+        or not PROVIDER_ID_RE.fullmatch(provider_id)
+        or not _bounded_opaque(subject_id, minimum=1, maximum=255)
+    ):
+        raise InstitutionalIdentityError("institutional_identity_claim_invalid")
     digest = hashlib.sha256(
-        f"{principal.provider_id}\0{principal.subject_id}".encode("utf-8")
+        f"{provider_id}\0{subject_id}".encode("utf-8")
     ).hexdigest()
     return f"institutional:{digest}"
 

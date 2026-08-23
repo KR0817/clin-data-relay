@@ -891,3 +891,57 @@ Acceptance criteria:
 - `create_app()` does not include this central-only module. Centre Lite remains
   unchanged and central startup stays fail-closed pending membership
   administration, central route composition and operational qualification.
+
+## 2026-08-24 first Central Data Manager membership bootstrap
+
+Central membership administration cannot require a Central Data Manager
+session before the first Central Data Manager has a Study Membership. The
+project therefore needs one narrow operator path that breaks this bootstrap
+cycle without introducing a second password account or trusting identity
+provider roles, groups, email addresses or usernames.
+
+Acceptance criteria:
+
+- A dedicated operator command reads one exact JSON document from standard
+  input. The provider alias, PostgreSQL DSN and environment come only from
+  configured environment variables; no subject or DSN command-line argument is
+  supported.
+- The request supplies the exact OIDC `sub` observed under the qualified
+  project client, a caller-supplied operator audit label, an expiry timestamp
+  and an explicit fixed confirmation phrase. The command does not authenticate
+  that operator label or prove a second witness.
+- Before use, external qualification evidence must bind the provider alias to
+  the exact issuer, client ID and subject-mapper mode, demonstrate the
+  administration-ID-to-client-`sub` mapping with a synthetic account, and
+  record two-person verification for the real account. The command cannot
+  obtain or verify that evidence. A changed issuer, client or subject mode
+  requires a new provider alias and membership qualification.
+- The command validates the supplied subject, derives the existing pseudonymous
+  Principal ID and removes the subject field before calling the repository. It
+  never copies the subject into persistence, audit details or output. Managed
+  input strings can remain in process memory until process exit and are not
+  claimed to be securely erased. Operator labels and free-text reasons remain
+  controlled operational inputs and must not contain identity material.
+- The repository atomically permits exactly one initial bootstrap while there
+  is no active Study Membership and no Companion Session history. Any historical
+  membership must be an inactive Central Data Manager bootstrap grant with its
+  dedicated rollback audit event; all other history closes bootstrap. Role is
+  fixed to `central_data_manager`, centre is fixed to `null`, and the grant is
+  appended to the shared audit chain with `bootstrap=true`.
+- Concurrent bootstrap attempts produce exactly one grant. Later attempts fail
+  with one bounded closed error.
+- Before any Companion Session has ever been issued, a confirmed rollback may
+  deactivate only a bootstrap-created Central Data Manager membership with a
+  required reason. The rollback is idempotent, audited and permits a corrected
+  bootstrap. Generic membership deactivation never reopens bootstrap. Once any
+  Companion Session exists, this recovery path is permanently closed.
+- Membership expiry must be after the grant time. Deactivation timestamps may
+  not precede membership creation.
+- Success output contains only status, membership ID, fixed role and lifecycle
+  timestamps. No password, token, subject, Principal ID, username or DSN is
+  returned.
+- This command does not create a Keycloak account, grant ordinary memberships,
+  mount central HTTP or make production readiness pass. Account enrolment,
+  two-person witnessing and OIDC-sub mapping qualification remain operational
+  requirements. Production also remains blocked until an audited emergency
+  deactivation path exists for a mistaken binding discovered after first login.

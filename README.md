@@ -52,9 +52,10 @@ Run the verified behavior tests with:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The future central repository now has a non-clinical PostgreSQL bootstrap
-preflight. Install the optional development dependency, provide the DSN through
-the runtime environment, and run:
+The future central foundation now has a PostgreSQL migration preflight plus
+repository contracts for reviewed imports, confirmed reads, Study Memberships,
+Companion Sessions and OIDC Login Exchanges. Install the optional development
+dependency, provide the DSN through the runtime environment, and run:
 
 ```powershell
 uv sync --extra central --extra dev --frozen
@@ -66,9 +67,23 @@ runtime secret-injection process before running the preflight. For development,
 a non-verifying TLS mode is accepted only for localhost. A
 non-local or production-like environment requires `sslmode=verify-full`. A
 successful result verifies the connection and migration ledger only; central
-application startup remains blocked until the clinical repository and
-institutional identity adapters are complete. Never put the DSN in source,
-documentation, command history, logs or GitHub workflow files.
+application startup remains blocked until repository-backed route composition,
+qualified identity-provider operation and the remaining production controls are
+complete. Never put the DSN in source, documentation, command history, logs or
+GitHub workflow files.
+
+The first Central Data Manager membership has a separate witnessed operator
+command. It reads one protected JSON document from standard input, derives the
+pseudonymous Principal ID from the exact OIDC `sub` observed for the qualified
+client, and never persists or returns that raw subject. The command fixes the
+role and centre and allows correction only before the membership has issued a
+Companion Session. Use the exact contract in `docs/api-contract.md`; never
+assume an identity-provider administration ID equals that client-specific
+subject. The command does not verify issuer/client/subject-mapper evidence or
+authenticate the caller-supplied operator label; those are external
+qualification gates. This bootstrap does not mount central HTTP or establish
+production qualification, and a post-login emergency deactivation path remains
+a release blocker.
 
 The automated suite covers the candidate, PDF/image intake, privacy, dictionary, quality, transfer and portable-runtime boundaries. Transfer creation accepts an optional bounded `Idempotency-Key`; without one, the server derives a deterministic candidate/package/target key. An exact retry returns the original transfer with HTTP 200 and `replayed: true`, while conflicting reuse returns HTTP 409. A historical simulation request can never be submitted through a later live adapter; a new target-specific request must be created instead. The transfer and reconciliation endpoints are:
 

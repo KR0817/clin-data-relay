@@ -69,6 +69,7 @@ jobs:
           tests/test_package_import_repository.py
           tests/test_reviewed_import_repository.py
           tests/test_confirmed_data_repository.py
+          tests/test_bootstrap_central_membership.py
           tests/test_study_membership_repository.py
           tests/test_institutional_session_repository.py
           tests/test_oidc_exchange_repository.py

@@ -70,6 +70,13 @@ This file is not a substitute for a Git history or an approved project license.
   after membership deactivation and append atomic create/revoke audit events.
   Plaintext bearer tokens are returned once and excluded from persistence and
   object representations.
+- Added a witnessed operator-only command for the first Central Data Manager
+  Study Membership. It derives the existing pseudonymous Principal ID from the
+  exact qualified-client OIDC subject, atomically admits one bootstrap grant,
+  and never persists or returns the raw subject. An audited correction is
+  available only before any Companion Session history exists.
+- Study Membership grants now reject an expiry at or before grant time, and
+  deactivation timestamps cannot predate the persisted grant.
 - Production readiness now requires an actually ready identity adapter as well
   as approved configuration and unexpired evidence. The current runtime passes
   no such capability and remains fail-closed.
@@ -79,9 +86,10 @@ This file is not a substitute for a Git history or an approved project license.
 
 ### Release blockers
 
-- Qualified institutional OIDC/SAML verification, membership administration,
-  HTTP composition and the remaining central repositories.
-- Verification passed Python compilation, JavaScript syntax checking,
-  `uv lock --check`, 231 tests with eight PostgreSQL-only cases skipped locally,
-  and focused identity/membership/session checks. The upstream Starlette/httpx
-  deprecation warning remains.
+- Qualified project-owned or contract-approved OIDC verification, routine
+  membership administration, HTTP composition and the remaining central
+  repositories.
+- Verification passed Python compilation and 274 tests with twelve
+  PostgreSQL/external-service cases skipped locally. The PostgreSQL 16 CI
+  contract remains required for the concurrent bootstrap path, and the
+  upstream Starlette/httpx deprecation warning remains.

@@ -110,6 +110,55 @@ class PostgresStudyMembershipRepository:
     def prepare(self) -> PostgresRepositoryStatus:
         return self._bootstrap.prepare()
 
+    @staticmethod
+    def _insert_grant(
+        connection: object,
+        membership: StudyMembership,
+        *,
+        membership_id: str,
+        actor: str,
+        created_at: datetime,
+        bootstrap: bool,
+    ) -> StudyMembershipRecord:
+        row = connection.execute(
+            f"""
+            INSERT INTO study_memberships ({_MEMBERSHIP_COLUMNS})
+            VALUES (%s, %s, %s, %s, %s, TRUE, %s, %s, %s, %s,
+                    NULL, NULL, NULL)
+            RETURNING {_MEMBERSHIP_COLUMNS}
+            """,
+            (
+                membership_id,
+                membership.provider_id,
+                membership.principal_id,
+                membership.role,
+                membership.centre_code,
+                membership.valid_from,
+                membership.expires_at,
+                actor,
+                created_at,
+            ),
+        ).fetchone()
+        details: dict[str, object] = {
+            "membership_id": membership_id,
+            "provider_id": membership.provider_id,
+            "role": membership.role,
+            "centre_code": membership.centre_code,
+        }
+        if bootstrap:
+            details["bootstrap"] = True
+        append_audit_event(
+            connection,
+            event_id=str(uuid4()),
+            candidate_id=None,
+            centre_code=membership.centre_code or "CENTRAL",
+            event_type="study_membership_granted",
+            actor_username=actor,
+            created_at=created_at,
+            details=details,
+        )
+        return _record(row)
+
     def grant(
         self,
         membership: StudyMembership,
@@ -119,52 +168,104 @@ class PostgresStudyMembershipRepository:
     ) -> StudyMembershipRecord:
         actor = _validated_actor(actor_username)
         created_at = _validated_time(granted_at, "study_membership_time_invalid")
-        if not membership.active:
+        if not membership.active or membership.expires_at <= created_at:
             raise StudyMembershipRepositoryError("study_membership_grant_invalid")
         membership_id = str(uuid4())
-        centre_code = membership.centre_code or "CENTRAL"
         try:
             with self._bootstrap._open_connection() as connection:
                 lock_audit_chain(connection)
-                row = connection.execute(
-                    f"""
-                    INSERT INTO study_memberships ({_MEMBERSHIP_COLUMNS})
-                    VALUES (%s, %s, %s, %s, %s, TRUE, %s, %s, %s, %s,
-                            NULL, NULL, NULL)
-                    RETURNING {_MEMBERSHIP_COLUMNS}
-                    """,
-                    (
-                        membership_id,
-                        membership.provider_id,
-                        membership.principal_id,
-                        membership.role,
-                        membership.centre_code,
-                        membership.valid_from,
-                        membership.expires_at,
-                        actor,
-                        created_at,
-                    ),
-                ).fetchone()
-                append_audit_event(
+                return self._insert_grant(
                     connection,
-                    event_id=str(uuid4()),
-                    candidate_id=None,
-                    centre_code=centre_code,
-                    event_type="study_membership_granted",
-                    actor_username=actor,
+                    membership,
+                    membership_id=membership_id,
+                    actor=actor,
                     created_at=created_at,
-                    details={
-                        "membership_id": membership_id,
-                        "provider_id": membership.provider_id,
-                        "role": membership.role,
-                        "centre_code": membership.centre_code,
-                    },
+                    bootstrap=False,
                 )
-                return _record(row)
         except psycopg.errors.UniqueViolation:
             raise StudyMembershipRepositoryError("study_membership_active_exists") from None
         except (psycopg.Error, InstitutionalIdentityError, TypeError, ValueError):
             raise StudyMembershipRepositoryError("study_membership_repository_unavailable") from None
+
+    def bootstrap_first_central_data_manager(
+        self,
+        provider_id: str,
+        principal_id: str,
+        *,
+        actor_username: str,
+        granted_at: datetime,
+        expires_at: datetime,
+    ) -> StudyMembershipRecord:
+        actor = _validated_actor(actor_username)
+        created_at = _validated_time(granted_at, "study_membership_time_invalid")
+        expiry = _validated_time(expires_at, "study_membership_time_invalid")
+        try:
+            membership = StudyMembership(
+                provider_id=provider_id,
+                principal_id=principal_id,
+                role="central_data_manager",
+                centre_code=None,
+                active=True,
+                valid_from=created_at,
+                expires_at=expiry,
+            )
+        except (InstitutionalIdentityError, TypeError, ValueError):
+            raise StudyMembershipRepositoryError(
+                "study_membership_bootstrap_invalid"
+            ) from None
+        membership_id = str(uuid4())
+        try:
+            with self._bootstrap._open_connection() as connection:
+                lock_audit_chain(connection)
+                disallowed = connection.execute(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM study_memberships AS memberships
+                        WHERE memberships.active
+                           OR memberships.role <> 'central_data_manager'
+                           OR memberships.centre_code IS NOT NULL
+                           OR NOT EXISTS (
+                               SELECT 1
+                               FROM audit_events AS events
+                               WHERE events.event_type = 'study_membership_granted'
+                                 AND events.details_json ->> 'membership_id' = memberships.id
+                                 AND events.details_json ->> 'bootstrap' = 'true'
+                           )
+                           OR NOT EXISTS (
+                               SELECT 1
+                               FROM audit_events AS events
+                               WHERE events.event_type = 'study_membership_bootstrap_rolled_back'
+                                 AND events.details_json ->> 'membership_id' = memberships.id
+                           )
+                    ) AS invalid_membership_history,
+                    EXISTS (SELECT 1 FROM institutional_sessions) AS session_history
+                    """
+                ).fetchone()
+                if bool(disallowed["invalid_membership_history"]) or bool(
+                    disallowed["session_history"]
+                ):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_bootstrap_closed"
+                    )
+                return self._insert_grant(
+                    connection,
+                    membership,
+                    membership_id=membership_id,
+                    actor=actor,
+                    created_at=created_at,
+                    bootstrap=True,
+                )
+        except StudyMembershipRepositoryError:
+            raise
+        except psycopg.errors.UniqueViolation:
+            raise StudyMembershipRepositoryError(
+                "study_membership_bootstrap_closed"
+            ) from None
+        except (psycopg.Error, InstitutionalIdentityError, TypeError, ValueError):
+            raise StudyMembershipRepositoryError(
+                "study_membership_repository_unavailable"
+            ) from None
 
     def find_active(
         self,
@@ -214,6 +315,8 @@ class PostgresStudyMembershipRepository:
                     raise StudyMembershipRepositoryError("study_membership_not_found")
                 if not bool(existing["active"]):
                     return _record(existing)
+                if occurred_at < existing["created_at"]:
+                    raise StudyMembershipRepositoryError("study_membership_time_invalid")
                 row = connection.execute(
                     f"""
                     UPDATE study_memberships
@@ -245,6 +348,115 @@ class PostgresStudyMembershipRepository:
             raise
         except (psycopg.Error, InstitutionalIdentityError, TypeError, ValueError):
             raise StudyMembershipRepositoryError("study_membership_repository_unavailable") from None
+
+    def rollback_unused_central_data_manager_bootstrap(
+        self,
+        membership_id: str,
+        *,
+        actor_username: str,
+        reason: str,
+        rolled_back_at: datetime,
+    ) -> StudyMembershipRecord:
+        actor = _validated_actor(actor_username)
+        bounded_reason = _validated_reason(reason)
+        occurred_at = _validated_time(rolled_back_at, "study_membership_time_invalid")
+        if not isinstance(membership_id, str) or not 1 <= len(membership_id) <= 200:
+            raise StudyMembershipRepositoryError("study_membership_bootstrap_invalid")
+        try:
+            with self._bootstrap._open_connection() as connection:
+                lock_audit_chain(connection)
+                existing = connection.execute(
+                    f"""
+                    SELECT {_MEMBERSHIP_COLUMNS}
+                    FROM study_memberships
+                    WHERE id = %s
+                    FOR UPDATE
+                    """,
+                    (membership_id,),
+                ).fetchone()
+                if existing is None:
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_bootstrap_not_found"
+                    )
+                bootstrap_audit = connection.execute(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM audit_events
+                        WHERE event_type = 'study_membership_granted'
+                          AND details_json ->> 'membership_id' = %s
+                          AND details_json ->> 'bootstrap' = 'true'
+                    ) AS grant_present,
+                    EXISTS (
+                        SELECT 1
+                        FROM audit_events
+                        WHERE event_type = 'study_membership_bootstrap_rolled_back'
+                          AND details_json ->> 'membership_id' = %s
+                    ) AS rollback_present
+                    """,
+                    (membership_id, membership_id),
+                ).fetchone()
+                if (
+                    str(existing["role"]) != "central_data_manager"
+                    or existing["centre_code"] is not None
+                    or not bool(bootstrap_audit["grant_present"])
+                ):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_bootstrap_invalid"
+                    )
+                used = connection.execute(
+                    """
+                    SELECT EXISTS (SELECT 1 FROM institutional_sessions) AS present
+                    """
+                ).fetchone()
+                if bool(used["present"]):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_bootstrap_already_used"
+                    )
+                if not bool(existing["active"]):
+                    if not bool(bootstrap_audit["rollback_present"]):
+                        raise StudyMembershipRepositoryError(
+                            "study_membership_bootstrap_invalid"
+                        )
+                    return _record(existing)
+                if bool(bootstrap_audit["rollback_present"]):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_bootstrap_invalid"
+                    )
+                if occurred_at < existing["created_at"]:
+                    raise StudyMembershipRepositoryError("study_membership_time_invalid")
+                row = connection.execute(
+                    f"""
+                    UPDATE study_memberships
+                    SET active = FALSE, deactivated_by = %s, deactivated_at = %s,
+                        deactivation_reason = %s
+                    WHERE id = %s
+                    RETURNING {_MEMBERSHIP_COLUMNS}
+                    """,
+                    (actor, occurred_at, bounded_reason, membership_id),
+                ).fetchone()
+                append_audit_event(
+                    connection,
+                    event_id=str(uuid4()),
+                    candidate_id=None,
+                    centre_code="CENTRAL",
+                    event_type="study_membership_bootstrap_rolled_back",
+                    actor_username=actor,
+                    created_at=occurred_at,
+                    details={
+                        "membership_id": membership_id,
+                        "provider_id": str(existing["provider_id"]),
+                        "role": "central_data_manager",
+                        "reason": bounded_reason,
+                    },
+                )
+                return _record(row)
+        except StudyMembershipRepositoryError:
+            raise
+        except (psycopg.Error, InstitutionalIdentityError, TypeError, ValueError):
+            raise StudyMembershipRepositoryError(
+                "study_membership_repository_unavailable"
+            ) from None
 
     def verify_audit_chain(self) -> ChainVerification:
         try:

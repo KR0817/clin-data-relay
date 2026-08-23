@@ -59,3 +59,7 @@ _Avoid_: identity-provider token, permanent login, local account
 **Login Exchange**:
 A short-lived, browser-bound, one-use code that carries no session credential and can be exchanged once for a Companion Session after an OIDC callback. Only its digest is persisted.
 _Avoid_: access token, refresh token, login URL token, reusable code
+
+**Central Membership Bootstrap**:
+A pre-login action run by an OS/database operator under an externally witnessed procedure to grant the first Central Data Manager Study Membership from the exact qualified-client OIDC subject. The command does not authenticate the operator or validate the external subject mapping; it only avoids persisting or returning the supplied subject.
+_Avoid_: local admin password, email lookup, Keycloak group mapping, ordinary account creation

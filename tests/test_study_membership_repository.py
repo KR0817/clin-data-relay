@@ -74,6 +74,26 @@ def test_membership_repository_rejects_unbounded_lifecycle_input_before_io() -> 
             deactivated_at=datetime.now(UTC),
         )
 
+    issued = datetime.now(UTC)
+    invalid_membership = membership(verified_principal)
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_grant_invalid$",
+    ):
+        repository.grant(
+            StudyMembership(
+                provider_id=invalid_membership.provider_id,
+                principal_id=invalid_membership.principal_id,
+                role=invalid_membership.role,
+                centre_code=invalid_membership.centre_code,
+                active=True,
+                valid_from=issued - timedelta(days=1),
+                expires_at=issued,
+            ),
+            actor_username="central-manager@example.test",
+            granted_at=issued,
+        )
+
 
 @pytest.mark.postgres
 def test_postgres_study_membership_lifecycle_and_audit_contract() -> None:
@@ -107,6 +127,17 @@ def test_postgres_study_membership_lifecycle_and_audit_contract() -> None:
             membership(verified_principal),
             actor_username=actor,
             granted_at=now + timedelta(seconds=1),
+        )
+
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_time_invalid$",
+    ):
+        repository.deactivate(
+            first.id,
+            actor_username=actor,
+            reason="This time predates the membership grant.",
+            deactivated_at=now - timedelta(seconds=1),
         )
 
     inactive = repository.deactivate(
