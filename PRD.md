@@ -863,3 +863,31 @@ Acceptance criteria:
   to the active composition root until central PostgreSQL, a managed session
   signing secret, a registered Keycloak client and operational qualification
   are available; central startup remains fail-closed.
+
+## 2026-08-24 project session HTTP boundary
+
+After the OIDC exchange creates a Companion Session, central HTTP needs one
+closed bearer boundary that can resolve the session for downstream route
+authorization and revoke it on logout. This slice defines that boundary without
+mounting central routes or changing Centre Lite authentication.
+
+Acceptance criteria:
+
+- A protected route receives the existing-compatible `UserContext` only when
+  an exact bearer token resolves to an unexpired, unrevoked session whose Study
+  Membership is still active and effective.
+- Missing authorization returns `authentication_required`; malformed, unknown,
+  expired, revoked or membership-invalid sessions return
+  `invalid_or_expired_token` without revealing which condition failed.
+- `POST /api/auth/logout` resolves and revokes the current Companion Session,
+  returns `204`, and makes that bearer unusable immediately.
+- PostgreSQL/provider failures return only
+  `project_session_unavailable`; raw tokens, repository errors, usernames and
+  connection details never enter responses.
+- Authentication and logout responses are `no-store`.
+- The module reuses the existing PostgreSQL session repository and
+  `UserContext`; it adds no database table, refresh token, cookie bearer,
+  provider call or new dependency.
+- `create_app()` does not include this central-only module. Centre Lite remains
+  unchanged and central startup stays fail-closed pending membership
+  administration, central route composition and operational qualification.

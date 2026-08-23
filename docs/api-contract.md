@@ -508,6 +508,29 @@ No endpoint returns provider error text, raw claims, raw subject, provider
 tokens, browser binding or database details. The current composition exposes
 none of these routes and remains fail-closed.
 
+### Project Companion Session authentication
+
+This future-central module is not mounted by the current local application.
+When central composition is qualified, its `current_user` dependency accepts
+the existing `Authorization: Bearer <cdrs-token>` header and supplies the same
+`UserContext` shape used by downstream routes.
+
+- Missing authorization returns `401 authentication_required`.
+- Malformed, unknown, expired, revoked or membership-invalid sessions return
+  `401 invalid_or_expired_token`.
+- Repository availability failures return `503 project_session_unavailable`.
+
+`POST /api/auth/logout`
+
+- Requires a currently valid Companion bearer.
+- Revokes that session and returns `204` with `Cache-Control: no-store`.
+- The bearer cannot authenticate a later request.
+
+Responses never contain the bearer, its digest, repository error text,
+membership identifiers or connection details. Local `POST /api/auth/login` and
+the client-side Lite workflow remain unchanged until a separate composition
+slice explicitly selects central authentication.
+
 ## Errors
 
 Stable detail codes include:

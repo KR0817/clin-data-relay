@@ -524,3 +524,22 @@
   cases skipped. The two Windows host-boundary cases that cannot run under the
   Codex sandbox identity passed under the normal Windows user; Python
   compilation, JavaScript syntax, `uv lock --check` and diff checks also passed.
+
+## 2026-08-24 project session HTTP boundary
+
+- `app/api/project_session_authentication.py` is the future-central bearer
+  resolver and server-side logout module. It reuses the PostgreSQL session
+  repository and projects successful resolution into the existing
+  `UserContext` consumed by downstream route authorization.
+- Missing authorization, invalid/revoked/expired sessions and repository
+  unavailability remain distinct bounded outcomes. Raw bearer values,
+  repository errors and database details do not enter HTTP responses.
+- `POST /api/auth/logout` resolves and revokes the current Companion Session,
+  returns `204` with no-store headers and makes the bearer immediately
+  unusable. No refresh token, cookie bearer, schema or dependency was added.
+- The module remains unmounted by `create_app()`. Centre Lite is unchanged and
+  central startup stays fail-closed pending membership administration, central
+  repository-backed route composition and operational qualification.
+- Local verification passed 254 tests with nine PostgreSQL service-backed cases
+  skipped, plus Python compilation, JavaScript syntax, `uv lock --check` and
+  diff checks.

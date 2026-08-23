@@ -765,6 +765,28 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   `create_app()`. Therefore it does not yet make `identity_provider_ready` true
   or enable `COMPANION_DEPLOYMENT_PROFILE=central`.
 
+## Project session HTTP authentication contract
+
+- `app/api/project_session_authentication.py` owns the future-central bearer
+  resolver and logout endpoint. It depends only on the public
+  `resolve_session()` and `revoke_session()` repository operations and reuses
+  the existing `AuthModule`/`UserContext` downstream boundary.
+- The bearer parser accepts the existing `Bearer <token>` shape. The
+  PostgreSQL repository remains authoritative for token format, digest lookup,
+  expiry, revocation and current Study Membership effectivity.
+- Successful resolution projects only pseudonymous user ID, bounded username,
+  role and centre into `UserContext`. No session token or database object is
+  attached to the user context.
+- Logout resolves the session and then calls the repository's idempotent
+  revocation operation. It returns `204`; later use of that bearer receives the
+  same `invalid_or_expired_token` response as other invalid sessions.
+- Repository exceptions are reduced to `project_session_unavailable` with
+  status `503`. Authentication failures do not distinguish missing database
+  rows, expiry, revocation or inactive membership.
+- The module is contract-tested with the repository interface and is not
+  included by `create_app()`. It introduces no schema or dependency and does
+  not enable the central deployment profile.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.
