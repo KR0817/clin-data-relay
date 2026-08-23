@@ -728,6 +728,43 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   short provider-token lifetime and an out-of-URL Companion session exchange.
   Central HTTP and `identity_provider_ready` remain fail-closed.
 
+## Project OIDC browser authentication contract
+
+- `app/api/project_oidc_authentication.py` owns the three-route HTTP boundary
+  and an Authlib-backed external client adapter. Authlib is isolated in the
+  optional `central` dependency group; Centre Lite does not import it.
+- The registered confidential client uses the fixed issuer discovery document,
+  `openid` scope, Authorization Code Flow and PKCE `S256`. The login route
+  passes a fixed configured callback URI, a generated nonce, the configured MFA
+  ACR and an eight-hour `max_age`; it never derives redirects from the request
+  Host header.
+- Starlette `SessionMiddleware` is a composition prerequisite. Production must
+  supply a managed random signing secret, `https_only=True`, `same_site=lax`,
+  `HttpOnly` and a short session age. The router fails closed when middleware
+  state is absent.
+- Authlib performs discovery/JWKS, state/nonce and ID-token validation. The
+  adapter returns only the validated `userinfo` claim mapping; access, refresh
+  and ID tokens are not returned to the router or persisted.
+- `VerifiedPrincipalLink` is a transient/persistable projection containing the
+  provider alias, pseudonymous Principal ID, username, authentication time and
+  MFA result. It contains no raw provider subject and cannot carry role or
+  centre. Existing principal authorization delegates to the same link-based
+  authorization function.
+- PostgreSQL migration 7 adds `oidc_login_exchanges`. Exchange and browser
+  binding values use independent 256-bit randomness; only SHA-256 digests are
+  stored. Each row expires after two minutes and is consumed once under
+  `SELECT ... FOR UPDATE`.
+- Exchange consumption returns the verified-principal link, after which
+  `PostgresInstitutionalSessionRepository.create_session_from_link()` applies
+  existing MFA age, membership and role/centre checks. A consumed exchange is
+  not restored if session issuance fails; the user must repeat OIDC login.
+- The callback returns a 303 redirect with a Login Exchange code only. The
+  exchange POST returns the existing Companion bearer response once and clears
+  the browser binding. All authentication responses are `no-store`.
+- This module is contract-tested independently and is not included by
+  `create_app()`. Therefore it does not yet make `identity_provider_ready` true
+  or enable `COMPANION_DEPLOYMENT_PROFILE=central`.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

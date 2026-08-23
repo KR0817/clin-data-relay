@@ -19,6 +19,8 @@ dependencies = [
 
 [project.optional-dependencies]
 central = [
+  "authlib>=1.7,<2.0",
+  "itsdangerous>=2.2,<3.0",
   "psycopg[binary]>=3.3,<4.0",
 ]
 dev = [

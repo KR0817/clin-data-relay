@@ -501,3 +501,26 @@
   release gates; central HTTP stays fail-closed.
 - Local verification passed 243 tests with eight PostgreSQL-only cases skipped,
   Python compilation, JavaScript syntax, `uv lock --check` and diff checks.
+
+## 2026-08-24 project OIDC browser flow and one-time exchange
+
+- `app/api/project_oidc_authentication.py` defines an Authlib-backed
+  Authorization Code/PKCE browser boundary for the future central composition.
+  The callback discards provider tokens and redirects only with a two-minute,
+  same-browser, one-use Login Exchange; it never places a Companion bearer in
+  a URL.
+- `VerifiedPrincipalLink` removes the raw provider subject after deriving the
+  pseudonymous Principal ID. PostgreSQL schema version 7 persists only exchange
+  and browser-binding SHA-256 digests plus the bounded link fields needed for
+  existing Study Membership authorization.
+- Login, callback and exchange errors are bounded and authentication responses
+  are `no-store`. Redirects are fixed HTTPS same-origin configuration; no
+  request Host value can choose a callback or completion destination.
+- Authlib and browser-session signing support are confined to the optional
+  `central` dependency group. `create_app()` intentionally does not mount the
+  OIDC router, so Centre Lite is unchanged and central startup remains
+  fail-closed pending Keycloak/TLS/PostgreSQL composition and qualification.
+- Local verification passed 252 tests with nine PostgreSQL/external service
+  cases skipped. The two Windows host-boundary cases that cannot run under the
+  Codex sandbox identity passed under the normal Windows user; Python
+  compilation, JavaScript syntax, `uv lock --check` and diff checks also passed.

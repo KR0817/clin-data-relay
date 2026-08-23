@@ -18,8 +18,9 @@ from app.institutional_identity import (
     MAX_AUTHENTICATION_AGE,
     StudyMembership,
     VerifiedInstitutionalPrincipal,
-    authorize_institutional_principal,
-    institutional_principal_id,
+    VerifiedPrincipalLink,
+    authorize_verified_principal_link,
+    verified_principal_link,
 )
 from app.postgres_audit import (
     append_audit_event,
@@ -84,8 +85,18 @@ class PostgresInstitutionalSessionRepository:
         *,
         issued_at: datetime,
     ) -> InstitutionalSession:
+        return self.create_session_from_link(
+            verified_principal_link(principal),
+            issued_at=issued_at,
+        )
+
+    def create_session_from_link(
+        self,
+        principal: VerifiedPrincipalLink,
+        *,
+        issued_at: datetime,
+    ) -> InstitutionalSession:
         issued = _validated_time(issued_at)
-        principal_id = institutional_principal_id(principal)
         session_id = str(uuid4())
         token = f"cdrs_{secrets.token_urlsafe(32)}"
         digest = _token_digest(token)
@@ -103,14 +114,14 @@ class PostgresInstitutionalSessionRepository:
                     WHERE provider_id = %s AND principal_id = %s AND active
                     FOR SHARE
                     """,
-                    (principal.provider_id, principal_id),
+                    (principal.provider_id, principal.principal_id),
                 ).fetchone()
                 if row is None:
                     raise InstitutionalSessionRepositoryError(
                         "institutional_session_membership_required"
                     )
                 membership = _membership(row)
-                user = authorize_institutional_principal(
+                user = authorize_verified_principal_link(
                     principal,
                     membership,
                     now=issued,

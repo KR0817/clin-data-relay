@@ -11,6 +11,7 @@ from app.institutional_identity import (
     StudyMembership,
     VerifiedInstitutionalPrincipal,
     institutional_principal_id,
+    verified_principal_link,
 )
 from app.postgres_institutional_session_repository import (
     InstitutionalSessionRepositoryError,
@@ -73,6 +74,15 @@ def test_invalid_or_malformed_session_input_fails_before_database_io() -> None:
             now=datetime(2026, 8, 23, 10, 0),
         )
 
+    with pytest.raises(
+        InstitutionalSessionRepositoryError,
+        match="^institutional_session_time_invalid$",
+    ):
+        repository.create_session_from_link(
+            verified_principal_link(principal(authenticated_at=datetime.now(UTC))),
+            issued_at=datetime(2026, 8, 23, 10, 0),
+        )
+
 
 @pytest.mark.postgres
 def test_postgres_institutional_session_lifecycle_contract() -> None:
@@ -92,7 +102,10 @@ def test_postgres_institutional_session_lifecycle_contract() -> None:
         expires_at=now + timedelta(hours=2),
     )
 
-    first = session_repository.create_session(verified_principal, issued_at=now)
+    first = session_repository.create_session_from_link(
+        verified_principal_link(verified_principal),
+        issued_at=now,
+    )
 
     assert first.token.startswith("cdrs_")
     assert len(first.token) == 48

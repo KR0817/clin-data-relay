@@ -829,3 +829,37 @@ Acceptance criteria:
   membership administration or central-runtime enablement. Production remains
   blocked until the complete Authorization Code callback, operational Keycloak
   controls and qualification evidence pass.
+
+## 2026-08-24 project OIDC browser flow and one-time exchange
+
+The central browser must complete project-owned OIDC login without exposing a
+Companion bearer token in a callback URL, browser history, referrer or provider
+token record. The callback therefore creates a short-lived Login Exchange that
+contains only a pseudonymous verified-principal link. A same-browser POST
+consumes that exchange before a Companion Session is issued.
+
+Acceptance criteria:
+
+- `GET /api/auth/oidc/login` uses Authorization Code Flow with PKCE S256,
+  fixed HTTPS callback configuration, a high-entropy nonce, requested MFA ACR
+  and signed HttpOnly browser-session state.
+- `GET /api/auth/oidc/callback` accepts only claims returned by the maintained
+  OIDC client after discovery/JWKS, state, nonce and ID-token validation. It
+  discards provider tokens after extracting verified claims.
+- The callback redirects only to a fixed same-origin completion URL carrying a
+  short-lived exchange code. A Companion bearer token never appears in the
+  redirect URL or body.
+- PostgreSQL stores only SHA-256 digests of the exchange code and browser
+  binding plus provider alias, pseudonymous Principal ID, bounded username and
+  authentication time. It stores no raw subject, provider token, browser code
+  or Companion bearer.
+- `POST /api/auth/oidc/exchange` requires the same signed browser session,
+  consumes the code exactly once and only then creates the digest-backed
+  Companion Session through the active Study Membership.
+- Missing/expired/replayed/wrong-browser exchanges fail with one bounded error.
+  Provider, claim, database and membership errors do not echo secrets or
+  identity values.
+- Centre Lite and local SQLite login remain unchanged. The router is not added
+  to the active composition root until central PostgreSQL, a managed session
+  signing secret, a registered Keycloak client and operational qualification
+  are available; central startup remains fail-closed.

@@ -78,6 +78,49 @@ def institutional_principal_id(principal: VerifiedInstitutionalPrincipal) -> str
 
 
 @dataclass(frozen=True)
+class VerifiedPrincipalLink:
+    """Pseudonymous verified identity projection without the provider subject."""
+
+    provider_id: str
+    principal_id: str
+    username: str
+    authenticated_at: datetime
+    mfa_authenticated: bool
+
+    def __post_init__(self) -> None:
+        if (
+            not isinstance(self.provider_id, str)
+            or not PROVIDER_ID_RE.fullmatch(self.provider_id)
+            or not isinstance(self.principal_id, str)
+            or not PRINCIPAL_ID_RE.fullmatch(self.principal_id)
+            or not _bounded_opaque(self.username, minimum=3, maximum=320)
+            or not isinstance(self.mfa_authenticated, bool)
+        ):
+            raise InstitutionalIdentityError("institutional_identity_claim_invalid")
+        object.__setattr__(
+            self,
+            "authenticated_at",
+            _normalise_time(
+                self.authenticated_at,
+                "institutional_identity_claim_invalid",
+            ),
+        )
+
+
+def verified_principal_link(
+    principal: VerifiedInstitutionalPrincipal,
+) -> VerifiedPrincipalLink:
+    """Remove the raw provider subject after deriving its pseudonymous link."""
+    return VerifiedPrincipalLink(
+        provider_id=principal.provider_id,
+        principal_id=institutional_principal_id(principal),
+        username=principal.username,
+        authenticated_at=principal.authenticated_at,
+        mfa_authenticated=principal.mfa_authenticated,
+    )
+
+
+@dataclass(frozen=True)
 class StudyMembership:
     provider_id: str
     principal_id: str
@@ -132,6 +175,19 @@ def authorize_institutional_principal(
     *,
     now: datetime,
 ) -> InstitutionalUser:
+    return authorize_verified_principal_link(
+        verified_principal_link(principal),
+        membership,
+        now=now,
+    )
+
+
+def authorize_verified_principal_link(
+    principal: VerifiedPrincipalLink,
+    membership: StudyMembership,
+    *,
+    now: datetime,
+) -> InstitutionalUser:
     resolved_now = _normalise_time(now, "institutional_identity_clock_invalid")
     if not principal.mfa_authenticated:
         raise InstitutionalIdentityError("institutional_identity_mfa_required")
@@ -143,7 +199,7 @@ def authorize_institutional_principal(
         raise InstitutionalIdentityError("institutional_identity_authentication_stale")
     if (
         principal.provider_id != membership.provider_id
-        or institutional_principal_id(principal) != membership.principal_id
+        or principal.principal_id != membership.principal_id
     ):
         raise InstitutionalIdentityError("institutional_identity_membership_mismatch")
     if not membership.active:

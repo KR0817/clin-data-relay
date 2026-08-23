@@ -55,3 +55,7 @@ _Avoid_: username, employee number, reversible identifier
 **Companion Session**:
 A short-lived Companion session issued only after a Verified Principal and an effective Study Membership have both been verified.
 _Avoid_: identity-provider token, permanent login, local account
+
+**Login Exchange**:
+A short-lived, browser-bound, one-use code that carries no session credential and can be exchanged once for a Companion Session after an OIDC callback. Only its digest is persisted.
+_Avoid_: access token, refresh token, login URL token, reusable code

@@ -9,8 +9,11 @@ from app.institutional_identity import (
     InstitutionalIdentityError,
     StudyMembership,
     VerifiedInstitutionalPrincipal,
+    VerifiedPrincipalLink,
     authorize_institutional_principal,
+    authorize_verified_principal_link,
     institutional_principal_id,
+    verified_principal_link,
 )
 
 
@@ -47,6 +50,32 @@ def test_mfa_verified_principal_receives_only_the_matching_study_membership() ->
     assert user.centre_code == "SITE_A"
     assert principal.subject_id not in repr(user)
     assert principal.subject_id not in repr(membership)
+
+
+def test_pseudonymous_principal_link_preserves_authorization_without_raw_subject() -> None:
+    verified = principal()
+    link = verified_principal_link(verified)
+
+    assert link == VerifiedPrincipalLink(
+        provider_id="hospital-a",
+        principal_id=(
+            "institutional:"
+            "7fb79e14c5bc8de6673b432c8d00efd3625ce65d965b103181bec2dfb4f41e04"
+        ),
+        username="investigator@example.test",
+        authenticated_at=datetime(2026, 8, 22, 8, 0, tzinfo=UTC),
+        mfa_authenticated=True,
+    )
+    assert verified.subject_id not in repr(link)
+    assert authorize_verified_principal_link(
+        link,
+        membership(),
+        now=datetime(2026, 8, 22, 9, 0, tzinfo=UTC),
+    ) == authorize_institutional_principal(
+        verified,
+        membership(),
+        now=datetime(2026, 8, 22, 9, 0, tzinfo=UTC),
+    )
 
 
 def principal() -> VerifiedInstitutionalPrincipal:

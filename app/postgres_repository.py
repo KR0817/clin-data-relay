@@ -13,7 +13,7 @@ from psycopg.rows import dict_row
 from app.package_import_repository import PackageImportAttempt, PackageImportReceipt
 
 
-LATEST_POSTGRES_SCHEMA_VERSION = 6
+LATEST_POSTGRES_SCHEMA_VERSION = 7
 MIGRATION_NAMES = {
     1: "central_repository_bootstrap",
     2: "package_import_ledger",
@@ -21,6 +21,7 @@ MIGRATION_NAMES = {
     4: "confirmed_data_read_index",
     5: "study_membership_authorization",
     6: "institutional_sessions",
+    7: "oidc_login_exchanges",
 }
 MIGRATION_STATEMENTS = {
     1: (),
@@ -225,6 +226,34 @@ MIGRATION_STATEMENTS = {
         """
         CREATE INDEX IF NOT EXISTS idx_institutional_sessions_membership
         ON institutional_sessions (membership_id, expires_at DESC)
+        """,
+    ),
+    7: (
+        """
+        CREATE TABLE IF NOT EXISTS oidc_login_exchanges (
+            sequence BIGINT GENERATED ALWAYS AS IDENTITY UNIQUE,
+            id TEXT PRIMARY KEY,
+            code_sha256 TEXT NOT NULL UNIQUE
+                CHECK (code_sha256 ~ '^[a-f0-9]{64}$'),
+            browser_binding_sha256 TEXT NOT NULL
+                CHECK (browser_binding_sha256 ~ '^[a-f0-9]{64}$'),
+            provider_id TEXT NOT NULL
+                CHECK (provider_id ~ '^[a-z][a-z0-9._-]{1,63}$'),
+            principal_id TEXT NOT NULL
+                CHECK (principal_id ~ '^institutional:[a-f0-9]{64}$'),
+            username TEXT NOT NULL CHECK (length(username) BETWEEN 3 AND 320),
+            authenticated_at TIMESTAMPTZ NOT NULL,
+            mfa_authenticated BOOLEAN NOT NULL,
+            created_at TIMESTAMPTZ NOT NULL,
+            expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+            consumed_at TIMESTAMPTZ,
+            CHECK (consumed_at IS NULL OR consumed_at >= created_at)
+        )
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_oidc_login_exchanges_expiry
+        ON oidc_login_exchanges (expires_at)
+        WHERE consumed_at IS NULL
         """,
     ),
 }

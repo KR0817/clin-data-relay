@@ -468,6 +468,46 @@ Stable failures are `project_oidc_policy_invalid`,
 No callback, raw JWT, provider token, secret or new browser response is part of
 this contract, and central readiness remains blocked.
 
+### Project OIDC browser flow
+
+These routes are defined for the future qualified central composition and are
+not mounted by the current local application:
+
+`GET /api/auth/oidc/login`
+
+- Requires signed browser-session middleware.
+- Returns a temporary redirect to the configured project OIDC provider using a
+  fixed HTTPS callback, `openid`, PKCE S256, nonce, MFA ACR and bounded
+  authentication age.
+- Returns `Cache-Control: no-store`.
+
+`GET /api/auth/oidc/callback`
+
+- Completes Authlib's Authorization Code exchange and accepts only its verified
+  `userinfo` mapping.
+- Creates a two-minute browser-bound Login Exchange and returns `303` to the
+  fixed same-origin completion URL with `oidc_exchange=<opaque-code>`.
+- The Location and body never contain an IdP token or Companion bearer.
+
+`POST /api/auth/oidc/exchange`
+
+```json
+{"exchange_code":"cdre_<43 base64url characters>"}
+```
+
+- Requires the same signed browser session that initiated login.
+- Consumes the code once, verifies active Study Membership and returns the
+  existing `access_token`, `token_type=bearer` and bounded user projection.
+- A replay, expiry, malformed code or wrong browser returns `401` with
+  `project_oidc_exchange_invalid`.
+
+Other bounded details include `project_oidc_browser_session_required`,
+`project_oidc_callback_failed`, `project_oidc_access_denied`,
+`project_oidc_provider_unavailable` and `project_oidc_session_unavailable`.
+No endpoint returns provider error text, raw claims, raw subject, provider
+tokens, browser binding or database details. The current composition exposes
+none of these routes and remains fail-closed.
+
 ## Errors
 
 Stable detail codes include:
