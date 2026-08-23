@@ -575,5 +575,5 @@
   deactivation timestamps cannot precede creation. Centre Lite and central HTTP
   composition remain unchanged and fail-closed.
 - Local verification passed 274 tests with twelve PostgreSQL/external-service
-  cases skipped. The real concurrent bootstrap/session contract still requires
-  the PostgreSQL 16 CI service before this tranche is accepted.
+  cases skipped. GitHub Actions run `32663416538` passed the Windows quality job
+  and the isolated PostgreSQL 16 concurrent bootstrap/session contract.

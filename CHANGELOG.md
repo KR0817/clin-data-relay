@@ -90,6 +90,7 @@ This file is not a substitute for a Git history or an approved project license.
   membership administration, HTTP composition and the remaining central
   repositories.
 - Verification passed Python compilation and 274 tests with twelve
-  PostgreSQL/external-service cases skipped locally. The PostgreSQL 16 CI
-  contract remains required for the concurrent bootstrap path, and the
-  upstream Starlette/httpx deprecation warning remains.
+  PostgreSQL/external-service cases skipped locally. GitHub Actions run
+  `32663416538` passed both the Windows source-quality job and the PostgreSQL 16
+  concurrent bootstrap contract. The upstream Starlette/httpx deprecation
+  warning remains.
