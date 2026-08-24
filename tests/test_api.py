@@ -2583,6 +2583,27 @@ def test_homepage_serves_external_workbench_script_without_runtime_data(client: 
     assert client.get("/static/img/unlisted.webp").status_code == 404
 
 
+def test_homepage_keeps_diagnostics_in_an_accessible_compact_command_deck(
+    client: TestClient,
+) -> None:
+    response = client.get("/")
+    stylesheet = client.get("/static/css/app.css")
+
+    assert response.status_code == 200
+    assert '<details class="session-health lite-full-only">' in response.text
+    assert '<summary><span>系统状态</span>' in response.text
+    assert 'id="edc-status"' in response.text
+    assert 'id="production-status"' in response.text
+    assert (
+        'href="/static/css/app.css?v=20260824-compact-command-deck-v1"'
+        in response.text
+    )
+    assert stylesheet.status_code == 200
+    assert ".session-health" in stylesheet.text
+    assert ".session-actions { display: grid;" in stylesheet.text
+    assert "scroll-snap-type: x proximity" in stylesheet.text
+
+
 def test_homepage_exposes_one_time_centre_credentials_and_authenticated_kimi_settings(
     client: TestClient,
 ) -> None:
@@ -2627,7 +2648,10 @@ def test_homepage_serves_external_stylesheet_without_exposing_runtime_data(clien
     response = client.get("/")
 
     assert response.status_code == 200
-    assert '<link rel="stylesheet" href="/static/css/app.css">' in response.text
+    assert (
+        'href="/static/css/app.css?v=20260824-compact-command-deck-v1"'
+        in response.text
+    )
     assert "<style>" not in response.text
     assert "<script>" not in response.text
 

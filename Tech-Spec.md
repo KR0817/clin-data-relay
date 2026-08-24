@@ -856,6 +856,29 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - The command is containment only. It does not provision a replacement CDM,
   revoke or delete session rows, mount an HTTP route or claim dual approval.
 
+## Compact authenticated command deck
+
+- `app/static/index.html` groups `#edc-status` and `#production-status` inside
+  one native `details.session-health` disclosure. The existing IDs and live
+  regions remain the JavaScript update targets; the disclosure is presentation
+  only and closed by default.
+- `#identity`, the Kimi control, export, data exchange and logout remain visible
+  in the session command surface. No diagnostic text is deleted, truncated in
+  the DOM or promoted into an authorization decision.
+- Desktop compaction changes only spacing and intrinsic dimensions. Buttons,
+  links, summaries and form controls retain a minimum 44 CSS pixel target.
+- At `max-width: 560px`, session actions use a two-column grid with the Kimi
+  control spanning both columns. The role-aware navigation becomes a bounded
+  single-row horizontal scroller with focus-visible links and scroll snapping;
+  only this component scrolls horizontally, never the page.
+- The workflow stepper stays in one four-column row on phones. Each item stacks
+  its number above its label and may wrap internally without clipping.
+- The research run strip keeps centre scope and permission text visible. Its
+  facts use two columns on phones, with the permission boundary spanning the
+  row. Existing role/Lite projection logic and section anchors are unchanged.
+- No JavaScript, API, schema, remote asset, font, framework or dependency is
+  added by this presentation slice.
+
 ## Windows host preflight
 
 - `scripts/portable_host_preflight.ps1` is the single host-capability boundary. It uses locale-independent CIM/optional-feature state where available, captures Docker stderr instead of exposing the raw named-pipe response, and returns a stable diagnostic code.

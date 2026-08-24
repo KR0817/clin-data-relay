@@ -599,3 +599,24 @@
 - Local verification passed 277 tests with thirteen PostgreSQL/external-service
   cases skipped, plus Python compilation, JavaScript syntax, lock-file and diff
   checks. The real PostgreSQL contract remains covered by the quality workflow.
+
+## 2026-08-24 compact authenticated workbench command deck
+
+- The shared central/site workbench keeps identity and Kimi readiness visible
+  while moving full EDC and production-readiness diagnostics into a closed
+  native `details.session-health` disclosure. The original live-region IDs and
+  diagnostic text remain unchanged and accessible.
+- Desktop header, session controls, research run strip and workflow rail use
+  tighter spacing. At 375 CSS pixels, session actions use a two-column command
+  grid, workspace navigation is a bounded horizontal scroller, workflow steps
+  stay in one row and the permission boundary remains visible.
+- The document had zero page-level horizontal overflow at 375x812, 812x375,
+  768x900, 1024x768 and 1440x900. Central and SITE_A visual checks, expanded
+  diagnostics, keyboard focus and console checks passed; the nav alone scrolls
+  at 375 pixels.
+- UI cache token `20260824-compact-command-deck-v1` versions both the stylesheet
+  request and portable-launcher URL. No API, authorization, clinical workflow,
+  JavaScript behavior, remote asset, font, framework or dependency was added.
+- Local verification passed 278 tests with thirteen PostgreSQL/external-service
+  cases skipped, plus Python compilation, JavaScript syntax, lock-file and diff
+  checks.

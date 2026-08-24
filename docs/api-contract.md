@@ -671,6 +671,20 @@ Command-local stable error codes are:
 Any unrecognized internal exception is collapsed to
 `study_membership_bootstrap_unavailable`; no exception text is forwarded.
 
+### Compact command-deck presentation contract
+
+The authenticated workbench may place `#edc-status` and `#production-status`
+inside a closed native system-status disclosure. Both live regions, their full
+text, existing update logic and all health/readiness API responses remain
+unchanged. Identity, centre scope and Kimi state remain visible outside the
+disclosure.
+
+Responsive navigation, session-action layout, header density and workflow-step
+layout are CSS projections of the existing DOM. They add no endpoint, request,
+response, authorization rule, clinical state or audit event. Internal
+horizontal overflow is permitted only for the bounded mobile workspace
+navigation; the document itself must not overflow horizontally.
+
 ## Errors
 
 Stable detail codes include:

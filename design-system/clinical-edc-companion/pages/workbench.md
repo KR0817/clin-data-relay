@@ -67,3 +67,15 @@ success, warning, error or permission semantics.
 - Use no runtime remote asset, new dependency or decorative motion. Generated
   source material is audited once and shipped only as a same-origin WebP
   derivative.
+
+## Compact command-deck override
+
+- Keep identity and Kimi readiness visible; place detailed EDC and production
+  diagnostics in one native disclosure labelled `系统状态`.
+- Treat the first viewport as an operations console: reduce ornamental header
+  height and repeated padding before reducing clinical form density.
+- On phones, use a two-column session-action grid, a one-row bounded navigation
+  scroller and a one-row four-step rail. Preserve 44 px interactive targets,
+  visible focus and page-level overflow containment.
+- The permission boundary remains visible in the research run strip; on phones
+  it spans the full width below centre and current-focus facts.

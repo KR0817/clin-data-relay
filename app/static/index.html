@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f3f6fb">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a1730'/%3E%3Cpath d='M16 5 26 10.7v10.6L16 27 6 21.3V10.7L16 5Z' fill='none' stroke='%237dd3fc' stroke-width='1.7'/%3E%3Cpath d='M10.5 16h11M16 10.5v11' stroke='%237dd3fc' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
   <title>临床数据采集工作台</title>
-  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/app.css?v=20260824-compact-command-deck-v1">
 </head>
 <body>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -72,8 +72,13 @@
       <section class="card session-bar" aria-label="当前会话">
         <div class="session-copy">
           <p id="identity" class="status" aria-live="polite"></p>
-          <p id="edc-status" class="status lite-full-only" aria-live="polite"></p>
-          <p id="production-status" class="status lite-full-only" aria-live="polite"></p>
+          <details class="session-health lite-full-only">
+            <summary><span>系统状态</span><span class="session-health-hint">查看 EDC 与生产闸门</span></summary>
+            <div class="session-health-body">
+              <p id="edc-status" class="status" aria-live="polite"></p>
+              <p id="production-status" class="status" aria-live="polite"></p>
+            </div>
+          </details>
           <p id="export-status" class="status" aria-live="polite"></p>
         </div>
         <div class="session-actions">

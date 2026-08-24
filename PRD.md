@@ -976,6 +976,31 @@ Acceptance criteria:
 - Emergency deactivation never creates the dedicated unused-bootstrap rollback
   marker and therefore never reopens bootstrap. Replacement central authority
   requires a later dual-controlled membership lifecycle, not this command.
+
+## 2026-08-24 compact workbench command deck
+
+The authenticated workbench currently spends too much of the first viewport on
+diagnostic prose and stacked navigation, especially at 375 CSS pixels. The
+next authorized clinical-data task must appear sooner without hiding the
+identity, centre scope, Kimi state or fail-closed system diagnostics.
+
+Acceptance criteria:
+
+- The EDC and production-readiness diagnostics remain in the DOM and readable
+  to assistive technology, but move behind a native, keyboard-operable system
+  status disclosure that is closed by default.
+- Identity and Kimi state remain visible without opening the disclosure.
+- Desktop header, session controls and research run strip use less vertical
+  space without reducing any interactive target below 44 CSS pixels.
+- At 375 CSS pixels, the workspace navigation uses one bounded horizontal
+  track rather than three stacked rows, and the four-step workflow remains one
+  compact row. Neither pattern creates page-level horizontal overflow.
+- Mobile session actions use a two-column command grid where space permits;
+  status, errors and button labels wrap without clipping.
+- Central, site, oversight and Lite projections retain their existing DOM IDs,
+  role filtering, API calls, authorization decisions and workflow behavior.
+- Desktop, tablet and mobile browser checks cover keyboard focus, reduced
+  motion, console errors and page-level overflow.
 - `operator_id`, `incident_reference` and `reason` are controlled operational
   labels, not authentication or proof of two-person approval. They must not
   contain direct identity, bearer, credential or clinical material; approval

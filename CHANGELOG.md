@@ -80,6 +80,11 @@ This file is not a substitute for a Git history or an approved project license.
   referenced membership, appends a dedicated incident audit event, preserves
   session evidence, invalidates linked bearers through the active-membership
   check and never reopens bootstrap or creates replacement authority.
+- Compacted the authenticated command deck for central and centre workspaces.
+  Detailed EDC/production diagnostics now remain available inside a native
+  system-status disclosure, while mobile session actions, navigation, workflow
+  steps and the research run strip expose the next task sooner without changing
+  authorization or API behavior.
 - Study Membership grants now reject an expiry at or before grant time, and
   deactivation timestamps cannot predate the persisted grant.
 - Production readiness now requires an actually ready identity adapter as well
@@ -94,7 +99,7 @@ This file is not a substitute for a Git history or an approved project license.
 - Qualified project-owned or contract-approved OIDC verification, routine
   membership administration, HTTP composition and the remaining central
   repositories.
-- Verification passed Python compilation and 277 tests with thirteen
+- Verification passed Python compilation and 278 tests with thirteen
   PostgreSQL/external-service cases skipped locally. GitHub Actions run
   `32663416538` passed both the Windows source-quality job and the PostgreSQL 16
   concurrent bootstrap contract. The upstream Starlette/httpx deprecation
