@@ -94,6 +94,18 @@ def test_membership_repository_rejects_unbounded_lifecycle_input_before_io() -> 
             granted_at=issued,
         )
 
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_emergency_invalid$",
+    ):
+        repository.emergency_deactivate_bootstrap_central_data_manager(
+            str(uuid4()),
+            actor_username="central-manager@example.test",
+            incident_reference="\n",
+            reason="Contain an incorrect central identity binding.",
+            deactivated_at=issued,
+        )
+
 
 @pytest.mark.postgres
 def test_postgres_study_membership_lifecycle_and_audit_contract() -> None:

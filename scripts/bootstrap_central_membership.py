@@ -1,4 +1,4 @@
-"""Bootstrap or correct the first Central Data Manager study membership."""
+"""Bootstrap, correct, or contain the first Central Data Manager membership."""
 
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ INPUT_ERROR = "study_membership_bootstrap_input_invalid"
 UNAVAILABLE_ERROR = "study_membership_bootstrap_unavailable"
 BOOTSTRAP_CONFIRMATION = "BOOTSTRAP_FIRST_CENTRAL_DATA_MANAGER"
 ROLLBACK_CONFIRMATION = "ROLLBACK_UNUSED_CENTRAL_DATA_MANAGER_BOOTSTRAP"
+EMERGENCY_CONFIRMATION = "EMERGENCY_DEACTIVATE_BOOTSTRAP_CENTRAL_DATA_MANAGER"
 BOOTSTRAP_FIELDS = frozenset(
     {
         "action",
@@ -39,6 +40,16 @@ ROLLBACK_FIELDS = frozenset(
         "action",
         "membership_id",
         "operator_id",
+        "reason",
+        "confirmation",
+    }
+)
+EMERGENCY_FIELDS = frozenset(
+    {
+        "action",
+        "membership_id",
+        "operator_id",
+        "incident_reference",
         "reason",
         "confirmation",
     }
@@ -61,6 +72,9 @@ SAFE_ERROR_CODES = frozenset(
         "study_membership_bootstrap_closed",
         "study_membership_bootstrap_not_found",
         "study_membership_bootstrap_already_used",
+        "study_membership_emergency_invalid",
+        "study_membership_emergency_not_found",
+        "study_membership_emergency_already_inactive",
         "study_membership_repository_unavailable",
     }
 )
@@ -139,6 +153,8 @@ def execute_command(
             if action == "bootstrap"
             else ROLLBACK_FIELDS
             if action == "rollback_unused_bootstrap"
+            else EMERGENCY_FIELDS
+            if action == "emergency_deactivate_bootstrap"
             else None
         )
         if expected_fields is None or set(document) != expected_fields:
@@ -156,7 +172,10 @@ def execute_command(
                 subject_id=subject_id,
             )
             subject_id = None
-        elif document["confirmation"] != ROLLBACK_CONFIRMATION:
+        elif action == "rollback_unused_bootstrap":
+            if document["confirmation"] != ROLLBACK_CONFIRMATION:
+                raise ValueError(INPUT_ERROR)
+        elif document["confirmation"] != EMERGENCY_CONFIRMATION:
             raise ValueError(INPUT_ERROR)
 
         repository = repository_factory(dsn, environment=environment)
@@ -178,14 +197,28 @@ def execute_command(
                 "expires_at": record.membership.expires_at.isoformat(),
             }
 
-        record = repository.rollback_unused_central_data_manager_bootstrap(
+        if action == "rollback_unused_bootstrap":
+            record = repository.rollback_unused_central_data_manager_bootstrap(
+                document["membership_id"],
+                actor_username=document["operator_id"],
+                reason=document["reason"],
+                rolled_back_at=occurred_at,
+            )
+            return 0, {
+                "status": "rolled_back",
+                "membership_id": record.id,
+                "active": record.active,
+            }
+
+        record = repository.emergency_deactivate_bootstrap_central_data_manager(
             document["membership_id"],
             actor_username=document["operator_id"],
+            incident_reference=document["incident_reference"],
             reason=document["reason"],
-            rolled_back_at=occurred_at,
+            deactivated_at=occurred_at,
         )
         return 0, {
-            "status": "rolled_back",
+            "status": "deactivated",
             "membership_id": record.id,
             "active": record.active,
         }

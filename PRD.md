@@ -943,5 +943,43 @@ Acceptance criteria:
 - This command does not create a Keycloak account, grant ordinary memberships,
   mount central HTTP or make production readiness pass. Account enrolment,
   two-person witnessing and OIDC-sub mapping qualification remain operational
-  requirements. Production also remains blocked until an audited emergency
-  deactivation path exists for a mistaken binding discovered after first login.
+  requirements. The emergency containment action below addresses a mistaken
+  binding discovered after first login; governed replacement and routine
+  membership administration remain production blockers.
+
+## 2026-08-24 emergency deactivation after first central login
+
+If the first Central Data Manager was bound to the wrong qualified OIDC
+principal and a Companion Session has already been issued, bootstrap rollback
+must stay closed. The project needs one narrower containment action that removes
+access immediately without deleting session or audit evidence and without
+silently authorizing a replacement administrator.
+
+Acceptance criteria:
+
+- The existing operator JSON-stdin command accepts one exact
+  `emergency_deactivate_bootstrap` action with membership ID, caller-supplied
+  operator audit label, incident reference, reason and a fixed emergency
+  confirmation phrase. It accepts no subject, Principal ID, username, bearer or
+  database connection argument.
+- The repository permits the action only for an active, centreless
+  `central_data_manager` membership whose original grant audit event has
+  `bootstrap=true`. Unknown, normal, site-scoped and already inactive
+  memberships fail with bounded codes and no new audit event.
+- Membership deactivation metadata and one
+  `study_membership_emergency_deactivated` event commit atomically under the
+  existing audit advisory lock. The event records only membership/provider
+  aliases, fixed role, bounded incident reference and controlled reason.
+- Existing Companion Session rows and their audit history are preserved. After
+  commit, every bearer linked to the inactive membership fails through the
+  normal session-resolution join; no token value or digest is returned.
+- Emergency deactivation never creates the dedicated unused-bootstrap rollback
+  marker and therefore never reopens bootstrap. Replacement central authority
+  requires a later dual-controlled membership lifecycle, not this command.
+- `operator_id`, `incident_reference` and `reason` are controlled operational
+  labels, not authentication or proof of two-person approval. They must not
+  contain direct identity, bearer, credential or clinical material; approval
+  evidence remains in the external incident/change record.
+- Success returns only `status=deactivated`, membership ID and `active=false`.
+  The action does not mount central HTTP, alter Centre Lite or make production
+  readiness pass.

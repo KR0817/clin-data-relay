@@ -81,9 +81,11 @@ Companion Session. Use the exact contract in `docs/api-contract.md`; never
 assume an identity-provider administration ID equals that client-specific
 subject. The command does not verify issuer/client/subject-mapper evidence or
 authenticate the caller-supplied operator label; those are external
-qualification gates. This bootstrap does not mount central HTTP or establish
-production qualification, and a post-login emergency deactivation path remains
-a release blocker.
+qualification gates. The same operator command can contain a mistaken
+bootstrap binding found after first login by deactivating only that membership,
+preserving session evidence and keeping bootstrap closed. It does not provision
+a replacement administrator, mount central HTTP or establish production
+qualification; routine membership administration remains a release blocker.
 
 The automated suite covers the candidate, PDF/image intake, privacy, dictionary, quality, transfer and portable-runtime boundaries. Transfer creation accepts an optional bounded `Idempotency-Key`; without one, the server derives a deterministic candidate/package/target key. An exact retry returns the original transfer with HTTP 200 and `replayed: true`, while conflicting reuse returns HTTP 409. A historical simulation request can never be submitted through a later live adapter; a new target-specific request must be created instead. The transfer and reconciliation endpoints are:
 

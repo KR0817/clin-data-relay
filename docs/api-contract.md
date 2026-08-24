@@ -584,12 +584,32 @@ characters and may contain no control characters. Each action rejects missing,
 additional or duplicate JSON keys, naive timestamps and input larger than
 8 KiB.
 
+Emergency deactivation stdin is one exact JSON object:
+
+```json
+{
+  "action": "emergency_deactivate_bootstrap",
+  "membership_id": "00000000-0000-0000-0000-000000000000",
+  "operator_id": "operator:approved-admin",
+  "incident_reference": "INC-2026-0042",
+  "reason": "Contain access after a witnessed incorrect identity binding.",
+  "confirmation": "EMERGENCY_DEACTIVATE_BOOTSTRAP_CENTRAL_DATA_MANAGER"
+}
+```
+
+`incident_reference` is trimmed to 3–200 printable characters and may contain
+no control characters. The other fields retain the rollback bounds. The
+operator label, incident reference and reason are external controlled labels;
+the command does not authenticate them or prove dual approval, and they must
+not contain identity, bearer, credential or clinical material.
+
 The command accepts no subject, DSN, provider alias or operator argument on the
 command line. Bootstrap success returns only `status=granted`, membership ID,
 `role=central_data_manager`, `centre_code=null`, `valid_from` and `expires_at`.
 Rollback success returns only `status=rolled_back`, membership ID and
-`active=false`. Failures return `status=error` plus one stable code. The raw
-subject and Principal ID are never output.
+`active=false`. Emergency success returns only `status=deactivated`, membership
+ID and `active=false`. Failures return `status=error` plus one stable code. The
+raw subject, Principal ID, username, bearer and session digest are never output.
 
 The command requires `COMPANION_POSTGRES_DSN`, `COMPANION_ENV` and
 `COMPANION_OIDC_PROVIDER_ID`. The subject must be the exact OIDC `sub` verified
@@ -607,8 +627,16 @@ membership deactivation does not. Any Companion Session history permanently
 closes bootstrap recovery. A `granted` response proves only the atomic
 membership/audit write: identity-provider readiness and central clinical-data
 readiness remain false, central HTTP remains unmounted, and production remains
-`BLOCK`. An audited emergency membership-deactivation path for mistakes found
-after first login is still required.
+`BLOCK`. The emergency action defined above provides audited containment for mistakes
+found after first login, but it does not provide routine membership lifecycle
+administration or replacement authority.
+
+Emergency deactivation accepts only an active bootstrap-created Central Data
+Manager membership. It atomically deactivates the membership and appends a
+dedicated audit event while preserving existing session rows. Those bearers
+immediately fail because session resolution requires an active membership.
+This action does not create the unused-bootstrap rollback marker, cannot reopen
+bootstrap and cannot provision a replacement administrator.
 
 This slice adds no migration, but the command calls the standard repository
 prepare step before changing membership state. It can therefore apply older
@@ -623,6 +651,9 @@ Command-local stable error codes are:
 - `study_membership_bootstrap_closed`
 - `study_membership_bootstrap_not_found`
 - `study_membership_bootstrap_already_used`
+- `study_membership_emergency_invalid`
+- `study_membership_emergency_not_found`
+- `study_membership_emergency_already_inactive`
 - `study_membership_actor_invalid`
 - `study_membership_reason_invalid`
 - `study_membership_time_invalid`

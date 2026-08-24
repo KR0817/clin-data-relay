@@ -829,8 +829,32 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - This slice adds no migration. The operator command still invokes the normal
   repository prepare step and can apply previously unapplied versioned
   migrations; it must run under the same backup and change-control procedure.
-  Central HTTP stays unmounted and Centre Lite is unchanged. A post-login
-  emergency membership-deactivation command/API remains a production blocker.
+  Central HTTP stays unmounted and Centre Lite is unchanged. The emergency
+  containment action below does not supply routine membership administration
+  or replacement authority, which remain production blockers.
+
+## Emergency deactivation of a used bootstrap membership
+
+- `PostgresStudyMembershipRepository.emergency_deactivate_bootstrap_central_data_manager()`
+  validates actor, reason, incident reference, membership ID and server time
+  before opening PostgreSQL.
+- Under `lock_audit_chain()`, it row-locks the target and requires centre
+  `None`, role `central_data_manager`, active state and the original
+  `study_membership_granted` audit detail `bootstrap=true`. It does not accept a
+  normal CDM or any site membership.
+- The same transaction changes the membership to inactive and appends
+  `study_membership_emergency_deactivated`. Existing session rows remain
+  immutable operational evidence; `resolve_session()` already joins the active
+  membership, so access fails immediately after the deactivation commit.
+- The emergency event is distinct from
+  `study_membership_bootstrap_rolled_back`. It never restores bootstrap
+  eligibility, even when no session row exists.
+- `scripts/bootstrap_central_membership.py` reuses its strict 8 KiB JSON parser,
+  environment-owned PostgreSQL configuration, bounded error allowlist and
+  redacted output for the new action. No schema or dependency is added; the
+  normal repository prepare/change-control caveat remains.
+- The command is containment only. It does not provision a replacement CDM,
+  revoke or delete session rows, mount an HTTP route or claim dual approval.
 
 ## Windows host preflight
 

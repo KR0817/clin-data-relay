@@ -1,6 +1,6 @@
 # ADR 0019: Bootstrap only the first central membership out of band
 
-**Status:** Accepted for implementation
+**Status:** Implemented; post-login containment extended by ADR 0020
 **Date:** 2026-08-24
 
 ## Context
@@ -48,9 +48,10 @@ rollback event reopens bootstrap; generic membership deactivation does not.
 - Routine membership administration remains a later CDM-authenticated API.
   Central-role lifecycle remains an operator-governed action until a real
   dual-approval design exists.
-- A mistaken binding discovered after any Companion Session cannot be repaired
-  by this bootstrap command. Central production therefore remains blocked until
-  an audited emergency membership-deactivation path is delivered.
+- A mistaken binding discovered after any Companion Session cannot use the
+  unused-bootstrap rollback. ADR 0020 adds audited emergency deactivation for
+  containment only; it does not reopen bootstrap or provision replacement
+  authority.
 - An invitation-token flow is deferred. It would reduce operator subject
   handling but would add a transferable authorization secret, new schema and
   issuance/revocation/claim lifecycle before there is an active administrator.

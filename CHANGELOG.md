@@ -75,6 +75,11 @@ This file is not a substitute for a Git history or an approved project license.
   exact qualified-client OIDC subject, atomically admits one bootstrap grant,
   and never persists or returns the raw subject. An audited correction is
   available only before any Companion Session history exists.
+- Added an operator-only emergency containment action for a mistaken
+  bootstrap-created Central Data Manager after login. It deactivates only the
+  referenced membership, appends a dedicated incident audit event, preserves
+  session evidence, invalidates linked bearers through the active-membership
+  check and never reopens bootstrap or creates replacement authority.
 - Study Membership grants now reject an expiry at or before grant time, and
   deactivation timestamps cannot predate the persisted grant.
 - Production readiness now requires an actually ready identity adapter as well
@@ -89,7 +94,7 @@ This file is not a substitute for a Git history or an approved project license.
 - Qualified project-owned or contract-approved OIDC verification, routine
   membership administration, HTTP composition and the remaining central
   repositories.
-- Verification passed Python compilation and 274 tests with twelve
+- Verification passed Python compilation and 277 tests with thirteen
   PostgreSQL/external-service cases skipped locally. GitHub Actions run
   `32663416538` passed both the Windows source-quality job and the PostgreSQL 16
   concurrent bootstrap contract. The upstream Starlette/httpx deprecation

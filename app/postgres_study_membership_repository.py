@@ -61,6 +61,17 @@ def _validated_reason(value: object) -> str:
     return reason
 
 
+def _validated_incident_reference(value: object) -> str:
+    if not isinstance(value, str):
+        raise StudyMembershipRepositoryError("study_membership_emergency_invalid")
+    reference = value.strip()
+    if not 3 <= len(reference) <= 200 or any(
+        ord(character) < 32 for character in reference
+    ):
+        raise StudyMembershipRepositoryError("study_membership_emergency_invalid")
+    return reference
+
+
 def _validated_time(value: object, error_code: str) -> datetime:
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() is None:
         raise StudyMembershipRepositoryError(error_code)
@@ -447,6 +458,98 @@ class PostgresStudyMembershipRepository:
                         "membership_id": membership_id,
                         "provider_id": str(existing["provider_id"]),
                         "role": "central_data_manager",
+                        "reason": bounded_reason,
+                    },
+                )
+                return _record(row)
+        except StudyMembershipRepositoryError:
+            raise
+        except (psycopg.Error, InstitutionalIdentityError, TypeError, ValueError):
+            raise StudyMembershipRepositoryError(
+                "study_membership_repository_unavailable"
+            ) from None
+
+    def emergency_deactivate_bootstrap_central_data_manager(
+        self,
+        membership_id: str,
+        *,
+        actor_username: str,
+        incident_reference: str,
+        reason: str,
+        deactivated_at: datetime,
+    ) -> StudyMembershipRecord:
+        """Contain a used bootstrap grant without deleting session evidence."""
+        actor = _validated_actor(actor_username)
+        reference = _validated_incident_reference(incident_reference)
+        bounded_reason = _validated_reason(reason)
+        occurred_at = _validated_time(deactivated_at, "study_membership_time_invalid")
+        if not isinstance(membership_id, str) or not 1 <= len(membership_id) <= 200:
+            raise StudyMembershipRepositoryError("study_membership_emergency_invalid")
+        try:
+            with self._bootstrap._open_connection() as connection:
+                lock_audit_chain(connection)
+                existing = connection.execute(
+                    f"""
+                    SELECT {_MEMBERSHIP_COLUMNS}
+                    FROM study_memberships
+                    WHERE id = %s
+                    FOR UPDATE
+                    """,
+                    (membership_id,),
+                ).fetchone()
+                if existing is None:
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_emergency_not_found"
+                    )
+                bootstrap_audit = connection.execute(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM audit_events
+                        WHERE event_type = 'study_membership_granted'
+                          AND details_json ->> 'membership_id' = %s
+                          AND details_json ->> 'bootstrap' = 'true'
+                    ) AS grant_present
+                    """,
+                    (membership_id,),
+                ).fetchone()
+                if (
+                    str(existing["role"]) != "central_data_manager"
+                    or existing["centre_code"] is not None
+                    or not bool(bootstrap_audit["grant_present"])
+                ):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_emergency_invalid"
+                    )
+                if not bool(existing["active"]):
+                    raise StudyMembershipRepositoryError(
+                        "study_membership_emergency_already_inactive"
+                    )
+                if occurred_at < existing["created_at"]:
+                    raise StudyMembershipRepositoryError("study_membership_time_invalid")
+                row = connection.execute(
+                    f"""
+                    UPDATE study_memberships
+                    SET active = FALSE, deactivated_by = %s, deactivated_at = %s,
+                        deactivation_reason = %s
+                    WHERE id = %s
+                    RETURNING {_MEMBERSHIP_COLUMNS}
+                    """,
+                    (actor, occurred_at, bounded_reason, membership_id),
+                ).fetchone()
+                append_audit_event(
+                    connection,
+                    event_id=str(uuid4()),
+                    candidate_id=None,
+                    centre_code="CENTRAL",
+                    event_type="study_membership_emergency_deactivated",
+                    actor_username=actor,
+                    created_at=occurred_at,
+                    details={
+                        "membership_id": membership_id,
+                        "provider_id": str(existing["provider_id"]),
+                        "role": "central_data_manager",
+                        "incident_reference": reference,
                         "reason": bounded_reason,
                     },
                 )

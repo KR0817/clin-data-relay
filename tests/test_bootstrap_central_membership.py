@@ -39,6 +39,7 @@ class FakeMembershipRepository:
     def __init__(self) -> None:
         self.bootstrap_arguments: dict[str, object] | None = None
         self.rollback_arguments: dict[str, object] | None = None
+        self.emergency_arguments: dict[str, object] | None = None
 
     def prepare(self) -> None:
         return None
@@ -106,6 +107,40 @@ class FakeMembershipRepository:
             created_at=FIXED_NOW - timedelta(minutes=1),
             deactivated_by=actor_username,
             deactivated_at=rolled_back_at,
+            deactivation_reason=reason,
+        )
+
+    def emergency_deactivate_bootstrap_central_data_manager(
+        self,
+        membership_id: str,
+        *,
+        actor_username: str,
+        incident_reference: str,
+        reason: str,
+        deactivated_at: datetime,
+    ) -> StudyMembershipRecord:
+        self.emergency_arguments = {
+            "membership_id": membership_id,
+            "actor_username": actor_username,
+            "incident_reference": incident_reference,
+            "reason": reason,
+            "deactivated_at": deactivated_at,
+        }
+        return StudyMembershipRecord(
+            id=membership_id,
+            membership=StudyMembership(
+                provider_id=PROVIDER_ID,
+                principal_id="institutional:" + "b" * 64,
+                role="central_data_manager",
+                centre_code=None,
+                active=False,
+                valid_from=FIXED_NOW - timedelta(minutes=1),
+                expires_at=FIXED_EXPIRY,
+            ),
+            created_by=OPERATOR_ID,
+            created_at=FIXED_NOW - timedelta(minutes=1),
+            deactivated_by=actor_username,
+            deactivated_at=deactivated_at,
             deactivation_reason=reason,
         )
 
@@ -234,6 +269,48 @@ def test_rollback_command_returns_no_identity_or_connection_material() -> None:
     assert "principal_id" not in response
 
 
+def test_emergency_command_deactivates_only_by_membership_reference() -> None:
+    repository = FakeMembershipRepository()
+    membership_id = "membership-bootstrap-001"
+    reason = "Contain access after a witnessed incorrect identity binding."
+    raw_input = json.dumps(
+        {
+            "action": "emergency_deactivate_bootstrap",
+            "membership_id": membership_id,
+            "operator_id": OPERATOR_ID,
+            "incident_reference": "INC-2026-0042",
+            "reason": reason,
+            "confirmation": (
+                "EMERGENCY_DEACTIVATE_BOOTSTRAP_CENTRAL_DATA_MANAGER"
+            ),
+        }
+    )
+
+    exit_code, response = execute_command(
+        raw_input,
+        environ=command_environment(),
+        repository_factory=repository_factory(repository),
+        now=FIXED_NOW,
+    )
+
+    assert exit_code == 0
+    assert response == {
+        "status": "deactivated",
+        "membership_id": membership_id,
+        "active": False,
+    }
+    assert repository.emergency_arguments == {
+        "membership_id": membership_id,
+        "actor_username": OPERATOR_ID,
+        "incident_reference": "INC-2026-0042",
+        "reason": reason,
+        "deactivated_at": FIXED_NOW,
+    }
+    assert PROVIDER_ID not in repr(response)
+    assert TEST_DSN not in repr(response)
+    assert "principal_id" not in response
+
+
 @pytest.mark.parametrize(
     "payload",
     [
@@ -271,6 +348,23 @@ def test_rollback_command_returns_no_identity_or_connection_material() -> None:
             "operator_id": OPERATOR_ID,
             "reason": "Correcting the witnessed pre-login subject mapping.",
             "confirmation": "yes",
+        },
+        {
+            "action": "emergency_deactivate_bootstrap",
+            "membership_id": "membership-bootstrap-001",
+            "operator_id": OPERATOR_ID,
+            "incident_reference": "INC-2026-0042",
+            "reason": "Contain access after an incorrect identity binding.",
+            "confirmation": "yes",
+        },
+        {
+            "action": "emergency_deactivate_bootstrap",
+            "membership_id": "membership-bootstrap-001",
+            "operator_id": OPERATOR_ID,
+            "reason": "Contain access after an incorrect identity binding.",
+            "confirmation": (
+                "EMERGENCY_DEACTIVATE_BOOTSTRAP_CENTRAL_DATA_MANAGER"
+            ),
         },
     ],
 )
@@ -676,3 +770,125 @@ def test_any_session_history_closes_bootstrap_recovery(
             granted_at=now + timedelta(seconds=3),
             expires_at=now + timedelta(days=30),
         )
+
+
+@pytest.mark.postgres
+def test_emergency_deactivation_invalidates_session_without_reopening_bootstrap(
+    postgres_bootstrap_dsn: str,
+) -> None:
+    membership_repository = PostgresStudyMembershipRepository(
+        postgres_bootstrap_dsn,
+        environment="test",
+    )
+    session_repository = PostgresInstitutionalSessionRepository(
+        postgres_bootstrap_dsn,
+        environment="test",
+    )
+    membership_repository.prepare()
+    now = datetime.now(UTC).replace(microsecond=0)
+    membership = membership_repository.bootstrap_first_central_data_manager(
+        PROVIDER_ID,
+        "institutional:" + "a" * 64,
+        actor_username=OPERATOR_ID,
+        granted_at=now,
+        expires_at=now + timedelta(days=30),
+    )
+    session = session_repository.create_session_from_link(
+        VerifiedPrincipalLink(
+            provider_id=PROVIDER_ID,
+            principal_id=membership.membership.principal_id,
+            username="mistaken-central-manager@example.test",
+            authenticated_at=now,
+            mfa_authenticated=True,
+        ),
+        issued_at=now + timedelta(seconds=1),
+    )
+    audit_before = membership_repository.verify_audit_chain().head_hash
+
+    deactivated = (
+        membership_repository.emergency_deactivate_bootstrap_central_data_manager(
+            membership.id,
+            actor_username=OPERATOR_ID,
+            incident_reference="INC-2026-0042",
+            reason="Contain access after a witnessed incorrect identity binding.",
+            deactivated_at=now + timedelta(seconds=2),
+        )
+    )
+    audit_after = membership_repository.verify_audit_chain().head_hash
+
+    assert deactivated.active is False
+    assert audit_after != audit_before
+    assert session_repository.resolve_session(
+        session.token,
+        now=now + timedelta(seconds=3),
+    ) is None
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_emergency_already_inactive$",
+    ):
+        membership_repository.emergency_deactivate_bootstrap_central_data_manager(
+            membership.id,
+            actor_username=OPERATOR_ID,
+            incident_reference="INC-2026-0042",
+            reason="A repeated action must not append another event.",
+            deactivated_at=now + timedelta(seconds=4),
+        )
+    assert membership_repository.verify_audit_chain().head_hash == audit_after
+    assert session_repository.revoke_session(
+        session.token,
+        revoked_at=now + timedelta(seconds=5),
+    ) is True
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_bootstrap_closed$",
+    ):
+        membership_repository.bootstrap_first_central_data_manager(
+            PROVIDER_ID,
+            "institutional:" + "b" * 64,
+            actor_username=OPERATOR_ID,
+            granted_at=now + timedelta(seconds=6),
+            expires_at=now + timedelta(days=30),
+        )
+
+    normal = membership_repository.grant(
+        StudyMembership(
+            provider_id=PROVIDER_ID,
+            principal_id="institutional:" + "c" * 64,
+            role="central_data_manager",
+            centre_code=None,
+            active=True,
+            valid_from=now + timedelta(seconds=7),
+            expires_at=now + timedelta(days=30),
+        ),
+        actor_username=OPERATOR_ID,
+        granted_at=now + timedelta(seconds=7),
+    )
+    audit_before_invalid_targets = (
+        membership_repository.verify_audit_chain().head_hash
+    )
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_emergency_invalid$",
+    ):
+        membership_repository.emergency_deactivate_bootstrap_central_data_manager(
+            normal.id,
+            actor_username=OPERATOR_ID,
+            incident_reference="INC-2026-0043",
+            reason="Normal memberships are outside the emergency bootstrap path.",
+            deactivated_at=now + timedelta(seconds=8),
+        )
+    with pytest.raises(
+        StudyMembershipRepositoryError,
+        match="^study_membership_emergency_not_found$",
+    ):
+        membership_repository.emergency_deactivate_bootstrap_central_data_manager(
+            str(uuid4()),
+            actor_username=OPERATOR_ID,
+            incident_reference="INC-2026-0044",
+            reason="Unknown memberships must fail without an audit mutation.",
+            deactivated_at=now + timedelta(seconds=9),
+        )
+    assert (
+        membership_repository.verify_audit_chain().head_hash
+        == audit_before_invalid_targets
+    )

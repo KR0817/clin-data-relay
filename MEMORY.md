@@ -577,3 +577,25 @@
 - Local verification passed 274 tests with twelve PostgreSQL/external-service
   cases skipped. GitHub Actions run `32663416538` passed the Windows quality job
   and the isolated PostgreSQL 16 concurrent bootstrap/session contract.
+
+## 2026-08-24 emergency containment of a used bootstrap membership
+
+- `scripts/bootstrap_central_membership.py` now accepts the exact
+  `emergency_deactivate_bootstrap` JSON-stdin action with a fixed confirmation,
+  bounded incident reference and reason. It returns only membership reference
+  and inactive status; no identity, bearer or connection material is emitted.
+- `PostgresStudyMembershipRepository.emergency_deactivate_bootstrap_central_data_manager()`
+  accepts only an active bootstrap-marked centreless Central Data Manager. The
+  membership update and `study_membership_emergency_deactivated` audit event
+  commit atomically under the shared audit lock.
+- Existing session rows are preserved. Session resolution already joins an
+  active Study Membership, so linked bearers fail immediately after commit.
+  Repeated, normal, site-scoped, unknown and inactive targets fail closed and do
+  not append another event.
+- Emergency containment never creates the unused-bootstrap rollback marker and
+  never provisions replacement authority. Routine dual-controlled membership
+  administration, qualified identity operation and central HTTP composition
+  remain production blockers.
+- Local verification passed 277 tests with thirteen PostgreSQL/external-service
+  cases skipped, plus Python compilation, JavaScript syntax, lock-file and diff
+  checks. The real PostgreSQL contract remains covered by the quality workflow.
