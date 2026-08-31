@@ -27,18 +27,20 @@ class KimiKeyPayload(BaseModel):
 def kimi_status_payload(kimi_client: KimiClient) -> dict[str, object]:
     """Return only the non-secret Kimi capability state used by HTTP responses."""
 
+    settings = kimi_client.settings
     if getattr(kimi_client, "ready", False):
         status = "ready"
     elif not kimi_client.enabled:
         status = "disabled"
-    elif not kimi_client.settings.api_key:
+    elif getattr(settings, "api_key_required", True) and not settings.api_key:
         status = "key_required"
     else:
         status = "misconfigured"
     return {
         "configured": status == "ready",
         "status": status,
-        "model": kimi_client.settings.model,
+        "provider": getattr(settings, "provider", "kimi"),
+        "model": settings.model,
     }
 
 
@@ -61,7 +63,9 @@ def create_kimi_settings_router(
             raise HTTPException(status_code=409, detail="centre_kimi_configuration_unavailable")
         if user.username != centre_profile.username or user.centre_code != centre_profile.centre_code:
             raise HTTPException(status_code=403, detail="centre_kimi_configuration_forbidden")
-        configured_path = os.getenv("KIMI_API_KEY_FILE", "").strip()
+        configured_path = (
+            os.getenv("MODEL_API_KEY_FILE") or os.getenv("KIMI_API_KEY_FILE", "")
+        ).strip()
         if not configured_path:
             raise HTTPException(status_code=409, detail="centre_kimi_configuration_unavailable")
         return Path(configured_path)
@@ -93,7 +97,10 @@ def create_kimi_settings_router(
                 centre_code=user.centre_code or "CENTRAL",
                 event_type="kimi_credential_configured",
                 actor_username=user.username,
-                details={"model": kimi_client.settings.model},
+                details={
+                    "provider": kimi_client.settings.provider,
+                    "model": kimi_client.settings.model,
+                },
             )
         return kimi_status_payload(kimi_client)
 

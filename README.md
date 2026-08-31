@@ -64,6 +64,12 @@ Relay separates the convenience layer from the record of authority:
 - optional PostgreSQL repository contracts and project-owned OIDC boundaries
   for a future central deployment.
 
+Kimi remains the default model provider. The same guarded multimodal transport
+can target an operator-approved OpenAI-compatible endpoint through the
+[model-provider configuration](docs/model-provider-configuration.md). Custom
+URLs are process-configured and exact-allow-listed; they cannot be selected in
+the browser.
+
 These are implementation and synthetic-test claims, not clinical-validation
 claims. See [testing seams](docs/testing-seams.md) and the
 [go-live blockers](docs/release-governance-blockers-2026-08.md).
@@ -174,6 +180,9 @@ defines independent gold annotation, a locked synthetic test set, OCR-only
 versus OCR-plus-model comparison, error taxonomy and report-clustered
 uncertainty. No benchmark result is claimed until the frozen dataset and
 evidence package exist.
+The [executable metric-engine example](benchmarks/synthetic-v0.1/README.md)
+contains deliberately constructed synthetic predictions and must not be read as
+OCR or model performance.
 
 Development uses AI coding tools under explicit human control. The
 [AI-assisted development disclosure](docs/development/ai-assisted-development.md)

@@ -1,6 +1,13 @@
 # Extraction benchmark protocol v0.1
 
-**Status:** protocol only; no benchmark result has been generated.
+**Status:** protocol and metric engine implemented; no extractor benchmark
+result has been generated.
+
+The versioned JSONL contracts, report-clustered scorer and deliberately
+constructed demonstration fixtures are documented in
+[`benchmarks/synthetic-v0.1/README.md`](../../benchmarks/synthetic-v0.1/README.md).
+The demonstration proves only that the metric engine detects known errors. It
+is not part of the development or locked test set.
 
 ## Objective
 
@@ -124,3 +131,19 @@ human-adjudicated evidence. Do not claim clinical validation, site
 generalization or patient benefit from a synthetic benchmark. Any later real
 data evaluation requires its own protocol, approvals, access controls and
 statistical design.
+
+## Frozen metric-engine command
+
+```text
+python scripts/evaluate_extraction_benchmark.py \
+  --gold GOLD.jsonl \
+  --predictions local_ocr=LOCAL.jsonl \
+  --predictions local_ocr_plus_model=ASSISTED.jsonl \
+  --output-dir NEW_EVALUATION_DIRECTORY \
+  --bootstrap-samples 2000 \
+  --seed 20260831
+```
+
+The command creates a value-free error CSV, aggregate summary and input/output
+hash manifest. It refuses to overwrite an existing directory. The initial
+normalization version performs no unit inference or unit conversion.

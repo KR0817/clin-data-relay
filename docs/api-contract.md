@@ -732,3 +732,72 @@ Open-source availability does not establish clinical validation, institutional
 approval, identity qualification or production readiness. The Authority EDC,
 candidate-only model output, human-review and fail-closed production contracts
 remain unchanged.
+
+### Synthetic benchmark command contract
+
+The executable benchmark is a local command and artifact contract, not an HTTP
+endpoint. `scripts/evaluate_extraction_benchmark.py` accepts:
+
+```text
+--gold PATH
+--predictions ARM=PATH  # repeatable
+--output-dir NEW_PATH
+--bootstrap-samples INTEGER
+--seed INTEGER
+```
+
+Gold input is UTF-8 JSONL with schema version `clin-data-relay-gold-v1`.
+Prediction input is UTF-8 JSONL with schema version
+`clin-data-relay-prediction-v1`; every row's `arm` must equal the command-line
+alias. The command rejects a missing gold report, an unknown prediction report,
+duplicate report/visit/arm rows, duplicate field codes and an output directory
+that already exists.
+
+Gold rows include `privacy_gate_expected=allow|block`; prediction rows include
+`privacy_gate_decision=allow|block`. A blocked row cannot contain fields.
+Prediction `review_outcome` is either `null` or exact non-negative
+`{edits,rejects,review_time_ms}` counts. Missing review observation is never
+converted to zero. A bootstrap confidence bound is `null` when its metric has
+no applicable denominator.
+
+On success the command creates exactly one new directory with:
+
+- `summary.json`: schema `clin-data-relay-benchmark-summary-v1`, frozen
+  normalization version, aggregate counts/rates, report-clustered 95%
+  intervals, availability totals and optional paired arm deltas;
+- `errors.csv`: value-free field-level error classifications; and
+- `manifest.json`: schema `clin-data-relay-benchmark-package-v1`, SHA-256 and
+  byte length for every input and output, command parameters and creation time.
+
+The command writes no source bytes, image, PDF, OCR text, field value,
+credential, endpoint, token, provider response or raw provider error. Existing
+`POST /api/extraction-evaluations` behavior and the compatibility
+`scripts/evaluate_ocr.py` command are unchanged.
+
+### Model provider compatibility contract
+
+The existing `/api/settings/kimi` path remains backward compatible and still
+accepts only `{ "key": "..." }`. Its redacted response becomes:
+
+```json
+{
+  "configured": true,
+  "status": "ready",
+  "provider": "kimi",
+  "model": "kimi-k3"
+}
+```
+
+`GET /api/health` retains `kimi_integration`, `kimi_default_enabled` and
+`kimi_model` for existing clients and adds `model_provider`. These values are
+configuration metadata only; no URL, allow-list, credential path or key is
+returned. Provider/base/model/allow-list configuration is process-owned and
+cannot be changed through HTTP. The key route only replaces the credential for
+that preconfigured provider.
+
+The default provider remains Kimi. A custom OpenAI-compatible endpoint is not
+ready unless its normalized base URL is in the exact process allow-list.
+Unauthenticated transport is accepted only for a loopback endpoint. Provider
+generalization does not authorize transmission: the confirmed de-identified
+derivative gate, dictionary restriction, candidate-only output and human review
+remain mandatory.

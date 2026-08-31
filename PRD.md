@@ -1090,3 +1090,58 @@ Acceptance criteria:
 - Preserve every existing human-review, centre-isolation, Authority EDC,
   external-model and production BLOCK control. No real participant data is
   introduced into documentation, tests, screenshots, releases or benchmarks.
+
+## 2026-08-31 executable synthetic extraction benchmark
+
+The preregistered benchmark protocol needs a runnable, reviewable measurement
+path before any provider-generalization change can be assessed. The first
+implementation is a scoring and artifact-packaging framework, not a performance
+claim and not a clinical data endpoint.
+
+Acceptance criteria:
+
+- Define versioned JSONL contracts for independently adjudicated gold records
+  and per-arm predictions. Reject unknown versions, duplicate report/arm rows,
+  duplicate field instances, missing required keys and non-finite operational
+  metrics.
+- Score strict field tuples, numeric-normalized tuples, field detection,
+  missing and unsupported values, unit/comparator/reference-interval errors,
+  report-level exact matches and bounded operational outcomes.
+- Calculate deterministic report-clustered bootstrap 95% confidence intervals
+  and paired strict-accuracy deltas when two arms cover the same report set.
+- Classify every false positive, false negative, duplicate or incorrect field
+  under the frozen protocol taxonomy without storing source images, OCR text,
+  credentials or provider error bodies in the evaluation output.
+- Write a new immutable evaluation directory containing an aggregate JSON
+  report, a value-free error-detail CSV and an input-hash manifest. Refuse to
+  overwrite an existing package.
+- Include only clearly labelled synthetic demonstration fixtures. Their output
+  validates the metric engine and must never be presented as OCR, Kimi or
+  clinical performance.
+- Keep the existing single-pair `scripts/evaluate_ocr.py` interface working.
+  Add no runtime dependency, database table or HTTP endpoint.
+
+## 2026-08-31 allow-listed OpenAI-compatible model transport
+
+The optional model-assistance boundary should be vendor-neutral enough to test
+another approved OpenAI-compatible endpoint without forking the extraction
+workflow. Kimi remains the default configured provider and public product term;
+this tranche changes transport configuration, not the review or privacy model.
+
+Acceptance criteria:
+
+- Move the multimodal chat-completions transport into a provider-neutral module
+  while retaining `app.kimi` compatibility imports and existing Kimi defaults.
+- Support generic environment names for provider alias, enabled state, base URL,
+  model, credential file, timeout, retries and exact endpoint allow-list. Legacy
+  `KIMI_*` names remain fallback inputs for existing packages.
+- Built-in Kimi endpoints remain allow-listed by default. Every other endpoint
+  must appear in an operator-controlled exact allow-list; remote endpoints must
+  use HTTPS and unauthenticated mode is permitted only for loopback services.
+- The browser may save a key for the already configured provider but may not
+  choose an arbitrary URL, disable TLS, alter the allow-list or return a key.
+- Preserve the same de-identified derivative, field dictionary, strict response
+  schema, bounded retry, candidate-only and human-review controls.
+- Expose only provider alias and model in redacted settings/health/audit
+  metadata. Never expose a base URL, key, credential path or provider response.
+- Add no third-party SDK and make no live provider call during tests.

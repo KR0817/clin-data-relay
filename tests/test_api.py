@@ -3145,11 +3145,15 @@ def test_health_reports_when_kimi_is_ready_for_confirmed_deidentified_derivative
 
     assert health.status_code == 200
     assert health.json()["kimi_integration"] == "ready"
+    assert health.json()["model_provider"] == "kimi"
     assert health.json()["kimi_model"] == "kimi-k3"
     assert health.json()["kimi_data_boundary"] == "confirmed_deidentified_derivative_only"
 
 
 def test_health_reports_key_required_for_the_default_kimi_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("MODEL_ENABLED", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY_FILE", raising=False)
     monkeypatch.delenv("KIMI_ENABLED", raising=False)
     monkeypatch.delenv("KIMI_API_KEY", raising=False)
     monkeypatch.setenv("KIMI_API_KEY_FILE", str(tmp_path / "missing-kimi-key.txt"))

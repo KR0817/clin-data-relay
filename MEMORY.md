@@ -680,3 +680,33 @@
   Remotion lint/TypeScript, zero production npm audit findings, Python
   compilation, JavaScript syntax, lock validation, CFF parsing, desktop/mobile
   UI checks and the 120-second rendered demo frame review.
+
+## 2026-08-31 executable benchmark and model-provider boundary
+
+- `app/benchmark_evaluation.py` and
+  `scripts/evaluate_extraction_benchmark.py` implement the versioned synthetic
+  benchmark contract. They validate gold/prediction JSONL, score strict and
+  numeric-normalized fields, privacy-gate false negatives, optional observed
+  review burden and availability, and use deterministic report-clustered
+  bootstrap intervals plus paired strict-accuracy deltas.
+- Evaluation output is a new immutable directory containing aggregate
+  `summary.json`, a value-free `errors.csv` and a SHA-256 manifest. Existing
+  output directories are never overwritten. The tracked three-record fixture
+  is explicitly `DEMONSTRATION_ONLY`; its constructed arm difference is a
+  metric-engine self-test, not OCR, model or clinical performance.
+- `app/model_provider.py` owns the allow-listed OpenAI-compatible multimodal
+  transport. Kimi remains the default provider and `app/kimi.py` preserves
+  historical imports, route names, health fields and package behavior.
+  Generic `MODEL_*` configuration takes precedence over legacy `KIMI_*`
+  variables. Non-Kimi endpoints require an exact operator allow-list; remote
+  endpoints require HTTPS and keyless mode is confined to exact-allow-listed
+  loopback URLs.
+- The browser can replace only the credential file selected by the process. It
+  cannot set provider, endpoint, model or allow-list. Health/settings/audit add
+  provider alias and model only; no endpoint, credential path, key or provider
+  response is returned or persisted.
+- Local verification passed 290 tests with thirteen PostgreSQL/external-service
+  cases skipped, plus the public-release gate, Python compilation, JavaScript
+  syntax, lock validation and diff checks. No live model request was made. The
+  frozen 30/100-report benchmark dataset, independent annotation/adjudication,
+  actual extraction results and Zenodo DOI remain future governed work.

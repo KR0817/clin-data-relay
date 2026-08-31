@@ -51,6 +51,10 @@ LibreClinica 始终是权威 EDC，本程序绝不直接写 LibreClinica 数据�
 - 不依赖 Docker 的 Windows Lite 本地识别/审核/导出包；
 - 面向未来中央部署的 PostgreSQL 合同与项目自管 OIDC 边界。
 
+Kimi 仍是默认模型服务。经负责人批准后，同一条受控多模态传输边界也可配置为
+[OpenAI 兼容端点](docs/model-provider-configuration.md)。自定义地址必须由进程配置并精确
+加入允许列表，浏览器不能修改服务地址。
+
 上述是实现与合成测试声明，不是临床验证声明。详见
 [测试边界](docs/testing-seams.md)和[上线阻断项](docs/release-governance-blockers-2026-08.md)。
 
@@ -124,6 +128,8 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 [评测方案](docs/evaluation/benchmark-protocol-v0.1.md)规定了独立金标准、冻结
 合成测试集、OCR 与 OCR+模型对照、错误分类和按报告聚类的不确定性估计；在
 数据集和证据包冻结前不声明任何准确率。
+[可执行指标引擎示例](benchmarks/synthetic-v0.1/README.md)只包含人为构造的合成预测，
+用于验证评分逻辑，不代表 OCR 或模型性能。
 
 [AI 辅助开发披露](docs/development/ai-assisted-development.md)说明 agent 可以
 完成什么、哪些内容必须由人判断，以及代码和安全变更如何接受测试。

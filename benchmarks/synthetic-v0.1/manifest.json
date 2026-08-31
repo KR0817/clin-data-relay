@@ -1,0 +1,26 @@
+{
+  "schema_version": "clin-data-relay-benchmark-fixture-manifest-v1",
+  "benchmark_id": "synthetic-v0.1-metric-engine-example",
+  "purpose": "DEMONSTRATION_ONLY",
+  "report_count": 3,
+  "normalization_version": "benchmark-normalization-v1",
+  "error_taxonomy_version": "extraction-error-taxonomy-v0.1",
+  "artifacts": [
+    {
+      "name": "gold.example.jsonl",
+      "bytes": 1195,
+      "sha256": "07e2d0a1a0a31be41eb75981490bb68df276ff7314adbf975f8f5816ba7f436c"
+    },
+    {
+      "name": "local_ocr.example.jsonl",
+      "bytes": 1280,
+      "sha256": "0c5f93eac0ca68b342be949313eec6185e4fcd943f36a3821c4a7d4e6498965e"
+    },
+    {
+      "name": "assisted.example.jsonl",
+      "bytes": 1331,
+      "sha256": "9dc9183e929305a0ec362fbbf4ce8bcf177191c4f3012eca27a90a98a8236bf8"
+    }
+  ],
+  "reporting_boundary": "NOT_EXTRACTOR_PERFORMANCE_NOT_CLINICAL_VALIDATION"
+}

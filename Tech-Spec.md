@@ -969,3 +969,71 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   accounts as `test`/`development`, immediately upgrading the successful
   account to scrypt. A centre profile disables that path and uses the existing
   first-run setup credential; `production` remains denied.
+
+## Executable benchmark artifact contract
+
+- `app/benchmark_evaluation.py` is a pure standard-library scoring module. It
+  owns schema validation, frozen normalization, report-level scoring,
+  deterministic clustered bootstrap intervals, paired arm comparisons and the
+  protocol error taxonomy. It imports no OCR, Kimi, FastAPI or persistence
+  module and performs no network or database operation.
+- Gold JSONL uses `clin-data-relay-gold-v1`; prediction JSONL uses
+  `clin-data-relay-prediction-v1`. One gold row identifies one report and visit.
+  One prediction row identifies one report, visit and arm. Field identity is
+  the stable uppercase `field_code`; repeated identities within a row are
+  rejected instead of silently resolved.
+- Gold rows state whether the privacy gate should `allow` or `block`; blocked
+  rows contain no gold fields. Predictions state the observed decision and may
+  contain no fields when blocked. False negatives are report-clustered and use
+  the dedicated direct-identifier taxonomy category. Optional review outcomes
+  record only edit/reject counts and elapsed milliseconds; absent observations
+  remain `null` instead of being treated as zero.
+- `benchmark-normalization-v1` trims text, canonicalizes decimal commas and
+  comparison symbols, compares numeric values through `Decimal`, and compares
+  units case-insensitively after whitespace normalization. It performs no unit
+  inference or conversion.
+- Content metrics use every gold field in the supplied set. Provider timeout or
+  error remains an availability outcome; it is not silently dropped. A
+  `fallback` row may contain the local predictions actually shown to reviewers.
+- Bootstrap resampling draws reports with replacement and retains every field
+  from a selected report. The random seed and replicate count are written into
+  the report. Undefined zero-denominator bootstrap draws are omitted for that
+  metric and a wholly inapplicable interval is `null`. Paired deltas resample
+  the shared report IDs and never treat fields as independent clusters.
+- `scripts/evaluate_extraction_benchmark.py` accepts one gold file and one or
+  more `ARM=PATH` prediction files. It validates exact arm agreement, hashes
+  every input, and atomically publishes a previously absent output directory
+  containing `summary.json`, `errors.csv` and `manifest.json`.
+- Error rows contain report/visit/arm/field identifiers and taxonomy labels but
+  no expected or predicted value, evidence text, source path, OCR text or raw
+  provider error. The summary contains aggregate counts, rates and operational
+  totals only.
+- `benchmarks/synthetic-v0.1/examples` is a metric-engine demonstration, not the
+  planned 30-report development set or locked 100-report test set. Its manifest
+  states `DEMONSTRATION_ONLY` and no README or release may present its scores as
+  extractor performance.
+
+## OpenAI-compatible model provider boundary
+
+- `app/model_provider.py` owns `ModelProviderSettings`,
+  `OpenAICompatibleClient`, structured candidate parsing, outbound request
+  validation and credential-file writing. `app/kimi.py` is a compatibility
+  facade exporting the historical Kimi class/error names as aliases.
+- Generic environment variables are `MODEL_PROVIDER`, `MODEL_ENABLED`,
+  `MODEL_API_KEY`, `MODEL_API_KEY_FILE`, `MODEL_BASE_URL`, `MODEL_NAME`,
+  `MODEL_ALLOWED_BASE_URLS`, `MODEL_API_KEY_REQUIRED`, `MODEL_TIMEOUT_SECONDS`,
+  `MODEL_MAX_RETRIES` and `MODEL_REASONING_EFFORT`. Each absent generic value
+  falls back to the equivalent existing `KIMI_*` value where one exists.
+- Provider aliases match `[a-z][a-z0-9._-]{1,63}`. Base URLs have no query,
+  fragment, userinfo or non-root path beyond the API prefix. Kimi receives the
+  two built-in Moonshot v1 URLs. A non-Kimi URL is ready only when it exactly
+  matches one entry in `MODEL_ALLOWED_BASE_URLS` after trailing-slash removal.
+- Allowed remote URLs require HTTPS. HTTP is accepted only for `localhost`,
+  `127.0.0.1` or `::1`. `MODEL_API_KEY_REQUIRED=false` is valid only for such a
+  loopback URL; otherwise readiness fails closed.
+- `reasoning_effort` is included only when configured. Its Kimi default remains
+  `low`; custom providers receive no speculative parameter by default.
+- Existing `/api/settings/kimi` routes remain for package compatibility. Their
+  redacted response adds `provider`; health adds `model_provider`; configuration
+  audit detail contains provider and model only. No browser request can change
+  provider transport configuration.

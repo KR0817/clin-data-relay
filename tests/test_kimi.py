@@ -8,6 +8,7 @@ from urllib.error import HTTPError
 import pytest
 
 from app.kimi import KimiClient, KimiConfigurationError, KimiServiceError, KimiSettings
+from app.model_provider import ModelConfigurationError, ModelProviderSettings, OpenAICompatibleClient
 
 
 class SyntheticHttpResponse:
@@ -226,6 +227,8 @@ def test_kimi_settings_load_the_server_side_key_from_an_ignored_runtime_file(
     credential_file = tmp_path / "kimi-api-key.txt"
     credential_file.write_text("synthetic-runtime-secret\n", encoding="utf-8")
     monkeypatch.delenv("KIMI_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY_FILE", raising=False)
     monkeypatch.setenv("KIMI_API_KEY_FILE", str(credential_file))
     monkeypatch.setenv("KIMI_ENABLED", "true")
 
@@ -240,6 +243,9 @@ def test_kimi_is_enabled_by_default_but_not_ready_without_a_key(
 ) -> None:
     monkeypatch.delenv("KIMI_ENABLED", raising=False)
     monkeypatch.delenv("KIMI_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_ENABLED", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY_FILE", raising=False)
     monkeypatch.setenv("KIMI_API_KEY_FILE", "C:/path/that/does/not/exist/kimi-api-key.txt")
 
     settings = KimiSettings.from_environment()
@@ -338,3 +344,117 @@ def test_kimi_preserves_not_visible_as_missing_instead_of_a_literal_none_value()
 
     assert candidates[0].status == "not_visible"
     assert candidates[0].proposed_value is None
+
+
+def test_generic_provider_environment_takes_precedence_and_requires_an_exact_allowlist(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("MODEL_PROVIDER", "approved-local")
+    monkeypatch.setenv("MODEL_ENABLED", "true")
+    monkeypatch.setenv("MODEL_BASE_URL", "http://127.0.0.1:11434/v1/")
+    monkeypatch.setenv("MODEL_NAME", "synthetic-vision-model")
+    monkeypatch.setenv("MODEL_ALLOWED_BASE_URLS", "http://127.0.0.1:11434/v1")
+    monkeypatch.setenv("MODEL_API_KEY_REQUIRED", "false")
+    monkeypatch.setenv("MODEL_API_KEY_FILE", str(tmp_path / "missing-model-key.txt"))
+    monkeypatch.setenv("MODEL_REASONING_EFFORT", "")
+    monkeypatch.setenv("KIMI_BASE_URL", "https://api.moonshot.cn/v1")
+    monkeypatch.setenv("KIMI_MODEL", "kimi-k3")
+
+    settings = ModelProviderSettings.from_environment()
+
+    assert settings.provider == "approved-local"
+    assert settings.base_url == "http://127.0.0.1:11434/v1"
+    assert settings.model == "synthetic-vision-model"
+    assert settings.reasoning_effort is None
+    assert OpenAICompatibleClient(settings).ready is True
+
+
+def test_custom_provider_cannot_send_to_an_unlisted_or_insecure_remote_endpoint() -> None:
+    unlisted = OpenAICompatibleClient(
+        ModelProviderSettings(
+            enabled=True,
+            api_key="synthetic-secret",
+            base_url="https://models.example.test/v1",
+            model="synthetic-model",
+            provider="approved-provider",
+        )
+    )
+    insecure = OpenAICompatibleClient(
+        ModelProviderSettings(
+            enabled=True,
+            api_key="synthetic-secret",
+            base_url="http://models.example.test/v1",
+            model="synthetic-model",
+            provider="approved-provider",
+            allowed_base_urls=("http://models.example.test/v1",),
+        )
+    )
+
+    assert unlisted.ready is False
+    assert insecure.ready is False
+    with pytest.raises(ModelConfigurationError, match="model_base_url_not_allowlisted"):
+        unlisted.extract_candidates(
+            image_bytes=b"synthetic-image",
+            media_type="image/png",
+            deidentified_ocr_text="ALT 31 U/L",
+            field_dictionary={"ALT": "ALT"},
+        )
+
+
+def test_allowlisted_loopback_provider_can_omit_bearer_and_reasoning_parameter() -> None:
+    captured: dict[str, object] = {}
+
+    def synthetic_open(request, *, timeout):
+        captured["request"] = request
+        return SyntheticHttpResponse(
+            {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "candidates": [
+                                        {
+                                            "field_code": "ALT",
+                                            "proposed_value": "31",
+                                            "unit": "U/L",
+                                            "evidence_text": "ALT 31 U/L",
+                                            "status": "read",
+                                        }
+                                    ]
+                                }
+                            )
+                        },
+                    }
+                ]
+            }
+        )
+
+    client = OpenAICompatibleClient(
+        ModelProviderSettings(
+            enabled=True,
+            api_key=None,
+            base_url="http://localhost:11434/v1",
+            model="synthetic-model",
+            provider="approved-local",
+            allowed_base_urls=("http://localhost:11434/v1",),
+            api_key_required=False,
+            reasoning_effort=None,
+        ),
+        opener=synthetic_open,
+    )
+
+    candidates = client.extract_candidates(
+        image_bytes=b"synthetic-image",
+        media_type="image/png",
+        deidentified_ocr_text="ALT 31 U/L",
+        field_dictionary={"ALT": "ALT"},
+    )
+
+    assert client.ready is True
+    assert candidates[0].proposed_value == "31"
+    request = captured["request"]
+    assert "Authorization" not in request.headers
+    assert "reasoning_effort" not in json.loads(request.data.decode("utf-8"))

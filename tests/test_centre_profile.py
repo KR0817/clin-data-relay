@@ -139,7 +139,12 @@ def test_centre_user_can_configure_kimi_without_the_key_entering_http_responses(
         headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
 
         missing = client.get("/api/settings/kimi", headers=headers)
-        assert missing.json() == {"configured": False, "status": "key_required", "model": "kimi-k3"}
+        assert missing.json() == {
+            "configured": False,
+            "status": "key_required",
+            "provider": "kimi",
+            "model": "kimi-k3",
+        }
         assert client.put("/api/settings/kimi", headers=headers, json={"key": "too-short"}).status_code == 422
 
         placeholder_key = "sk-centre-local-placeholder-1234567890"
@@ -149,7 +154,12 @@ def test_centre_user_can_configure_kimi_without_the_key_entering_http_responses(
             json={"key": placeholder_key},
         )
         assert configured.status_code == 200
-        assert configured.json() == {"configured": True, "status": "ready", "model": "kimi-k3"}
+        assert configured.json() == {
+            "configured": True,
+            "status": "ready",
+            "provider": "kimi",
+            "model": "kimi-k3",
+        }
         assert placeholder_key not in configured.text
         assert credential_path.read_text(encoding="utf-8") == placeholder_key
         assert client.get("/api/health").json()["kimi_integration"] == "ready"
@@ -162,7 +172,7 @@ def test_centre_user_can_configure_kimi_without_the_key_entering_http_responses(
                 """
             ).fetchone()
         assert audit_row is not None
-        assert json.loads(audit_row["details_json"]) == {"model": "kimi-k3"}
+        assert json.loads(audit_row["details_json"]) == {"provider": "kimi", "model": "kimi-k3"}
         assert placeholder_key not in audit_row["details_json"]
 
 

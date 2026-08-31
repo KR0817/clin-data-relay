@@ -2070,6 +2070,7 @@ def create_app(
             ),
             "kimi_integration": kimi_configuration["status"],
             "kimi_default_enabled": resolved_kimi_client.enabled,
+            "model_provider": getattr(resolved_kimi_client.settings, "provider", "kimi"),
             "kimi_model": resolved_kimi_client.settings.model,
             "kimi_data_boundary": "confirmed_deidentified_derivative_only",
             "original_retention_days": configured_retention_days,
@@ -4510,7 +4511,12 @@ def create_app(
                     (candidate.field_code for candidate in kimi_candidates),
                 )
             except (KimiConfigurationError, KimiServiceError, CrfMappingError) as error:
-                kimi_error = type(error).__name__
+                if isinstance(error, KimiConfigurationError):
+                    kimi_error = "KimiConfigurationError"
+                elif isinstance(error, KimiServiceError):
+                    kimi_error = "KimiServiceError"
+                else:
+                    kimi_error = type(error).__name__
                 kimi_candidates = []
 
         kimi_by_field = {
