@@ -125,11 +125,15 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 ## 评测、AI 披露与引用
 
-[评测方案](docs/evaluation/benchmark-protocol-v0.1.md)规定了独立金标准、冻结
-合成测试集、OCR 与 OCR+模型对照、错误分类和按报告聚类的不确定性估计；在
-数据集和证据包冻结前不声明任何准确率。
+[Benchmark v1 评测方案](docs/eval/v1/protocol.md)规定了独立金标准、120 份冻结
+合成测试报告、OCR 与 OCR+模型对照、错误分类和按报告聚类的不确定性估计；在
+数据集和证据包冻结前不声明任何准确率。早期的
+[v0.1 方案](docs/evaluation/benchmark-protocol-v0.1.md)只保留用于指标引擎演示。
 [可执行指标引擎示例](benchmarks/synthetic-v0.1/README.md)只包含人为构造的合成预测，
 用于验证评分逻辑，不代表 OCR 或模型性能。
+[Benchmark v1 报告](docs/eval/v1/REPORT.md)目前明确标记为
+`EXPERIMENT_NOT_RUN`；已跟踪的[150份报告分配](benchmarks/synthetic-v1/README.md)
+不包含源报告、金标准数值、预测或评测结果。
 
 [AI 辅助开发披露](docs/development/ai-assisted-development.md)说明 agent 可以
 完成什么、哪些内容必须由人判断，以及代码和安全变更如何接受测试。

@@ -1,5 +1,9 @@
 # Extraction benchmark protocol v0.1
 
+**Superseded for the planned formal experiment by
+[`docs/eval/v1/protocol.md`](../eval/v1/protocol.md).** This document remains the
+historical metric-engine protocol used by the demonstration fixture.
+
 **Status:** protocol and metric engine implemented; no extractor benchmark
 result has been generated.
 

@@ -731,3 +731,28 @@
   with `uv sync --locked --extra dev --extra central --reinstall-package clinical-edc-companion`;
   otherwise Python source reports the new version while installed package
   metadata can retain the preceding release number.
+
+## 2026-09-01 Benchmark v1 experiment-readiness baseline
+
+- Benchmark v1 is frozen as a deterministic, value-free allocation of 30
+  development and 120 locked-test synthetic report IDs across eight primary
+  challenge strata. Thirty locked reports are assigned to masked reviewer A,
+  reviewer B and later adjudication. No source report, gold value, prediction
+  or measured result exists in the allocation package.
+- Formal predictions use `clin-data-relay-prediction-v2`, adding a deliberate
+  report-level `abstained` status with no fields. Prediction-v1 remains readable
+  only for compatibility. Summary and evaluation package schemas are v2.
+- Per-arm results now separate timeout, provider error, fallback and abstention;
+  report human edits/rejects/correction workload; and expose report-type plus
+  challenge-class summaries. All confidence intervals resample report IDs and
+  retain every visit belonging to a selected report.
+- Paired arm comparisons operate on the union of gold and both prediction field
+  codes. They separately count errors corrected by the second arm and errors it
+  introduces, including unsupported fields produced by only one arm.
+- `docs/eval/v1/REPORT.md` must remain `EXPERIMENT_NOT_RUN`, and `bench-v1` must
+  remain absent, until immutable source, two-reviewer annotation, adjudicated
+  gold, both frozen prediction arms and the v2 result package exist. The
+  v0.3.0 two-document/19-candidate workflow smoke test is not benchmark N.
+- Local regression validation passed 294 tests with thirteen external-service
+  cases skipped, plus lock validation, Python compilation and JavaScript syntax.
+  No live model-provider request was made.

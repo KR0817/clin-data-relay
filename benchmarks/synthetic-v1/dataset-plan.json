@@ -1,0 +1,1546 @@
+{
+  "benchmark_id": "synthetic-benchmark-v1",
+  "counts": {
+    "development": 30,
+    "double_review": 30,
+    "locked_test": 120
+  },
+  "primary_challenge_quotas": {
+    "development": {
+      "clear_scan": 4,
+      "cross_centre_unit_variant": 4,
+      "low_dpi_skew": 4,
+      "margin_handwritten_annotation": 4,
+      "multipage_pulmonary": 3,
+      "reference_boundary_value": 4,
+      "star_or_footnote_marker": 3,
+      "vendor_reprint_layout": 4
+    },
+    "double_review": {
+      "clear_scan": 4,
+      "cross_centre_unit_variant": 4,
+      "low_dpi_skew": 4,
+      "margin_handwritten_annotation": 4,
+      "multipage_pulmonary": 3,
+      "reference_boundary_value": 4,
+      "star_or_footnote_marker": 3,
+      "vendor_reprint_layout": 4
+    },
+    "locked_test": {
+      "clear_scan": 15,
+      "cross_centre_unit_variant": 15,
+      "low_dpi_skew": 15,
+      "margin_handwritten_annotation": 15,
+      "multipage_pulmonary": 15,
+      "reference_boundary_value": 15,
+      "star_or_footnote_marker": 15,
+      "vendor_reprint_layout": 15
+    }
+  },
+  "purpose": "EXPERIMENT_ALLOCATION_ONLY_NOT_RESULTS",
+  "reporting_boundary": "ALLOCATION_ONLY_NOT_SOURCE_NOT_GOLD_NOT_RESULTS",
+  "reports": [
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNDEV-0001",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 8,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNDEV-0002",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNDEV-0003",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNDEV-0004",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNDEV-0005",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 8,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNDEV-0006",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNDEV-0007",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 15,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNDEV-0008",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 8,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNDEV-0009",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNDEV-0010",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNDEV-0011",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 15,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNDEV-0012",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 13,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNDEV-0013",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 12,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNDEV-0014",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 12,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNDEV-0015",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNDEV-0016",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 11,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNDEV-0017",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 12,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNDEV-0018",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNDEV-0019",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 12,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNDEV-0020",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 10,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNDEV-0021",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNDEV-0022",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNDEV-0023",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 15,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNDEV-0024",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 9,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNDEV-0025",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 8,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNDEV-0026",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNDEV-0027",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 10,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNDEV-0028",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 12,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNDEV-0029",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNDEV-0030",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "development",
+      "target_field_count": 14,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0001",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0002",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0003",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0004",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0005",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0006",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0007",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0008",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0009",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0010",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0011",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0012",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0013",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0014",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0015",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0016",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0017",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0018",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0019",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0020",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0021",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0022",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0023",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0024",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0025",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0026",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0027",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0028",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0029",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0030",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0031",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0032",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0033",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0034",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0035",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0036",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0037",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0038",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0039",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0040",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0041",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0042",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0043",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0044",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0045",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0046",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0047",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0048",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0049",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0050",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0051",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0052",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0053",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0054",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0055",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0056",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0057",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0058",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0059",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0060",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0061",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0062",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0063",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0064",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0065",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0066",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0067",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0068",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0069",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0070",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0071",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0072",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0073",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0074",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0075",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0076",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0077",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0078",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0079",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0080",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0081",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0082",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0083",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0084",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0085",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 12,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0086",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0087",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0088",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0089",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0090",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0091",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0092",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0093",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0094",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0095",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "clear_scan",
+      "report_id": "SYNTEST-0096",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_table_clear_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0097",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0098",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0099",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0100",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 10,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0101",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0102",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0103",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0104",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0105",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0106",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0107",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0108",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0109",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "reference_boundary_value",
+      "report_id": "SYNTEST-0110",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_reference_boundary_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0111",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "margin_handwritten_annotation",
+      "report_id": "SYNTEST-0112",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 13,
+      "template_family": "lab_margin_annotation_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0113",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "low_dpi_skew",
+      "report_id": "SYNTEST-0114",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "lab_table_mobile_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "cross_centre_unit_variant",
+      "report_id": "SYNTEST-0115",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 11,
+      "template_family": "lab_unit_variant_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "star_or_footnote_marker",
+      "report_id": "SYNTEST-0116",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_footnote_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0117",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 8,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "multipage_pulmonary",
+      "report_id": "SYNTEST-0118",
+      "report_type": "synthetic_pulmonary_pdf",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 9,
+      "template_family": "pulmonary_multipage_v1"
+    },
+    {
+      "double_review_required": true,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0119",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 15,
+      "template_family": "lab_vendor_reprint_v1"
+    },
+    {
+      "double_review_required": false,
+      "primary_challenge": "vendor_reprint_layout",
+      "report_id": "SYNTEST-0120",
+      "report_type": "synthetic_lab_image",
+      "source_status": "not_generated",
+      "split": "locked_test",
+      "target_field_count": 14,
+      "template_family": "lab_vendor_reprint_v1"
+    }
+  ],
+  "schema_version": "clin-data-relay-benchmark-allocation-v1",
+  "seed": 20260901
+}

@@ -1171,3 +1171,36 @@ Acceptance criteria:
   tag, publish the GitHub Release and verify tag CI and every remote asset.
 - Preserve the Authority EDC boundary and production-readiness `BLOCK`; the
   release is an evaluation artifact, not clinical or institutional approval.
+
+## 2026-09-01 Benchmark v1 experiment-readiness baseline
+
+The released metric engine must now support a prespecified synthetic
+measurement study without confusing release smoke tests with benchmark sample
+size or publishing results that have not been observed.
+
+Acceptance criteria:
+
+- Prespecify 30 development reports and 120 separately locked synthetic test
+  reports. Allocate report IDs, report types, primary challenge strata, target
+  field counts and a 30-report double-review subset deterministically before
+  any source document or prediction is inspected.
+- Keep the allocation value-free. It may contain generated report identifiers,
+  strata and reviewer slots, but no clinical values, source bytes, identities,
+  credentials or provider response.
+- Preserve prediction-v1 compatibility while adding an explicit v2 report-level
+  `abstained` status. Timeout, provider error, fallback and deliberate
+  abstention remain separate availability outcomes.
+- Report observed review candidates, unchanged accepts, edits, rejects,
+  correction count and correction rate. Reject impossible review totals rather
+  than silently accepting edits/rejects beyond presented candidates.
+- In every paired comparison, separately report errors corrected by the second
+  arm and new errors introduced by it, including unsupported fields that only
+  one arm produced. Net difference remains secondary.
+- Continue report-clustered bootstrap uncertainty and retain all numerator and
+  denominator counts beside rates. Include availability-rate intervals and
+  report-type/challenge-class summaries for the prespecified strata.
+- Create `docs/eval/v1/REPORT.md`, protocol and reproduction instructions, but
+  keep the report status `EXPERIMENT_NOT_RUN` until source artifacts, both
+  prediction arms and required human review evidence exist and pass manifests.
+- Do not create a `bench-v1` tag, accuracy claim or model-benefit claim from the
+  allocation, metric-engine fixture or 19-candidate release smoke test.

@@ -1,0 +1,247 @@
+{
+  "benchmark_id": "synthetic-benchmark-v1",
+  "reporting_boundary": "ASSIGNMENT_ONLY_NO_ANNOTATION_NO_IDENTITY",
+  "reports": [
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0001",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0008",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0014",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0020",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0027",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0039",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0052",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0057",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0058",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0059",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0063",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0067",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0070",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0071",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0073",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0074",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0076",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0085",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0086",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0088",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0090",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0091",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0103",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0105",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0110",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0111",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0112",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0115",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0117",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    },
+    {
+      "adjudication_required": true,
+      "report_id": "SYNTEST-0119",
+      "reviewers": [
+        "reviewer_a",
+        "reviewer_b"
+      ]
+    }
+  ],
+  "schema_version": "clin-data-relay-benchmark-review-assignment-v1"
+}

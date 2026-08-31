@@ -175,14 +175,18 @@ Read [the preflight boundary](docs/preflight.md),
 
 ## Evaluation and development transparency
 
-The preregistered-style [benchmark protocol](docs/evaluation/benchmark-protocol-v0.1.md)
-defines independent gold annotation, a locked synthetic test set, OCR-only
-versus OCR-plus-model comparison, error taxonomy and report-clustered
+The preregistered-style [Benchmark v1 protocol](docs/eval/v1/protocol.md)
+defines independent gold annotation, a 120-report locked synthetic test set,
+OCR-only versus OCR-plus-model comparison, error taxonomy and report-clustered
 uncertainty. No benchmark result is claimed until the frozen dataset and
-evidence package exist.
+evidence package exist. The earlier [v0.1 protocol](docs/evaluation/benchmark-protocol-v0.1.md)
+is retained only for the metric-engine demonstration.
 The [executable metric-engine example](benchmarks/synthetic-v0.1/README.md)
 contains deliberately constructed synthetic predictions and must not be read as
 OCR or model performance.
+The [Benchmark v1 report](docs/eval/v1/REPORT.md) is explicitly
+`EXPERIMENT_NOT_RUN`; its tracked [150-report allocation](benchmarks/synthetic-v1/README.md)
+contains no source reports, gold values, predictions or results.
 
 Development uses AI coding tools under explicit human control. The
 [AI-assisted development disclosure](docs/development/ai-assisted-development.md)

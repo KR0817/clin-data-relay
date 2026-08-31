@@ -1,0 +1,17 @@
+{
+  "artifacts": [
+    {
+      "bytes": 51180,
+      "name": "dataset-plan.json",
+      "sha256": "ca0701622d7ed02feb54ea614ca60b4f223280485457d78ab13ae41f9d23e916"
+    },
+    {
+      "bytes": 4915,
+      "name": "review-assignments.json",
+      "sha256": "731d2150eb1028f6c88b7637125d292ee9c0d3d61c644a03bcceea848ac203f3"
+    }
+  ],
+  "benchmark_id": "synthetic-benchmark-v1",
+  "reporting_boundary": "ALLOCATION_ONLY_NOT_SOURCE_NOT_GOLD_NOT_RESULTS",
+  "schema_version": "clin-data-relay-benchmark-allocation-package-v1"
+}

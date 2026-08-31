@@ -48,9 +48,11 @@ def _prediction(
     *,
     status: str = "completed",
     privacy_gate_decision: str = "allow",
+    schema_version: str = "clin-data-relay-prediction-v1",
+    review_outcome: dict[str, int] | None = None,
 ) -> dict[str, object]:
     return {
-        "schema_version": "clin-data-relay-prediction-v1",
+        "schema_version": schema_version,
         "report_id": report_id,
         "visit_ref": "BASELINE",
         "arm": arm,
@@ -62,7 +64,7 @@ def _prediction(
         "token_usage": {"input": 5 if arm == "assisted" else 0, "output": 2 if arm == "assisted" else 0},
         "cost_usd": "0.001" if arm == "assisted" else "0",
         "fallback_reason": "",
-        "review_outcome": None,
+        "review_outcome": review_outcome,
     }
 
 
@@ -122,12 +124,30 @@ def test_benchmark_scores_fields_errors_and_paired_report_bootstrap() -> None:
     assert local_metrics["privacy_gate_false_negative_rate"] == 1.0
     assert summary["arms"]["assisted"]["metrics"]["privacy_gate_false_negative_rate"] == 0.0
     assert summary["arms"]["assisted"]["metrics"]["strict_accuracy"] == 1.0
+    assert summary["arms"]["local"]["strata"]["report_type"]["synthetic_lab_image"]["metrics"]["report_count"] == 3
+    assert summary["arms"]["local"]["strata"]["challenge_class"]["clear"]["metrics"]["report_count"] == 3
     assert summary["paired_comparisons"] == [
         {
             "comparison": "assisted_minus_local",
             "metric": "strict_accuracy",
             "absolute_difference": 1.0,
             "confidence_interval_95": {"lower": 1.0, "upper": 1.0},
+            "field_transitions": {
+                "evaluable_slot_count": 4,
+                "corrected_error_count": 4,
+                "introduced_error_count": 0,
+                "unchanged_correct_count": 0,
+                "unchanged_incorrect_count": 0,
+                "corrected_error_rate": 1.0,
+                "introduced_error_rate": 0.0,
+                "net_corrected_minus_introduced_count": 4,
+                "net_corrected_minus_introduced_rate": 1.0,
+                "confidence_intervals_95": {
+                    "corrected_error_rate": {"lower": 1.0, "upper": 1.0},
+                    "introduced_error_rate": {"lower": 0.0, "upper": 0.0},
+                    "net_corrected_minus_introduced_rate": {"lower": 1.0, "upper": 1.0},
+                },
+            },
         }
     ]
     assert {(error.field_code, error.primary_category) for error in errors} >= {
@@ -146,6 +166,159 @@ def test_benchmark_rejects_duplicate_candidates_and_incomplete_report_coverage()
     gold, local, _ = _records()
     with pytest.raises(BenchmarkValidationError, match="coverage_mismatch"):
         evaluate_benchmark(gold, {"local": local[:1]}, bootstrap_samples=100)
+
+
+def test_prediction_v2_separates_abstention_and_validates_review_denominator() -> None:
+    abstained_v1 = _prediction("synthetic-lab-001", "assisted", [], status="abstained")
+    with pytest.raises(BenchmarkValidationError, match="prediction_status_invalid"):
+        parse_prediction_records([abstained_v1], expected_arm="assisted")
+
+    abstained_v2 = _prediction(
+        "synthetic-lab-001",
+        "assisted",
+        [],
+        status="abstained",
+        schema_version="clin-data-relay-prediction-v2",
+    )
+    parsed = parse_prediction_records([abstained_v2], expected_arm="assisted")
+    assert parsed[0].status == "abstained"
+    abstention_summary, _ = evaluate_benchmark(
+        parse_gold_records([_gold("synthetic-lab-001", [_field("ALT", "31")])]),
+        {"assisted": parsed},
+        bootstrap_samples=100,
+        seed=19,
+    )
+    availability = abstention_summary["arms"]["assisted"]["availability"]
+    assert availability["abstention_count"] == 1
+    assert availability["abstention_rate"] == 1.0
+    assert availability["rate_confidence_intervals_95"]["abstention_rate"] == {
+        "lower": 1.0,
+        "upper": 1.0,
+    }
+
+    abstained_with_value = _prediction(
+        "synthetic-lab-001",
+        "assisted",
+        [_field("ALT", "31")],
+        status="abstained",
+        schema_version="clin-data-relay-prediction-v2",
+    )
+    with pytest.raises(BenchmarkValidationError, match="abstained_fields_forbidden"):
+        parse_prediction_records([abstained_with_value], expected_arm="assisted")
+
+    impossible_review = _prediction(
+        "synthetic-lab-001",
+        "local",
+        [_field("ALT", "31")],
+        review_outcome={"edits": 1, "rejects": 1, "review_time_ms": 100},
+    )
+    with pytest.raises(BenchmarkValidationError, match="review_outcome_exceeds_candidates"):
+        parse_prediction_records([impossible_review], expected_arm="local")
+
+
+def test_benchmark_reports_human_correction_rate_and_directional_new_errors() -> None:
+    gold = parse_gold_records([_gold("synthetic-lab-001", [_field("ALT", "31")])])
+    local = parse_prediction_records(
+        [
+            _prediction(
+                "synthetic-lab-001",
+                "local",
+                [_field("ALT", "31")],
+                review_outcome={"edits": 0, "rejects": 0, "review_time_ms": 40},
+            )
+        ],
+        expected_arm="local",
+    )
+    assisted = parse_prediction_records(
+        [
+            _prediction(
+                "synthetic-lab-001",
+                "assisted",
+                [_field("ALT", "3l"), _field("HGB", "129", "g/L", reference="115-150")],
+                schema_version="clin-data-relay-prediction-v2",
+                review_outcome={"edits": 1, "rejects": 1, "review_time_ms": 90},
+            )
+        ],
+        expected_arm="assisted",
+    )
+
+    summary, _ = evaluate_benchmark(
+        gold,
+        {"local": local, "assisted": assisted},
+        bootstrap_samples=100,
+        seed=23,
+    )
+
+    assisted_summary = summary["arms"]["assisted"]
+    assert assisted_summary["human_review"] == {
+        "observed_report_count": 1,
+        "observed_report_visit_count": 1,
+        "reviewed_candidate_count": 2,
+        "unchanged_accept_count": 0,
+        "edit_count": 1,
+        "reject_count": 1,
+        "correction_count": 2,
+        "correction_rate": 1.0,
+        "correction_rate_confidence_interval_95": {"lower": 1.0, "upper": 1.0},
+        "total_review_time_ms": 90,
+    }
+    assert assisted_summary["availability"]["abstention_count"] == 0
+    assert assisted_summary["availability"]["abstention_rate"] == 0.0
+    assert assisted_summary["availability"]["rate_confidence_intervals_95"]["abstention_rate"] == {
+        "lower": 0.0,
+        "upper": 0.0,
+    }
+    transitions = summary["paired_comparisons"][0]["field_transitions"]
+    assert transitions["evaluable_slot_count"] == 2
+    assert transitions["corrected_error_count"] == 0
+    assert transitions["introduced_error_count"] == 2
+    assert transitions["net_corrected_minus_introduced_count"] == -2
+
+
+def test_review_and_availability_counts_distinguish_reports_from_visits() -> None:
+    gold_records = [
+        _gold("synthetic-lab-001", [_field("ALT", "31")]),
+        _gold("synthetic-lab-001", [_field("ALT", "32")]),
+        _gold("synthetic-lab-002", [_field("ALT", "33")]),
+    ]
+    gold_records[1]["visit_ref"] = "FOLLOWUP"
+    prediction_records = [
+        _prediction(
+            "synthetic-lab-001",
+            "local",
+            [_field("ALT", "31")],
+            review_outcome={"edits": 1, "rejects": 0, "review_time_ms": 10},
+        ),
+        _prediction(
+            "synthetic-lab-001",
+            "local",
+            [_field("ALT", "32")],
+            review_outcome={"edits": 1, "rejects": 0, "review_time_ms": 20},
+        ),
+        _prediction(
+            "synthetic-lab-002",
+            "local",
+            [_field("ALT", "33")],
+            review_outcome={"edits": 0, "rejects": 0, "review_time_ms": 30},
+        ),
+    ]
+    prediction_records[1]["visit_ref"] = "FOLLOWUP"
+
+    summary, _ = evaluate_benchmark(
+        parse_gold_records(gold_records),
+        {"local": parse_prediction_records(prediction_records, expected_arm="local")},
+        bootstrap_samples=100,
+        seed=29,
+    )
+
+    availability = summary["arms"]["local"]["availability"]
+    review = summary["arms"]["local"]["human_review"]
+    assert availability["report_count"] == 2
+    assert availability["report_visit_count"] == 3
+    assert availability["rate_denominator_report_visit_count"] == 3
+    assert review["observed_report_count"] == 2
+    assert review["observed_report_visit_count"] == 3
+    assert review["reviewed_candidate_count"] == 3
 
 
 def test_benchmark_command_writes_new_value_free_package_and_refuses_overwrite(tmp_path: Path) -> None:
@@ -200,6 +373,9 @@ def test_benchmark_command_writes_new_value_free_package_and_refuses_overwrite(t
     assert "3l" not in error_text
     assert "129" not in error_text
     manifest = json.loads((output_dir / "manifest.json").read_text(encoding="utf-8"))
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    assert summary["schema_version"] == "clin-data-relay-benchmark-summary-v2"
+    assert manifest["schema_version"] == "clin-data-relay-benchmark-package-v2"
     assert manifest["reporting_boundary"] == "SYNTHETIC_METRIC_ENGINE_ONLY_NOT_CLINICAL_VALIDATION"
     assert all(len(item["sha256"]) == 64 for item in manifest["outputs"])
 

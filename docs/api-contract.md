@@ -819,3 +819,26 @@ The downloadable verification JSON is build evidence, not an API response and
 not a clinical-performance result. It may report counts and control outcomes
 but must not contain image/PDF bytes, OCR text, extracted values, credentials,
 provider payloads or direct identifiers. Production readiness remains `BLOCK`.
+
+### Benchmark v1 experiment-readiness command contract
+
+Benchmark v1 allocation and scoring remain local file commands, not HTTP APIs.
+They add no application role, source upload, model call, review decision,
+database record or EDC transfer capability.
+
+`scripts/prepare_benchmark_v1_allocation.py --output-dir NEW_PATH` creates a
+previously absent directory containing only `dataset-plan.json`,
+`review-assignments.json` and `manifest.json`. It is deterministic, value-free
+and fixed at 30 development plus 120 locked-test report IDs. It does not create
+source reports, annotations, predictions or results.
+
+Formal prediction files use schema `clin-data-relay-prediction-v2`. Status
+`abstained` is a deliberate report-level no-output observation and therefore
+requires an empty `fields` array. Legacy prediction-v1 inputs remain accepted
+for the demonstration fixture but cannot use that status.
+
+Benchmark summary/package output advances to v2 and adds human-correction and
+directional paired-transition evidence. These aggregate outputs remain
+synthetic measurement artifacts, never clinical values or participant records.
+`bench-v1` remains forbidden until both frozen arms and required human
+annotation/adjudication evidence have actually been produced and hashed.

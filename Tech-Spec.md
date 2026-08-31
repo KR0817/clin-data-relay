@@ -1063,3 +1063,41 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   `ClinicalReportExtractorLite-windows-x64.zip`, its `.sha256` sidecar and its
   `.verification.json` report. The archive must exclude QA fixtures, source
   uploads, databases, logs, secrets and container assets.
+
+## Benchmark v1 experiment-readiness contract
+
+- `clin-data-relay-prediction-v1` remains readable. New formal runs use
+  `clin-data-relay-prediction-v2`, whose only additive input behavior is the
+  report-level `abstained` status; an abstained report contains no fields.
+- Summary and immutable package schemas advance to v2. Per-arm output retains
+  existing metrics and adds explicit availability rates plus a `human_review`
+  block with observed report/candidate counts, unchanged accepts, edits,
+  rejects, corrections and correction rate.
+- Availability and review-rate intervals resample report IDs, preserving every
+  visit belonging to a selected report. Per-arm stratum output is grouped by
+  frozen report type and challenge class and uses the same report-clustered
+  interval rule. Availability rates use report-visits as their explicit
+  denominator while also reporting the unique report count.
+- A review observation is candidate-level. `edits + rejects` must not exceed
+  the prediction's presented field count. Missing review observation remains
+  `null` and is excluded rather than converted to zero.
+- Paired field transitions operate on the union of gold, first-arm and
+  second-arm field codes per report/visit. For a code absent from gold, absence
+  is correct and a produced candidate is incorrect. This counts newly
+  hallucinated fields as introduced errors and removed hallucinations as
+  corrected errors.
+- Paired output reports evaluable slots, corrected errors, introduced errors,
+  unchanged-correct, unchanged-incorrect, directional rates, net count and
+  report-clustered percentile intervals for corrected, introduced and net
+  rates.
+- `scripts/prepare_benchmark_v1_allocation.py` uses only the standard library,
+  fixed quotas and a fixed seed. It refuses overwrite and atomically creates a
+  value-free dataset plan, double-review assignments and hash manifest. It does
+  not generate source documents, gold values, predictions or results.
+- The 150-report allocation uses 30 development and 120 locked-test IDs across
+  eight prespecified primary challenge strata. Exactly 30 locked reports are
+  assigned to two masked reviewers and later adjudication.
+- `docs/eval/v1/REPORT.md` is a status-gated report skeleton. Missing source,
+  prediction, annotation or adjudication manifests keeps the experiment
+  unrun; documentation must not replace those artifacts with placeholders that
+  resemble measured results.

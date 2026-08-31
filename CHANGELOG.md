@@ -5,6 +5,24 @@ This file is not a substitute for a Git history or an approved project license.
 
 ## Unreleased
 
+### Added
+
+- Added a deterministic, value-free Benchmark v1 allocation for 30 development
+  and 120 locked synthetic reports, including a prespecified 30-report masked
+  double-review subset and immutable artifact hashes.
+- Added directional model-error transitions, human correction workload,
+  deliberate abstention, availability uncertainty and prespecified stratum
+  summaries to the synthetic benchmark engine.
+- Added the Benchmark v1 protocol, reproduction gates and an explicitly unrun
+  report skeleton that separates formal sample size from release smoke tests.
+
+### Changed
+
+- Advanced formal prediction, benchmark summary and package contracts to v2
+  while retaining prediction-v1 input compatibility for demonstration fixtures.
+- Kept `bench-v1` uncreated until source, annotation, adjudication, both paired
+  prediction arms and the immutable result package actually exist.
+
 ## [0.3.0] - 2026-09-01
 
 ### Added

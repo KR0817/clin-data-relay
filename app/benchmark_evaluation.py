@@ -14,12 +14,13 @@ from typing import Iterable, Mapping, Sequence
 
 
 GOLD_SCHEMA_VERSION = "clin-data-relay-gold-v1"
-PREDICTION_SCHEMA_VERSION = "clin-data-relay-prediction-v1"
-SUMMARY_SCHEMA_VERSION = "clin-data-relay-benchmark-summary-v1"
-PACKAGE_SCHEMA_VERSION = "clin-data-relay-benchmark-package-v1"
+LEGACY_PREDICTION_SCHEMA_VERSION = "clin-data-relay-prediction-v1"
+PREDICTION_SCHEMA_VERSION = "clin-data-relay-prediction-v2"
+SUMMARY_SCHEMA_VERSION = "clin-data-relay-benchmark-summary-v2"
+PACKAGE_SCHEMA_VERSION = "clin-data-relay-benchmark-package-v2"
 NORMALIZATION_VERSION = "benchmark-normalization-v1"
 ERROR_TAXONOMY_VERSION = "extraction-error-taxonomy-v0.1"
-ALLOWED_PREDICTION_STATUSES = {"completed", "fallback", "provider_error", "timeout"}
+ALLOWED_PREDICTION_STATUSES = {"completed", "fallback", "provider_error", "timeout", "abstained"}
 ALLOWED_PRIVACY_GATE_DECISIONS = {"allow", "block"}
 PRIMARY_ERROR_CATEGORIES = {
     "character_or_digit_recognition",
@@ -106,6 +107,16 @@ class ReportScore:
     privacy_gate_false_negatives: int
     privacy_gate_false_positives: int
     exact_report: int
+
+
+@dataclass(frozen=True)
+class PairedTransitionScore:
+    report_id: str
+    evaluable_slots: int
+    corrected_errors: int
+    introduced_errors: int
+    unchanged_correct: int
+    unchanged_incorrect: int
 
 
 def _required_keys(payload: Mapping[str, object], expected: set[str], code: str) -> None:
@@ -255,14 +266,18 @@ def parse_prediction_records(
     }
     for payload in records:
         _required_keys(payload, required, "benchmark_prediction_shape_invalid")
-        if payload["schema_version"] != PREDICTION_SCHEMA_VERSION:
+        schema_version = payload["schema_version"]
+        if schema_version not in {LEGACY_PREDICTION_SCHEMA_VERSION, PREDICTION_SCHEMA_VERSION}:
             raise BenchmarkValidationError("benchmark_prediction_schema_unsupported")
         if payload["arm"] != arm:
             raise BenchmarkValidationError("benchmark_prediction_arm_mismatch")
         report_id = _bounded_string(payload["report_id"], code="benchmark_report_id_invalid")
         visit_ref = _bounded_string(payload["visit_ref"], code="benchmark_visit_ref_invalid", limit=100)
         status = _bounded_string(payload["status"], code="benchmark_prediction_status_invalid", limit=30)
-        if status not in ALLOWED_PREDICTION_STATUSES:
+        allowed_statuses = ALLOWED_PREDICTION_STATUSES - (
+            {"abstained"} if schema_version == LEGACY_PREDICTION_SCHEMA_VERSION else set()
+        )
+        if status not in allowed_statuses:
             raise BenchmarkValidationError("benchmark_prediction_status_invalid")
         privacy_gate_decision = _bounded_string(
             payload["privacy_gate_decision"], code="benchmark_privacy_gate_decision_invalid", limit=10
@@ -281,6 +296,8 @@ def parse_prediction_records(
         if status != "fallback" and fallback_reason:
             raise BenchmarkValidationError("benchmark_fallback_reason_unexpected")
         fields = _unique_fields(payload["fields"], gold=False)
+        if status == "abstained" and fields:
+            raise BenchmarkValidationError("benchmark_abstained_fields_forbidden")
         if privacy_gate_decision == "block" and fields:
             raise BenchmarkValidationError("benchmark_blocked_prediction_fields_forbidden")
         raw_review = payload["review_outcome"]
@@ -294,6 +311,8 @@ def parse_prediction_records(
                 _non_negative_int(raw_review["rejects"], "benchmark_review_outcome_invalid"),
                 _non_negative_int(raw_review["review_time_ms"], "benchmark_review_outcome_invalid"),
             )
+            if review_outcome[0] + review_outcome[1] > len(fields):
+                raise BenchmarkValidationError("benchmark_review_outcome_exceeds_candidates")
         key = (report_id, visit_ref)
         if key in seen:
             raise BenchmarkValidationError("benchmark_prediction_report_duplicate")
@@ -617,6 +636,231 @@ def _bootstrap_intervals(
     }
 
 
+_AVAILABILITY_RATE_STATUSES = {
+    "fallback_rate": "fallback",
+    "provider_error_rate": "provider_error",
+    "timeout_rate": "timeout",
+    "abstention_rate": "abstained",
+}
+
+
+def _bootstrap_availability_intervals(
+    predictions: Sequence[PredictionReport], *, samples: int, seed: int
+) -> dict[str, dict[str, float | None]]:
+    clusters: dict[str, list[PredictionReport]] = {}
+    for prediction in predictions:
+        clusters.setdefault(prediction.report_id, []).append(prediction)
+    report_ids = sorted(clusters)
+    randomizer = random.Random(seed)
+    distributions: dict[str, list[float]] = {
+        rate_name: [] for rate_name in _AVAILABILITY_RATE_STATUSES
+    }
+    for _ in range(samples):
+        sampled_ids = [
+            report_ids[randomizer.randrange(len(report_ids))]
+            for _ in range(len(report_ids))
+        ]
+        sampled = [
+            prediction
+            for report_id in sampled_ids
+            for prediction in clusters[report_id]
+        ]
+        for rate_name, status in _AVAILABILITY_RATE_STATUSES.items():
+            distributions[rate_name].append(
+                sum(item.status == status for item in sampled) / len(sampled)
+            )
+    return {
+        rate_name: {
+            "lower": round(_percentile(values, 0.025), 6),
+            "upper": round(_percentile(values, 0.975), 6),
+        }
+        for rate_name, values in distributions.items()
+    }
+
+
+def _human_review_summary(
+    predictions: Sequence[PredictionReport], *, samples: int, seed: int
+) -> dict[str, object]:
+    observed = [item for item in predictions if item.review_outcome is not None]
+    candidate_count = sum(len(item.fields) for item in observed)
+    edit_count = sum(item.review_outcome[0] for item in observed if item.review_outcome is not None)
+    reject_count = sum(item.review_outcome[1] for item in observed if item.review_outcome is not None)
+    correction_count = edit_count + reject_count
+    correction_distribution: list[float] = []
+    if observed and candidate_count:
+        clusters: dict[str, list[PredictionReport]] = {}
+        for item in observed:
+            clusters.setdefault(item.report_id, []).append(item)
+        report_ids = sorted(clusters)
+        randomizer = random.Random(seed)
+        for _ in range(samples):
+            sampled_ids = [
+                report_ids[randomizer.randrange(len(report_ids))]
+                for _ in range(len(report_ids))
+            ]
+            sampled = [
+                item
+                for report_id in sampled_ids
+                for item in clusters[report_id]
+            ]
+            sampled_candidates = sum(len(item.fields) for item in sampled)
+            sampled_corrections = sum(
+                item.review_outcome[0] + item.review_outcome[1]
+                for item in sampled
+                if item.review_outcome is not None
+            )
+            if sampled_candidates:
+                correction_distribution.append(sampled_corrections / sampled_candidates)
+    return {
+        "observed_report_count": len({item.report_id for item in observed}),
+        "observed_report_visit_count": len(observed),
+        "reviewed_candidate_count": candidate_count,
+        "unchanged_accept_count": candidate_count - correction_count,
+        "edit_count": edit_count,
+        "reject_count": reject_count,
+        "correction_count": correction_count,
+        "correction_rate": _rate(correction_count, candidate_count),
+        "correction_rate_confidence_interval_95": {
+            "lower": round(_percentile(correction_distribution, 0.025), 6)
+            if correction_distribution
+            else None,
+            "upper": round(_percentile(correction_distribution, 0.975), 6)
+            if correction_distribution
+            else None,
+        },
+        "total_review_time_ms": sum(
+            item.review_outcome[2] for item in observed if item.review_outcome is not None
+        ),
+    }
+
+
+def _stratified_arm_summary(
+    gold_by_key: Mapping[tuple[str, str], GoldReport],
+    scores_by_key: Mapping[tuple[str, str], ReportScore],
+    *,
+    samples: int,
+    seed: int,
+) -> dict[str, dict[str, dict[str, object]]]:
+    dimensions: dict[str, dict[str, list[ReportScore]]] = {
+        "report_type": {},
+        "challenge_class": {},
+    }
+    for key, expected in gold_by_key.items():
+        score = scores_by_key[key]
+        dimensions["report_type"].setdefault(expected.report_type, []).append(score)
+        for challenge_class in expected.challenge_classes:
+            dimensions["challenge_class"].setdefault(challenge_class, []).append(score)
+
+    return {
+        dimension: {
+            stratum: {
+                "metrics": _metrics(stratum_scores),
+                "confidence_intervals_95": _bootstrap_intervals(
+                    stratum_scores,
+                    samples=samples,
+                    seed=seed
+                    + int(
+                        hashlib.sha256(
+                            f"{dimension}:{stratum}".encode("utf-8")
+                        ).hexdigest()[:8],
+                        16,
+                    ),
+                ),
+            }
+            for stratum, stratum_scores in sorted(strata.items())
+        }
+        for dimension, strata in dimensions.items()
+    }
+
+
+def _paired_transition_scores(
+    gold_by_key: Mapping[tuple[str, str], GoldReport],
+    first_by_key: Mapping[tuple[str, str], PredictionReport],
+    second_by_key: Mapping[tuple[str, str], PredictionReport],
+) -> tuple[PairedTransitionScore, ...]:
+    scores: list[PairedTransitionScore] = []
+    for key, gold in gold_by_key.items():
+        first = first_by_key[key]
+        second = second_by_key[key]
+        gold_fields = {field.field_code: field for field in gold.fields}
+        first_fields = {field.field_code: field for field in first.fields}
+        second_fields = {field.field_code: field for field in second.fields}
+        codes = sorted(set(gold_fields) | set(first_fields) | set(second_fields))
+        corrected = introduced = unchanged_correct = unchanged_incorrect = 0
+        for code in codes:
+            expected = gold_fields.get(code)
+            first_actual = first_fields.get(code)
+            second_actual = second_fields.get(code)
+            first_correct = first_actual is None if expected is None else (
+                first_actual is not None and _strict_equal(expected, first_actual)
+            )
+            second_correct = second_actual is None if expected is None else (
+                second_actual is not None and _strict_equal(expected, second_actual)
+            )
+            corrected += int(not first_correct and second_correct)
+            introduced += int(first_correct and not second_correct)
+            unchanged_correct += int(first_correct and second_correct)
+            unchanged_incorrect += int(not first_correct and not second_correct)
+        scores.append(
+            PairedTransitionScore(
+                report_id=gold.report_id,
+                evaluable_slots=len(codes),
+                corrected_errors=corrected,
+                introduced_errors=introduced,
+                unchanged_correct=unchanged_correct,
+                unchanged_incorrect=unchanged_incorrect,
+            )
+        )
+    return tuple(scores)
+
+
+def _transition_metrics(scores: Sequence[PairedTransitionScore]) -> dict[str, int | float]:
+    slots = sum(item.evaluable_slots for item in scores)
+    corrected = sum(item.corrected_errors for item in scores)
+    introduced = sum(item.introduced_errors for item in scores)
+    return {
+        "evaluable_slot_count": slots,
+        "corrected_error_count": corrected,
+        "introduced_error_count": introduced,
+        "unchanged_correct_count": sum(item.unchanged_correct for item in scores),
+        "unchanged_incorrect_count": sum(item.unchanged_incorrect for item in scores),
+        "corrected_error_rate": _rate(corrected, slots),
+        "introduced_error_rate": _rate(introduced, slots),
+        "net_corrected_minus_introduced_count": corrected - introduced,
+        "net_corrected_minus_introduced_rate": _rate(corrected - introduced, slots),
+    }
+
+
+def _bootstrap_transition_intervals(
+    scores: Sequence[PairedTransitionScore], *, samples: int, seed: int
+) -> dict[str, dict[str, float | None]]:
+    clusters: dict[str, list[PairedTransitionScore]] = {}
+    for score in scores:
+        clusters.setdefault(score.report_id, []).append(score)
+    report_ids = sorted(clusters)
+    randomizer = random.Random(seed)
+    names = (
+        "corrected_error_rate",
+        "introduced_error_rate",
+        "net_corrected_minus_introduced_rate",
+    )
+    distributions: dict[str, list[float]] = {name: [] for name in names}
+    for _ in range(samples):
+        sampled_ids = [report_ids[randomizer.randrange(len(report_ids))] for _ in range(len(report_ids))]
+        sampled = [score for report_id in sampled_ids for score in clusters[report_id]]
+        metrics = _transition_metrics(sampled)
+        if metrics["evaluable_slot_count"]:
+            for name in names:
+                distributions[name].append(float(metrics[name]))
+    return {
+        name: {
+            "lower": round(_percentile(values, 0.025), 6) if values else None,
+            "upper": round(_percentile(values, 0.975), 6) if values else None,
+        }
+        for name, values in distributions.items()
+    }
+
+
 def evaluate_benchmark(
     gold: Sequence[GoldReport],
     predictions_by_arm: Mapping[str, Sequence[PredictionReport]],
@@ -633,16 +877,19 @@ def evaluate_benchmark(
         if set(prediction_by_key) != set(gold_by_key):
             raise BenchmarkValidationError("benchmark_prediction_report_coverage_mismatch")
         scores: list[ReportScore] = []
+        scores_by_key: dict[tuple[str, str], ReportScore] = {}
         for key, expected in gold_by_key.items():
             score, errors = _score_report(expected, prediction_by_key[key])
             scores.append(score)
+            scores_by_key[key] = score
             all_errors.extend(errors)
         score_sets[arm] = tuple(scores)
         arm_seed = seed + int(hashlib.sha256(arm.encode("utf-8")).hexdigest()[:8], 16)
         status_counts = {status: 0 for status in sorted(ALLOWED_PREDICTION_STATUSES)}
         for prediction in predictions:
             status_counts[prediction.status] += 1
-        observed_reviews = [item.review_outcome for item in predictions if item.review_outcome is not None]
+        report_visit_count = len(predictions)
+        report_count = len({item.report_id for item in predictions})
         arm_summaries[arm] = {
             "metrics": _metrics(scores),
             "confidence_intervals_95": _bootstrap_intervals(scores, samples=bootstrap_samples, seed=arm_seed),
@@ -653,11 +900,34 @@ def evaluate_benchmark(
                 "output_tokens": sum(item.output_tokens for item in predictions),
                 "total_latency_ms": sum(item.latency_ms for item in predictions),
                 "total_cost_usd": str(sum((item.cost_usd for item in predictions), Decimal("0"))),
-                "review_observed_reports": len(observed_reviews),
-                "human_edits": sum(item[0] for item in observed_reviews),
-                "human_rejects": sum(item[1] for item in observed_reviews),
-                "total_review_time_ms": sum(item[2] for item in observed_reviews),
+                "report_count": report_count,
+                "report_visit_count": report_visit_count,
+                "rate_denominator_report_visit_count": report_visit_count,
+                "fallback_count": status_counts["fallback"],
+                "fallback_rate": _rate(status_counts["fallback"], report_visit_count),
+                "provider_error_count": status_counts["provider_error"],
+                "provider_error_rate": _rate(status_counts["provider_error"], report_visit_count),
+                "timeout_count": status_counts["timeout"],
+                "timeout_rate": _rate(status_counts["timeout"], report_visit_count),
+                "abstention_count": status_counts["abstained"],
+                "abstention_rate": _rate(status_counts["abstained"], report_visit_count),
+                "rate_confidence_intervals_95": _bootstrap_availability_intervals(
+                    predictions,
+                    samples=bootstrap_samples,
+                    seed=arm_seed + 1,
+                ),
             },
+            "human_review": _human_review_summary(
+                predictions,
+                samples=bootstrap_samples,
+                seed=arm_seed + 2,
+            ),
+            "strata": _stratified_arm_summary(
+                gold_by_key,
+                scores_by_key,
+                samples=bootstrap_samples,
+                seed=arm_seed + 3,
+            ),
         }
     comparisons: list[dict[str, object]] = []
     arms = list(predictions_by_arm)
@@ -665,6 +935,14 @@ def evaluate_benchmark(
         for second_arm in arms[first_index + 1 :]:
             first_scores = score_sets[first_arm]
             second_scores = score_sets[second_arm]
+            first_predictions = {
+                (report.report_id, report.visit_ref): report
+                for report in predictions_by_arm[first_arm]
+            }
+            second_predictions = {
+                (report.report_id, report.visit_ref): report
+                for report in predictions_by_arm[second_arm]
+            }
             first_clusters: dict[str, list[ReportScore]] = {}
             second_clusters: dict[str, list[ReportScore]] = {}
             for score in first_scores:
@@ -684,6 +962,18 @@ def evaluate_benchmark(
                 first_metric = float(_metrics(first_sample)["strict_accuracy"])
                 second_metric = float(_metrics(second_sample)["strict_accuracy"])
                 deltas.append(second_metric - first_metric)
+            transition_scores = _paired_transition_scores(
+                gold_by_key,
+                first_predictions,
+                second_predictions,
+            )
+            transition_metrics = _transition_metrics(transition_scores)
+            transition_metrics["confidence_intervals_95"] = _bootstrap_transition_intervals(
+                transition_scores,
+                samples=bootstrap_samples,
+                seed=seed
+                + int(hashlib.sha256(f"transitions:{first_arm}:{second_arm}".encode()).hexdigest()[:8], 16),
+            )
             comparisons.append(
                 {
                     "comparison": f"{second_arm}_minus_{first_arm}",
@@ -693,6 +983,7 @@ def evaluate_benchmark(
                         "lower": round(_percentile(deltas, 0.025), 6) if deltas else None,
                         "upper": round(_percentile(deltas, 0.975), 6) if deltas else None,
                     },
+                    "field_transitions": transition_metrics,
                 }
             )
     return (
