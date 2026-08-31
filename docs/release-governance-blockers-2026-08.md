@@ -12,8 +12,9 @@ real-data blockers below remain active and are not changed by open sourcing.
    accepting external contributions. The earlier proprietary and custom
    source-available decisions are retained only as Git/ADR history.
 2. **Version baseline:** the canonical public Git repository is established on
-   `main`; the first formal open-source release is `v0.2.0`. Each later package
-   must continue to identify its corresponding tagged source.
+   `main`; `v0.2.0` is the source-only AGPL baseline and `v0.2.1` is the first
+   downloadable open-source release. Each later package must continue to
+   identify its corresponding tagged source.
 
 ## Remaining blockers
 

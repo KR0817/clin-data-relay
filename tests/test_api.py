@@ -1454,7 +1454,7 @@ def test_health_reports_redacted_runtime_profile_and_database_backend(client: Te
 
     assert response.status_code == 200
     health = response.json()
-    assert health["application_version"] == "0.2.0"
+    assert health["application_version"] == "0.2.1"
     assert health["deployment_profile"] == "local"
     assert health["database_backend"] == "sqlite"
     assert health["database_schema_version"] == 1
@@ -2866,6 +2866,33 @@ def test_production_environment_rejects_seeded_legacy_demo_credentials(tmp_path:
 
     assert response.status_code == 401
     assert response.json()["detail"] == "invalid_credentials"
+
+
+def test_generic_portable_synthetic_lite_upgrades_its_documented_demo_login(
+    tmp_path: Path,
+) -> None:
+    app = create_app(
+        database_path=tmp_path / "portable.db",
+        environment="portable_synthetic",
+        product_mode="lite",
+    )
+    with TestClient(app) as portable_client:
+        response = portable_client.post(
+            "/api/auth/login",
+            json={
+                "username": "site-a-investigator@example.test",
+                "password": "demo-password",
+            },
+        )
+
+    assert response.status_code == 200
+    with app.state.database.connect() as connection:
+        account = connection.execute(
+            "SELECT password_hash, credential_kind FROM users WHERE username = ?",
+            ("site-a-investigator@example.test",),
+        ).fetchone()
+    assert account["password_hash"].startswith("scrypt$")
+    assert account["credential_kind"] == "current"
 
 
 def test_local_ocr_uses_conservative_chinese_table_fallback_when_plain_text_has_no_mapped_codes(

@@ -54,6 +54,11 @@ if ($VerificationPort -lt 1024 -or $VerificationPort -gt 65535) {
     throw 'VerificationPort must be between 1024 and 65535.'
 }
 
+& $python (Join-Path $projectRoot 'scripts\prepare_tessdata.py')
+if ($LASTEXITCODE -ne 0) {
+    throw 'Pinned Tesseract language data preparation failed.'
+}
+
 if (-not $SkipTests) {
     & $python -m pytest `
         'tests\test_windows_launcher.py' `
@@ -131,8 +136,14 @@ Copy-Item -LiteralPath (Join-Path $projectRoot 'scripts\configure_kimi.ps1') -De
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs\windows-lite-distribution.md') -Destination $recipientDocs
 
 $sitePackages = (& $python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])").Trim()
-$openpyxlLicense = Join-Path $sitePackages 'openpyxl-3.1.5.dist-info\LICENCE.rst'
-$pyinstallerLicense = Join-Path $sitePackages 'pyinstaller-6.21.0.dist-info\licenses\COPYING.txt'
+$openpyxlLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'openpyxl-*.dist-info' |
+    ForEach-Object { Join-Path $_.FullName 'LICENCE.rst' } |
+    Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
+    Select-Object -First 1
+$pyinstallerLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'pyinstaller-*.dist-info' |
+    ForEach-Object { Join-Path $_.FullName 'licenses\COPYING.txt' } |
+    Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
+    Select-Object -First 1
 $pypdfLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'pypdf-*.dist-info' |
     ForEach-Object { Join-Path $_.FullName 'licenses\LICENSE' } |
     Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |

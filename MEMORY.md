@@ -649,9 +649,11 @@
   supersedes the earlier custom source-available showcase license; clinical and
   production approvals remain separate governance gates and are not added as
   license restrictions.
-- Formal version `0.2.0` is the next release after the historical
-  `v0.2.0-showcase.1` marker. Python, Remotion, citation metadata, portable
-  bundle notices and the workbench source link use the same license/version.
+- `v0.2.0` is the source-only AGPL baseline after the historical
+  `v0.2.0-showcase.1` marker. Its clean build exposed missing language-data and
+  version-pinned license-path prerequisites; `v0.2.1` is the corrected first
+  downloadable release. Python, Remotion, citation metadata, portable bundle
+  notices and the workbench source link use the corrected license/version.
 - Portable bundles include the complete AGPL text and `SOURCE-CODE.txt` pinned
   to the matching tag. Windows Lite also emits a standalone archive SHA-256
   file beside its synthetic black-box verification report.
@@ -663,8 +665,18 @@
 - AI-assisted development is disclosed with human ownership of scope, safety,
   tests and release decisions. Root `AGENTS.md` and `MEMORY.md` remain because
   they are active workflow controls, not hidden authorship claims.
-- Local pre-release validation passed 279 tests with thirteen
-  PostgreSQL/external-service cases skipped, Remotion lint/TypeScript, zero
-  production npm audit findings, Python compilation, JavaScript syntax, lock
-  validation, CFF parsing, desktop/mobile UI checks and the 120-second rendered
-  demo frame review.
+- Portable builders prepare only `eng` and `chi_sim` language files from pinned
+  `tessdata_fast` commit `87416418657359cb625c412a48b6e1d6d41c29bd`, enforce
+  a 16 MiB per-file bound and verify SHA-256 before caching under ignored
+  `vendor/` state. Third-party license discovery uses installed metadata rather
+  than hard-coded dependency versions.
+- Generic Lite permits documented legacy demo credentials only in the
+  launcher-forced `portable_synthetic` environment without a centre profile;
+  the first success upgrades to scrypt. Centre packages and production remain
+  fail-closed under their existing rules.
+- Local pre-release validation passed 283 tests with thirteen
+  PostgreSQL/external-service cases skipped, focused packaged tests, real
+  PyInstaller build, pulmonary-PDF/review/Excel black-box verification,
+  Remotion lint/TypeScript, zero production npm audit findings, Python
+  compilation, JavaScript syntax, lock validation, CFF parsing, desktop/mobile
+  UI checks and the 120-second rendered demo frame review.

@@ -9,9 +9,9 @@ is available at:
 https://github.com/KR0817/clin-data-relay
 
 For a released binary, select the Git tag matching the application version
-reported by the local /api/health endpoint. For version 0.2.0, use:
+reported by the local /api/health endpoint. For version 0.2.1, use:
 
-https://github.com/KR0817/clin-data-relay/tree/v0.2.0
+https://github.com/KR0817/clin-data-relay/tree/v0.2.1
 
 Network deployments must preserve a prominent route to the corresponding
 source as required by GNU AGPL section 13. Third-party components remain under

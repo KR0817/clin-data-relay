@@ -1060,9 +1060,20 @@ Acceptance criteria:
 - Every distributed first-party executable bundle includes the root AGPL text
   and a plain-text route to the corresponding tagged source. Third-party
   notices and their independent licenses remain separate.
-- Publish application version `0.2.0`, annotated tag `v0.2.0` and a GitHub
-  Release only after local verification and remote CI pass. Attach a verified
+- Preserve source-only tag `v0.2.0` as the point where a clean build exposed a
+  missing OCR-language-data prerequisite. Publish the corrected application as
+  `v0.2.1` only after local verification and remote CI pass. Attach a verified
   Windows Lite ZIP plus SHA-256 when the black-box build succeeds.
+- A clean Windows or macOS Lite build must prepare only `eng` and `chi_sim`
+  `tessdata_fast` files from an exact upstream commit, verify pinned SHA-256
+  values before use and cache them only under ignored `vendor/` state. Existing
+  valid files allow an offline repeat build; invalid or partial files never
+  enter a bundle.
+- The generic unsigned Windows Lite evaluation archive has no centre profile
+  and may accept its documented `.example.test` synthetic login only in the
+  launcher-forced `portable_synthetic` environment. First login upgrades the
+  legacy digest. Centre-specific packages still require first-run password
+  setup, and production continues to reject every legacy demo credential.
 - Add a Chinese public README and a POSIX-shell synthetic quick start without
   adding Docker or another runtime dependency.
 - Add `CITATION.cff` without inventing an ORCID or DOI. Zenodo linkage remains

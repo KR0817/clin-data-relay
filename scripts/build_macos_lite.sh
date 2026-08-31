@@ -58,6 +58,8 @@ if [[ -z "$tesseract_binary" || ! -x "$tesseract_binary" ]]; then
   exit 1
 fi
 
+"$python_bin" "$project_root/scripts/prepare_tessdata.py"
+
 if [[ "${SKIP_TESTS:-false}" != "true" ]]; then
   "$python_bin" -m pytest \
     tests/test_windows_launcher.py \

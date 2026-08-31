@@ -196,8 +196,14 @@ $offlineManifestLines = Get-ChildItem -LiteralPath $portableTargetRoot -Recurse 
 [IO.File]::WriteAllLines($offlineManifestPath, $offlineManifestLines, (New-Object Text.UTF8Encoding($false)))
 
 $sitePackages = (& $python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])").Trim()
-$openpyxlLicense = Join-Path $sitePackages 'openpyxl-3.1.5.dist-info\LICENCE.rst'
-$pyinstallerLicense = Join-Path $sitePackages 'pyinstaller-6.21.0.dist-info\licenses\COPYING.txt'
+$openpyxlLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'openpyxl-*.dist-info' |
+    ForEach-Object { Join-Path $_.FullName 'LICENCE.rst' } |
+    Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
+    Select-Object -First 1
+$pyinstallerLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'pyinstaller-*.dist-info' |
+    ForEach-Object { Join-Path $_.FullName 'licenses\COPYING.txt' } |
+    Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
+    Select-Object -First 1
 $pypdfLicense = Get-ChildItem -LiteralPath $sitePackages -Directory -Filter 'pypdf-*.dist-info' |
     ForEach-Object { Join-Path $_.FullName 'licenses\LICENSE' } |
     Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |

@@ -77,7 +77,7 @@ def authenticate_local_user(
         legacy_demo_allowed = bool(
             row is not None
             and row["credential_kind"] == "legacy_demo"
-            and environment in {"test", "development"}
+            and environment in {"test", "development", "portable_synthetic"}
             and not centre_profile_present
         )
         if (

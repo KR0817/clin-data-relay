@@ -19,7 +19,7 @@ $requiredFiles = @(
     'packaging/SOURCE-CODE.txt',
     'docs/development/ai-assisted-development.md',
     'docs/evaluation/benchmark-protocol-v0.1.md',
-    'docs/releases/v0.2.0.md',
+    'docs/releases/v0.2.1.md',
     'docs/assets/architecture.svg',
     'docs/assets/showcase/central-workbench.png',
     'docs/assets/showcase/intake-workflow.png',

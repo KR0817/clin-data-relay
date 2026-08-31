@@ -5,6 +5,16 @@ This file is not a substitute for a Git history or an approved project license.
 
 ## Unreleased
 
+## [0.2.1] - 2026-08-31
+
+### Fixed
+
+- Made clean Windows and macOS Lite builds prepare the exact English and
+  Simplified Chinese `tessdata_fast` files from an immutable upstream commit,
+  enforce download bounds and verify pinned SHA-256 digests before packaging.
+- Reserved source-only tag `v0.2.0` as the build-reproducibility finding and
+  moved the downloadable, black-box-verified release to `v0.2.1`.
+
 ## [0.2.0] - 2026-08-31
 
 ### Changed

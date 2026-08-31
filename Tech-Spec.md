@@ -950,6 +950,22 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - `docs/evaluation/benchmark-protocol-v0.1.md` defines the evaluation contract;
   it contains no results. A provider-generalization refactor is deferred until
   the frozen benchmark can detect a regression or benefit.
-- The formal release is version `0.2.0`. Source archives come from GitHub;
-  binary assets are uploaded only after their existing synthetic black-box
-  verification succeeds and a SHA-256 sidecar is generated.
+- `scripts/prepare_tessdata.py` is a standard-library build prerequisite shared
+  by Windows and macOS Lite builders. It downloads only `eng` and `chi_sim`
+  from one immutable `tessdata_fast` commit, enforces a 16 MiB per-file bound,
+  validates pinned SHA-256 values before atomic replacement and stores the
+  result under ignored `vendor/` state. A valid cache makes repeat builds
+  offline; a network or digest failure is fail-closed.
+- Source-only tag `v0.2.0` records the clean-build discovery that this
+  prerequisite was absent. The corrected formal binary release is version
+  `0.2.1`. Source archives come from GitHub; binary assets are uploaded only
+  after their existing synthetic black-box verification succeeds and a
+  SHA-256 sidecar is generated.
+- Portable builders discover third-party license files from installed
+  `*.dist-info` directories instead of embedding dependency-version paths.
+  Missing license text remains a hard build failure.
+- `portable_synthetic` is a launcher-controlled, loopback-only evaluation
+  environment. Without a centre profile it permits the same legacy synthetic
+  accounts as `test`/`development`, immediately upgrading the successful
+  account to scrypt. A centre profile disables that path and uses the existing
+  first-run setup credential; `production` remains denied.
