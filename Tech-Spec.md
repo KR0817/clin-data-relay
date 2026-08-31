@@ -1037,3 +1037,29 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   redacted response adds `provider`; health adds `model_provider`; configuration
   audit detail contains provider and model only. No browser request can change
   provider transport configuration.
+
+## v0.3.0 release artifact contract
+
+- `app/version.py` is the package and runtime version source. `CITATION.cff`,
+  `packaging/SOURCE-CODE.txt`, `CHANGELOG.md`, release notes and version tests
+  must agree with it before a tag is created.
+- `scripts/build_windows_lite.ps1` generates an obviously synthetic check-sheet
+  image and pulmonary-function PDF outside the archive, starts the packaged
+  executable on loopback and passes both fixtures to
+  `scripts/verify_portable_lite_pdf.py`.
+- The image path exercises upload, confirmed de-identification, one allow-listed
+  field, `use_kimi=true` with no configured key, local fallback provenance,
+  bulk human acceptance and reviewed Excel export. It performs no outbound
+  model request. The PDF path exercises all 18 pulmonary fields and the same
+  review/export boundary.
+- The generic and centre-package verifier accepts the redacted provider-aware
+  Kimi settings response. Centre-only setup, credential storage and encrypted
+  package assertions remain centre-only.
+- The verification JSON records executable and icon hashes, no container or
+  Authority EDC inclusion, one synthetic image candidate, 18 pulmonary PDF
+  candidates, missing-key local fallback, human review, reviewed Excel export
+  and the fail-closed health state.
+- Release assets keep stable names:
+  `ClinicalReportExtractorLite-windows-x64.zip`, its `.sha256` sidecar and its
+  `.verification.json` report. The archive must exclude QA fixtures, source
+  uploads, databases, logs, secrets and container assets.

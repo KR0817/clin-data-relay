@@ -8,8 +8,8 @@ abstract: >-
 authors:
   - family-names: "Yu"
     given-names: "Xinbo"
-version: 0.2.1
-date-released: 2026-08-31
+version: 0.3.0
+date-released: 2026-09-01
 license: AGPL-3.0-only
 repository-code: "https://github.com/KR0817/clin-data-relay"
 url: "https://github.com/KR0817/clin-data-relay"

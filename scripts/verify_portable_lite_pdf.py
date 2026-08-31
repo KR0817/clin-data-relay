@@ -111,70 +111,71 @@ def main() -> None:
             if kimi_status.json().get("status") != "key_required":
                 raise RuntimeError("portable_centre_kimi_initial_state_mismatch")
 
-            if args.image is not None:
-                image_upload = client.post(
-                    "/api/source-files/upload",
-                    headers=headers,
-                    files={"file": ("synthetic-check-sheet.png", args.image.read_bytes(), "image/png")},
-                    data={"synthetic_attestation": "true"},
-                )
-                image_upload.raise_for_status()
-                draft = client.post(
-                    f"/api/source-files/{image_upload.json()['id']}/deidentification-drafts",
-                    headers=headers,
-                )
-                draft.raise_for_status()
-                confirmed = client.post(
-                    f"/api/deidentification-drafts/{draft.json()['id']}/confirm",
-                    headers=headers,
-                    json={"human_review_attestation": True},
-                )
-                confirmed.raise_for_status()
-                image_job = client.post(
-                    "/api/recognition-jobs",
-                    headers=headers,
-                    json={
-                        "items": [
-                            {
-                                "source_file_id": image_upload.json()["id"],
-                                "edc_subject_ref": "LITEIMG001",
-                                "edc_event_ref": "WEEK_0",
-                                "field_codes": ["ALT"],
-                                "use_kimi": True,
-                            }
-                        ]
-                    },
-                )
-                image_job.raise_for_status()
-                completed_image_job = client.post(
-                    f"/api/recognition-jobs/{image_job.json()['id']}/run",
-                    headers=headers,
-                )
-                completed_image_job.raise_for_status()
-                image_candidate_ids = completed_image_job.json()["items"][0]["candidate_ids"]
-                if len(image_candidate_ids) != 1:
-                    raise RuntimeError("portable_centre_kimi_fallback_candidate_ids_missing")
-                image_candidates = client.get("/api/candidates", headers=headers)
-                image_candidates.raise_for_status()
-                fallback_candidate = next(
-                    (
-                        candidate
-                        for candidate in image_candidates.json()
-                        if candidate["id"] == image_candidate_ids[0]
-                    ),
-                    None,
-                )
-                if fallback_candidate is None or fallback_candidate["extraction_agreement"] != "local_fallback":
-                    raise RuntimeError("portable_centre_kimi_fallback_provenance_mismatch")
-                reviewed_image = client.post(
-                    "/api/candidate-reviews/bulk-accept",
-                    headers=headers,
-                    json={"candidate_ids": image_candidate_ids},
-                )
-                reviewed_image.raise_for_status()
-                if reviewed_image.json()["accepted_count"] != 1:
-                    raise RuntimeError("portable_centre_kimi_fallback_bulk_review_failed")
+        if args.image is not None:
+            image_upload = client.post(
+                "/api/source-files/upload",
+                headers=headers,
+                files={"file": ("synthetic-check-sheet.png", args.image.read_bytes(), "image/png")},
+                data={"synthetic_attestation": "true"},
+            )
+            image_upload.raise_for_status()
+            draft = client.post(
+                f"/api/source-files/{image_upload.json()['id']}/deidentification-drafts",
+                headers=headers,
+            )
+            draft.raise_for_status()
+            confirmed = client.post(
+                f"/api/deidentification-drafts/{draft.json()['id']}/confirm",
+                headers=headers,
+                json={"human_review_attestation": True},
+            )
+            confirmed.raise_for_status()
+            image_job = client.post(
+                "/api/recognition-jobs",
+                headers=headers,
+                json={
+                    "items": [
+                        {
+                            "source_file_id": image_upload.json()["id"],
+                            "edc_subject_ref": "LITEIMG001",
+                            "edc_event_ref": "WEEK_0",
+                            "field_codes": ["ALT"],
+                            "use_kimi": True,
+                        }
+                    ]
+                },
+            )
+            image_job.raise_for_status()
+            completed_image_job = client.post(
+                f"/api/recognition-jobs/{image_job.json()['id']}/run",
+                headers=headers,
+            )
+            completed_image_job.raise_for_status()
+            image_candidate_ids = completed_image_job.json()["items"][0]["candidate_ids"]
+            if len(image_candidate_ids) != 1:
+                raise RuntimeError("portable_kimi_fallback_candidate_ids_missing")
+            image_candidates = client.get("/api/candidates", headers=headers)
+            image_candidates.raise_for_status()
+            fallback_candidate = next(
+                (
+                    candidate
+                    for candidate in image_candidates.json()
+                    if candidate["id"] == image_candidate_ids[0]
+                ),
+                None,
+            )
+            if fallback_candidate is None or fallback_candidate["extraction_agreement"] != "local_fallback":
+                raise RuntimeError("portable_kimi_fallback_provenance_mismatch")
+            reviewed_image = client.post(
+                "/api/candidate-reviews/bulk-accept",
+                headers=headers,
+                json={"candidate_ids": image_candidate_ids},
+            )
+            reviewed_image.raise_for_status()
+            if reviewed_image.json()["accepted_count"] != 1:
+                raise RuntimeError("portable_kimi_fallback_bulk_review_failed")
 
+        if centre_mode:
             placeholder_key = "sk-package-qa-" + secrets.token_urlsafe(24)
             configured_kimi = client.put(
                 "/api/settings/kimi",
@@ -185,6 +186,7 @@ def main() -> None:
             if configured_kimi.json() != {
                 "configured": True,
                 "status": "ready",
+                "provider": "kimi",
                 "model": "kimi-k3",
             } or placeholder_key in configured_kimi.text:
                 raise RuntimeError("portable_centre_kimi_web_configuration_failed")
@@ -268,7 +270,7 @@ def main() -> None:
         if "WEEK_0" not in workbook.sheetnames:
             raise RuntimeError("portable_lite_excel_event_sheet_missing")
         rows = list(workbook["WEEK_0"].iter_rows(values_only=True))
-        expected_data_rows = 1 + int(centre_mode and args.image is not None)
+        expected_data_rows = 1 + int(args.image is not None)
         if len(rows) != expected_data_rows + 1:
             raise RuntimeError("portable_lite_excel_row_count_mismatch")
         headers_row = {str(value) for value in rows[0] if value is not None}
@@ -308,6 +310,8 @@ def main() -> None:
 
     if centre_mode:
         print("PASS: Centre package verified Kimi fallback, reviewed 19 fields and exported an encrypted centre package.")
+    elif args.image is not None:
+        print("PASS: Lite package verified local fallback, reviewed 19 fields and exported Excel.")
     else:
         print("PASS: Lite package parsed 18 pulmonary fields, recorded human review and exported Excel.")
 

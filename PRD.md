@@ -1145,3 +1145,29 @@ Acceptance criteria:
 - Expose only provider alias and model in redacted settings/health/audit
   metadata. Never expose a base URL, key, credential path or provider response.
 - Add no third-party SDK and make no live provider call during tests.
+
+## 2026-09-01 v0.3.0 reproducible Windows Lite release
+
+The executable benchmark and provider abstraction need a versioned public
+release that remains independently downloadable and verifiable. This release
+must demonstrate the current portable workflow without weakening the
+synthetic-only, candidate-only or human-review boundaries.
+
+Acceptance criteria:
+
+- Align the application, citation, corresponding-source notice, changelog and
+  release notes on version `0.3.0` and tag `v0.3.0`.
+- Run the complete automated test suite, compile checks, lock-file validation
+  and public-release gate from a clean Git worktree.
+- Build a fresh Docker-free Windows Lite archive and exercise the packaged
+  executable through synthetic image recognition, missing-key local fallback,
+  synthetic pulmonary PDF extraction, bulk human acceptance and Excel export.
+- Make no live model-provider call during release verification and include no
+  real participant data, credential, runtime database, source image or PDF in
+  the downloadable archive.
+- Publish the ZIP, standalone SHA-256 sidecar and machine-readable verification
+  report only after their content, hashes and prohibited-file checks pass.
+- Push the release commit, wait for `main` CI, create an immutable annotated
+  tag, publish the GitHub Release and verify tag CI and every remote asset.
+- Preserve the Authority EDC boundary and production-readiness `BLOCK`; the
+  release is an evaluation artifact, not clinical or institutional approval.

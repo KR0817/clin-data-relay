@@ -82,6 +82,11 @@ def test_lite_portable_entrypoint_has_no_container_runtime_dependency() -> None:
     assert "configure_kimi.ps1" in configure_cmd
     assert "ClinicalReportExtractorLite-windows-x64.zip" in build_script
     assert "verify_portable_lite_pdf.py" in build_script
+    assert "generate_synthetic_check_sheet.py" in build_script
+    assert "--image" in build_script
+    assert "image_ocr_candidates = 1" in build_script
+    assert "kimi_missing_key_local_fallback = 'verified'" in build_script
+    assert "$health.application_version -ne $expectedApplicationVersion" in build_script
     assert "-ArgumentList '--port'" in build_script
     assert "docker " not in build_script.lower()
     assert "docker.exe" not in build_script.lower()

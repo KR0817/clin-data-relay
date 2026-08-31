@@ -801,3 +801,21 @@ Unauthenticated transport is accepted only for a loopback endpoint. Provider
 generalization does not authorize transmission: the confirmed de-identified
 derivative gate, dictionary restriction, candidate-only output and human review
 remain mandatory.
+
+### v0.3.0 release verification contract
+
+Version metadata, packaged black-box verification and GitHub Release assets add
+no HTTP route and change no role, centre scope, database record, review rule,
+model-transport permission or EDC capability.
+
+The existing redacted `GET /api/settings/kimi` response includes `provider`, and
+the packaged verifier must accept that documented field. A synthetic image run
+with `use_kimi=true` and no configured credential must remain local fallback;
+it is a negative transport test and must make no live provider call. The
+resulting candidate still requires an authenticated bulk human-review request
+before it can appear in the reviewed Excel export.
+
+The downloadable verification JSON is build evidence, not an API response and
+not a clinical-performance result. It may report counts and control outcomes
+but must not contain image/PDF bytes, OCR text, extracted values, credentials,
+provider payloads or direct identifiers. Production readiness remains `BLOCK`.

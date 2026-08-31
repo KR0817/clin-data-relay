@@ -16,7 +16,7 @@ def test_package_version_and_static_asset_manifest_have_single_explicit_sources(
     assert project["tool"]["setuptools"]["dynamic"]["version"] == {
         "attr": "app.version.__version__"
     }
-    assert __version__ == "0.2.1"
+    assert __version__ == "0.3.0"
     assert project["tool"]["setuptools"]["package-data"]["app"] == [
         "static/index.html",
         "static/css/*.css",
@@ -38,5 +38,5 @@ def test_open_source_release_metadata_uses_agpl_3_only() -> None:
     assert license_text.lstrip().startswith("GNU AFFERO GENERAL PUBLIC LICENSE\n")
     assert "Version 3, 19 November 2007" in license_text
     assert "license: AGPL-3.0-only" in citation
-    assert "version: 0.2.1" in citation
-    assert "tree/v0.2.1" in source_offer
+    assert "version: 0.3.0" in citation
+    assert "tree/v0.3.0" in source_offer

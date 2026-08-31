@@ -28,6 +28,7 @@ $requiredFiles = @(
     'benchmarks/synthetic-v0.1/local_ocr.example.jsonl',
     'benchmarks/synthetic-v0.1/assisted.example.jsonl',
     'docs/releases/v0.2.1.md',
+    'docs/releases/v0.3.0.md',
     'docs/assets/architecture.svg',
     'docs/assets/showcase/central-workbench.png',
     'docs/assets/showcase/intake-workflow.png',

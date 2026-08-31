@@ -5,6 +5,24 @@ This file is not a substitute for a Git history or an approved project license.
 
 ## Unreleased
 
+## [0.3.0] - 2026-09-01
+
+### Added
+
+- Added a versioned, executable synthetic extraction benchmark with strict and
+  numeric-normalized field metrics, report-clustered confidence intervals,
+  paired arm comparisons, a frozen error taxonomy and value-free artifacts.
+- Added an allow-listed OpenAI-compatible model-provider boundary while keeping
+  Kimi as the default and retaining the existing `/api/settings/kimi` surface.
+
+### Changed
+
+- Expanded the Windows Lite packaged black-box check to cover a synthetic image,
+  missing-key local fallback, synthetic pulmonary PDF extraction, bulk human
+  review and reviewed Excel export without a live provider call.
+- Updated provider-aware portable verification and aligned all release metadata
+  and corresponding-source references on `v0.3.0`.
+
 ## [0.2.1] - 2026-08-31
 
 ### Fixed

@@ -710,3 +710,24 @@
   syntax, lock validation and diff checks. No live model request was made. The
   frozen 30/100-report benchmark dataset, independent annotation/adjudication,
   actual extraction results and Zenodo DOI remain future governed work.
+
+## 2026-09-01 v0.3.0 Windows Lite release baseline
+
+- Version `0.3.0` packages the executable synthetic benchmark and the
+  allow-listed OpenAI-compatible provider boundary. Release metadata,
+  corresponding-source notice, Remotion package metadata and runtime health
+  use the same version.
+- The generic Windows Lite black-box check now exercises an obviously synthetic
+  image through confirmed de-identification, `use_kimi=true` with no credential,
+  local fallback provenance and bulk human acceptance before exercising all 18
+  pulmonary PDF fields and reviewed Excel export. It makes no live provider
+  request and keeps production readiness `BLOCK`.
+- The release archive has SHA-256
+  `0ee50f5450751456ab1af0a36f28f36fbf3df6258693b59e3cbcc83a366c80cd`,
+  contains 809 manifest-covered files and passed independent in-archive hash,
+  required-file and prohibited-artifact checks. The three release fixtures are
+  the ZIP, its standalone checksum and the value-free verification JSON.
+- After changing the dynamic application version, rebuild the editable package
+  with `uv sync --locked --extra dev --extra central --reinstall-package clinical-edc-companion`;
+  otherwise Python source reports the new version while installed package
+  metadata can retain the preceding release number.

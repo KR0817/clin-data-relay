@@ -53,6 +53,10 @@ if (-not (Test-Path -LiteralPath (Join-Path $tesseractRoot 'tesseract.exe') -Pat
 if ($VerificationPort -lt 1024 -or $VerificationPort -gt 65535) {
     throw 'VerificationPort must be between 1024 and 65535.'
 }
+$expectedApplicationVersion = (& $python -c "from app.version import __version__; print(__version__)").Trim()
+if ($LASTEXITCODE -ne 0 -or $expectedApplicationVersion -notmatch '^\d+\.\d+\.\d+$') {
+    throw 'Application version could not be resolved from app.version.'
+}
 
 & $python (Join-Path $projectRoot 'scripts\prepare_tessdata.py')
 if ($LASTEXITCODE -ne 0) {
@@ -186,6 +190,11 @@ $syntheticPdfPath = Join-Path $qaRoot 'synthetic-pulmonary-report.pdf'
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $syntheticPdfPath -PathType Leaf)) {
     throw 'Synthetic pulmonary PDF generation failed.'
 }
+$syntheticImagePath = Join-Path $qaRoot 'synthetic-check-sheet.png'
+& $python (Join-Path $projectRoot 'scripts\generate_synthetic_check_sheet.py') $syntheticImagePath
+if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $syntheticImagePath -PathType Leaf)) {
+    throw 'Synthetic check-sheet image generation failed.'
+}
 
 $stdoutPath = Join-Path $qaRoot 'stdout.log'
 $stderrPath = Join-Path $qaRoot 'stderr.log'
@@ -219,6 +228,7 @@ try {
     }
     if (
         $health.status -ne 'ok' -or
+        $health.application_version -ne $expectedApplicationVersion -or
         $health.product_mode -ne 'lite' -or
         $health.data_boundary -ne 'synthetic_only' -or
         $health.local_ocr -ne 'local_only' -or
@@ -232,23 +242,28 @@ try {
     & $python `
         (Join-Path $projectRoot 'scripts\verify_portable_lite_pdf.py') `
         --base-url "http://127.0.0.1:$VerificationPort" `
-        --pdf $syntheticPdfPath
+        --pdf $syntheticPdfPath `
+        --image $syntheticImagePath
     if ($LASTEXITCODE -ne 0) {
-        throw 'Built Lite PDF/review/Excel verification failed.'
+        throw 'Built Lite image/PDF/review/Excel verification failed.'
     }
 
     $verification = [ordered]@{
         verified_at = (Get-Date).ToUniversalTime().ToString('o')
         executable_sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $executablePath).Hash.ToLowerInvariant()
         icon_sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $iconTarget).Hash.ToLowerInvariant()
+        application_version = $health.application_version
         primary_launcher = "$executableName.exe"
         container_runtime_required = $false
         authority_edc_included = $false
+        image_ocr_candidates = 1
+        kimi_missing_key_local_fallback = 'verified'
         pulmonary_pdf_candidates = 18
         human_review = 'verified'
         reviewed_excel_export = 'verified'
         health = [ordered]@{
             status = $health.status
+            application_version = $health.application_version
             product_mode = $health.product_mode
             data_boundary = $health.data_boundary
             local_ocr = $health.local_ocr

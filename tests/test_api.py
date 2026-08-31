@@ -1454,7 +1454,7 @@ def test_health_reports_redacted_runtime_profile_and_database_backend(client: Te
 
     assert response.status_code == 200
     health = response.json()
-    assert health["application_version"] == "0.2.1"
+    assert health["application_version"] == "0.3.0"
     assert health["deployment_profile"] == "local"
     assert health["database_backend"] == "sqlite"
     assert health["database_schema_version"] == 1
