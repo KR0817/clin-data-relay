@@ -189,6 +189,10 @@ The [Benchmark v1 report](docs/eval/v1/REPORT.md) is explicitly
 and deterministic corpus generator contain no tracked source reports,
 adjudicated gold values, predictions or results. A hash-only freeze record
 supports same-environment reproduction without publishing the locked corpus.
+The blinded review/adjudication CLI and
+[Chinese operator guide](docs/eval/v1/annotation-and-freeze-guide.zh-CN.md)
+make the next human-controlled gate reproducible; their presence is not human
+annotation or model-performance evidence.
 
 Development uses AI coding tools under explicit human control. The
 [AI-assisted development disclosure](docs/development/ai-assisted-development.md)

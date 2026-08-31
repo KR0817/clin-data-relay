@@ -1138,3 +1138,42 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - Full-corpus byte identity is guaranteed only for the locked dependency
   environment recorded by `uv.lock`. Tests prove same-environment
   determinism; cross-version image/PDF byte identity is not claimed.
+
+## Benchmark v1 review and freeze contract
+
+- `scripts/benchmark_v1_workflow.py` is one offline CLI with five bounded
+  commands: `prepare-review-kits`, `compile-review`, `prepare-adjudication`,
+  `finalize-gold` and `freeze-predictions`. It uses only the standard library
+  plus the existing benchmark validator and performs no OCR, provider, HTTP,
+  database or EDC action.
+- Review kits use long-form UTF-8 CSV because reviewers can edit it in a normal
+  spreadsheet without installing the application. One row represents one
+  reported field. Assignment metadata and source SHA-256 values are value-free;
+  the kit manifest covers every non-editable source and assignment artifact.
+- Compiled annotations use `clin-data-relay-annotation-v1`. Each record binds
+  one reviewer slot, report/visit metadata, source SHA-256 and canonical gold
+  field-shaped tuples. The compilation output is a new directory containing
+  `annotations.jsonl` and a manifest hashing the returned CSV, assignment file,
+  kit manifest, separately retained central custody manifest and compiled output.
+- Reviewer coverage is derived from the frozen allocation: 45 non-double plus
+  30 double-review reports per reviewer. The completed sets must each contain
+  75 reports, their intersection must equal the frozen 30-report subset and
+  their union must equal all 120 locked reports.
+- Adjudication compares canonical field dictionaries by `field_code`. It emits
+  only non-identical slots. The adjudicator selects one reviewer tuple, supplies
+  a complete custom tuple or explicitly omits the field, and always records a
+  bounded reason. Empty or stale resolution files fail closed.
+- Final gold uses `clin-data-relay-gold-v1` and contains all 120 locked reports.
+  Single-reviewed reports use their assigned annotation; double-reviewed exact
+  tuples use consensus; every remaining slot comes from the completed
+  adjudication CSV. `disagreement-log.jsonl`, agreement counts and an input/output
+  SHA-256 manifest remain beside gold.
+- Prediction freeze accepts only `clin-data-relay-prediction-v2` records for
+  `local_ocr` and `local_ocr_plus_model`. Parsed keys must exactly equal gold
+  keys. It binds the source manifest, allocation, dependency lock, both field
+  dictionaries, model contract and an explicit 40-character application commit.
+  It copies gold and both arms under canonical names and writes a manifest before
+  atomic rename; it neither scores nor exposes field values on stdout.
+- Every command refuses an existing destination and uses temporary-directory
+  publication. Hash manifests provide tamper evidence but do not make a local
+  filesystem WORM-compliant.

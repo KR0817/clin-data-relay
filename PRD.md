@@ -1235,3 +1235,41 @@ Acceptance criteria:
   reports are identifier-free; a separately allocated identifier safety set is
   required before any privacy-gate rate can be reported.
 - Keep `REPORT.md` at `EXPERIMENT_NOT_RUN` and do not create `bench-v1`.
+
+## 2026-09-01 Benchmark v1 review and freeze tranche
+
+The locked synthetic corpus needs a human-controlled evidence chain before the
+two extraction arms can be opened or scored. Automation may package, validate,
+hash and compare records, but it must not impersonate either reviewer or the
+third adjudicator.
+
+Acceptance criteria:
+
+- Create separate reviewer A and reviewer B kits from the frozen locked corpus.
+  Each kit contains only its 75 assigned source reports, a value-free assignment
+  table, an empty long-form annotation CSV and a source-hash manifest. It never
+  contains construction truth, the other reviewer's work or a prediction.
+- Compile a returned annotation CSV only when all 75 assigned reports are
+  represented, field codes are unique within a report, every field tuple is
+  structurally valid and the original kit/source manifest still verifies.
+- Preserve reviewer slots rather than names. The compiled evidence records the
+  completed CSV hash and source hashes, refuses overwrite and contains no
+  construction truth or system output.
+- Compare the two completed evidence files only after both pass validation.
+  Generate a third-person adjudication CSV for every non-identical field tuple
+  in the prespecified 30-report double-review subset; exact agreements remain
+  machine-derived consensus and are not silently treated as validation truth.
+- Create locked gold only when every discrepancy has one explicit resolution
+  (`reviewer_a`, `reviewer_b`, `custom` or `omit`) and a non-empty reason.
+  Retain both original annotations and the resolution in a disagreement log.
+- Freeze formal predictions only after locked gold exists. Require prediction
+  schema v2, exactly the two prespecified arms, exact 120-report coverage and no
+  duplicate report/visit. Copy inputs into a new hash-covered directory without
+  calculating or printing performance.
+- Use the existing evaluator to create a new non-overwriting v2 result package.
+  A manifest detects later modification; this is tamper-evident file custody,
+  not WORM storage.
+- Make no OCR, Kimi or other provider call while preparing this workflow. Human
+  identities, secrets and reviewer names remain outside repository artifacts.
+- Keep `REPORT.md` at `EXPERIMENT_NOT_RUN` and `bench-v1` absent until real
+  reviewer evidence, adjudication, frozen predictions and final results exist.

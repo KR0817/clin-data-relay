@@ -135,6 +135,8 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 `EXPERIMENT_NOT_RUN`；已跟踪的[150份报告分配](benchmarks/synthetic-v1/README.md)
 和确定性语料生成器不包含纳入 Git 的源报告、经裁决金标准、预测或评测结果。
 仅跟踪同一环境复现所需的哈希冻结记录，不公开冻结测试语料。
+隔离双人审核/裁决命令和[中文操作手册](docs/eval/v1/annotation-and-freeze-guide.zh-CN.md)
+已经就绪，但工具就绪不代表已有人工标注或模型性能证据。
 
 [AI 辅助开发披露](docs/development/ai-assisted-development.md)说明 agent 可以
 完成什么、哪些内容必须由人判断，以及代码和安全变更如何接受测试。

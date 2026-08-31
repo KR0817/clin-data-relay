@@ -13,6 +13,7 @@ generator and a hash-only local reproducibility record.
 | --- | --- |
 | Prespecified 30 development + 120 locked-test allocation | Complete |
 | Deterministic source generator and same-environment hash check | Complete |
+| Blinded review, adjudication and prediction-freeze toolchain | Complete |
 | Archived immutable source report bytes and source manifest | Missing |
 | Independent reviewer A annotations | Missing |
 | Independent reviewer B annotations | Missing |

@@ -43,13 +43,33 @@ This repository does not currently provide a paid-provider batch runner. That
 omission prevents an accidental live model call or an unbounded cost from being
 mistaken for a reproducible experiment.
 
-## 3. Run the frozen scorer
+## 3. Prepare blinded review and adjudication
+
+Follow the detailed
+[Chinese operator guide](annotation-and-freeze-guide.zh-CN.md). The bounded CLI
+sequence is:
+
+```text
+prepare-review-kits -> compile-review (A and B)
+-> prepare-adjudication -> finalize-gold -> freeze-predictions
+```
+
+The central custodian must retain `custody-manifest.json` separately from the
+reviewers. Each reviewer receives only their own 75-report kit. The third
+adjudicator sees both completed annotations only after they are compiled and
+hash-covered. No command substitutes construction truth for human gold.
+
+The current repository freezes completed prediction-v2 files but deliberately
+does not provide a paid-provider 120-report batch runner. Do not assemble a
+formal arm from repeated interactive attempts.
+
+## 4. Run the frozen scorer
 
 ```powershell
 uv run python scripts/evaluate_extraction_benchmark.py `
-  --gold PATH/locked-gold.jsonl `
-  --predictions local_ocr=PATH/local-ocr.jsonl `
-  --predictions local_ocr_plus_model=PATH/assisted.jsonl `
+  --gold PATH/frozen-inputs/locked-gold.jsonl `
+  --predictions local_ocr=PATH/frozen-inputs/local-ocr.jsonl `
+  --predictions local_ocr_plus_model=PATH/frozen-inputs/local-ocr-plus-model.jsonl `
   --output-dir PATH/NEW-evaluation-package `
   --bootstrap-samples 2000 `
   --seed 20260901
@@ -59,7 +79,7 @@ The output directory is immutable and contains aggregate `summary.json`, a
 value-free `errors.csv` and `manifest.json`. Preserve the raw governed inputs
 separately; do not add participant data, credentials or provider error bodies.
 
-## 4. Publication gate
+## 5. Publication gate
 
 Populate `REPORT.md` only from the immutable result package and annotation
 evidence. Keep the 19-candidate release smoke test separate. Create `bench-v1`

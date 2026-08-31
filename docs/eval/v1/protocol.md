@@ -50,6 +50,13 @@ output. A third adjudicator resolves every discrepancy before locked prediction
 files are opened. Application accept/edit/reject logs remain workflow outcomes,
 not gold evidence.
 
+Reviewers use separate custody kits and identify themselves only as the frozen
+slots `reviewer_a` and `reviewer_b`. They do not receive construction truth,
+the other reviewer's file or either prediction arm. The adjudicator receives
+only the two completed annotation records and generated discrepancy table.
+Automated consensus means exact tuple equality; it is not a substitute for the
+third-person resolution of a difference.
+
 Report exact tuple agreement and adjudication count for the double-reviewed
 subset. Agreement measures annotation reproducibility; it does not independently
 validate the constructed synthetic truth.
@@ -103,6 +110,11 @@ Before test execution, record hashes for source reports, environment lock,
 dictionary, prompt/schema, reviewer inputs, adjudicated gold and exclusions.
 Run each arm once per report under a frozen retry policy. Keep provider failure
 as availability evidence rather than silently dropping the report.
+
+Freeze gold before either formal prediction file is generated. Freeze both
+prediction files before scoring. A manifest and no-overwrite directory make
+later changes detectable; they do not create WORM storage, so custody copies
+must remain read-only under the study's normal controlled storage process.
 
 Create `bench-v1` only after the immutable v2 result package and this report are
 complete, reviewed and internally consistent. The tag must never be created

@@ -858,3 +858,29 @@ The command response contains only status, output path and aggregate counts.
 It never prints field values, construction truth, source bytes or credentials.
 The 150 generated reports are identifier-free and therefore do not supply the
 separate privacy-gate safety denominator.
+
+### Benchmark v1 review and freeze command contract
+
+The review/adjudication workflow is local file processing, not an HTTP API.
+`scripts/benchmark_v1_workflow.py` never authenticates a reviewer, calls an
+extractor/model, modifies application state or writes an EDC.
+
+All five subcommands accept a previously absent output directory and return
+only bounded status/count metadata. They never print annotated values,
+construction truth, source bytes, credentials or provider responses.
+
+- `prepare-review-kits` verifies the frozen corpus and emits separate
+  `reviewer-a` and `reviewer-b` directories.
+- `compile-review` verifies one returned kit and converts its completed
+  long-form CSV into hash-covered annotation JSONL.
+- `prepare-adjudication` validates both compiled review files and emits only
+  double-review discrepancies plus an agreement summary.
+- `finalize-gold` refuses unresolved/stale discrepancies and emits 120 locked
+  gold records, the disagreement log and a manifest.
+- `freeze-predictions` accepts only the two formal v2 arm files with exact gold
+  coverage, a frozen source manifest and an explicit application commit, then
+  emits a hash-covered, unscored input bundle.
+
+Malformed CSV, changed source hashes, incomplete assignment coverage, duplicate
+fields, reviewer-set mismatch, unresolved discrepancies, legacy prediction
+schemas, wrong arm names or report-coverage differences are fail-closed errors.

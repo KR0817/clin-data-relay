@@ -38,6 +38,13 @@ generator inputs and same-environment reproducibility hashes, but it is not a
 source archive and does not claim byte identity across operating systems or
 library versions.
 
+The offline `scripts/benchmark_v1_workflow.py` command now prepares isolated
+review kits, compiles returned annotations, produces a third-person discrepancy
+worklist, finalizes adjudicated gold and freezes two complete prediction-v2
+arms without scoring. See the
+[Chinese operation guide](../../docs/eval/v1/annotation-and-freeze-guide.zh-CN.md).
+These tools do not mean that any human annotation, prediction or result exists.
+
 Do not create a `bench-v1` tag from this preparation state. That tag requires
 an archived immutable source package, gold/adjudication, both prediction arms
 and the final result package.

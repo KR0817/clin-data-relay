@@ -780,3 +780,33 @@
   and diff checks. `REPORT.md` remains `EXPERIMENT_NOT_RUN`; `bench-v1` remains
   absent pending archived sources, independent annotation, adjudication, both
   frozen prediction arms and immutable results.
+
+## 2026-09-01 Benchmark v1 human-evidence workflow baseline
+
+- `scripts/benchmark_v1_workflow.py` implements five offline, no-overwrite
+  commands: prepare separate reviewer kits, compile one returned review against
+  the central custody anchor, prepare double-review discrepancies, finalize
+  adjudicated gold and freeze two complete prediction-v2 arms without scoring.
+- Reviewer kits contain 75 assigned locked synthetic sources plus the two
+  value-free field dictionaries, assignments and an editable long-form CSV.
+  Reviewer A and B overlap on exactly 30 reports. Construction truth, the other
+  reviewer's work and system predictions are excluded.
+- The central `custody-manifest.json` anchors both outgoing kit manifests.
+  Compiled annotation manifests bind the returned CSV and source kit; later
+  stages verify those manifests. The adjudicator must resolve every non-identical
+  field slot as reviewer A, reviewer B, custom or omit with a bounded reason.
+- Prediction freezing requires 120-report gold, exact two-arm prediction-v2
+  coverage, the frozen source manifest, allocation, dependency lock, both field
+  dictionaries, model contract and an explicit Git commit. It records hashes
+  but does not calculate or print performance; manifests are tamper evidence,
+  not WORM storage or electronic signatures.
+- Final local kits are under ignored
+  `.runtime/benchmark-v1-review-kits-20260901-final`. Each contains 75 sources
+  and two dictionaries with a 30-report overlap; no construction or prediction
+  file is present. Central custody-manifest SHA-256 is
+  `d600122955faa2b0a8b465fd5db81fab2c25f123c2b516c67c9c0f40a083ef80`.
+- No person has completed a review, no adjudicated gold or formal prediction
+  exists, and no Kimi call was made. `REPORT.md` remains
+  `EXPERIMENT_NOT_RUN`; `bench-v1` remains absent. Local validation passed 298
+  tests with thirteen external-service cases skipped, plus focused workflow,
+  compilation, lock, JavaScript syntax and diff checks.

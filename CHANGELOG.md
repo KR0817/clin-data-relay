@@ -7,6 +7,12 @@ This file is not a substitute for a Git history or an approved project license.
 
 ### Added
 
+- Added blinded Benchmark v1 reviewer kits, independent annotation compilation,
+  third-person discrepancy adjudication, gold finalization and unscored v2
+  prediction freezing with custody and SHA-256 manifests.
+- Added a Chinese operator guide that keeps reviewer identities external,
+  construction truth and predictions masked, and the paid-provider batch run
+  blocked until its retry and cost policy is frozen.
 - Added an offline, deterministic 150-report Benchmark v1 corpus generator with
   isolated source, construction-truth and value-free annotation-template layers.
 - Added same-environment corpus freeze hashes, overwrite refusal, reviewer
