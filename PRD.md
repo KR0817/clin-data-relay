@@ -1204,3 +1204,34 @@ Acceptance criteria:
   prediction arms and required human review evidence exist and pass manifests.
 - Do not create a `bench-v1` tag, accuracy claim or model-benefit claim from the
   allocation, metric-engine fixture or 19-candidate release smoke test.
+
+## 2026-09-01 Benchmark v1 synthetic-source tranche
+
+The frozen allocation needs reproducible source documents before either
+extractor arm or human annotation can run. Construction truth is generation
+evidence, not adjudicated gold, and must remain separate from reviewer work.
+
+Acceptance criteria:
+
+- Read the tracked 30-development/120-locked allocation without changing its
+  report IDs, split, primary challenge, template family or target-field count.
+- Generate exactly one identifier-free PNG or text-layer PDF per allocated
+  report using the locked Python environment and no new dependency.
+- Cover clear, low-DPI/skew, vendor-layout, margin-annotation,
+  reference-boundary, unit-variant, star/footnote and multipage pulmonary
+  source forms deterministically.
+- Write source bytes, construction truth and reviewer templates into separate
+  directories with separate SHA-256 manifests. Reviewer templates contain no
+  field value, reference interval, comparator or construction key.
+- Assign every locked report to one primary reviewer, balance non-double
+  assignments, and give both reviewers the previously frozen 30-report
+  double-review subset. Reviewer worklists remain blind to system predictions.
+- Refuse to overwrite an existing output directory and publish atomically only
+  after every expected file, count, hash and construction record validates.
+- Permit visual/parser inspection of development material. Validate locked
+  material only by structure, count and hash before annotation; do not inspect
+  predictions or calculate extraction performance.
+- Keep the privacy-gate result undefined in this tranche. The 150 extraction
+  reports are identifier-free; a separately allocated identifier safety set is
+  required before any privacy-gate rate can be reported.
+- Keep `REPORT.md` at `EXPERIMENT_NOT_RUN` and do not create `bench-v1`.

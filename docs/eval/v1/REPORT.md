@@ -3,15 +3,17 @@
 **Status: `EXPERIMENT_NOT_RUN`**
 
 No extraction accuracy, model benefit, human correction rate or annotator
-agreement result is reported here. The repository currently contains only the
-metric engine and the value-free 150-report allocation.
+agreement result is reported here. The repository currently contains the
+metric engine, the value-free 150-report allocation, a deterministic source
+generator and a hash-only local reproducibility record.
 
 ## Evidence gate
 
 | Required artifact | Status |
 | --- | --- |
 | Prespecified 30 development + 120 locked-test allocation | Complete |
-| Synthetic source report bytes and source manifest | Missing |
+| Deterministic source generator and same-environment hash check | Complete |
+| Archived immutable source report bytes and source manifest | Missing |
 | Independent reviewer A annotations | Missing |
 | Independent reviewer B annotations | Missing |
 | Adjudicated gold records and disagreement log | Missing |
@@ -21,6 +23,8 @@ metric engine and the value-free 150-report allocation.
 
 The report remains unrun while any row is missing. Missing evidence is not
 represented by zero, `PASS`, an estimated value or a constructed fixture.
+The construction records produced by the generator are input truth for corpus
+assembly, not independent or adjudicated gold annotations.
 
 ## Smoke-test separation
 

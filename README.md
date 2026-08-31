@@ -186,7 +186,9 @@ contains deliberately constructed synthetic predictions and must not be read as
 OCR or model performance.
 The [Benchmark v1 report](docs/eval/v1/REPORT.md) is explicitly
 `EXPERIMENT_NOT_RUN`; its tracked [150-report allocation](benchmarks/synthetic-v1/README.md)
-contains no source reports, gold values, predictions or results.
+and deterministic corpus generator contain no tracked source reports,
+adjudicated gold values, predictions or results. A hash-only freeze record
+supports same-environment reproduction without publishing the locked corpus.
 
 Development uses AI coding tools under explicit human control. The
 [AI-assisted development disclosure](docs/development/ai-assisted-development.md)

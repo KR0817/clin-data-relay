@@ -14,6 +14,23 @@ deterministic and refuses to overwrite an existing directory.
 
 ## 2. Required pre-run artifacts
 
+Generate offline source material into a new ignored directory:
+
+```powershell
+uv run python scripts/generate_benchmark_v1_corpus.py `
+  --allocation benchmarks/synthetic-v1/dataset-plan.json `
+  --output-dir .runtime/benchmark-v1-corpus
+```
+
+Keep `construction-truth/` under the corpus custodian. Give each reviewer only
+the identifier-free sources and their own value-free template. Do not expose
+either extractor prediction arm before annotation and adjudication close.
+
+The tracked `benchmarks/synthetic-v1/corpus-freeze.json` records the expected
+same-environment manifest hashes for a clean generation using the locked
+dependencies. Verify them before custody transfer. The file is not a source
+archive and does not establish cross-platform byte identity.
+
 Do not run or publish the locked analysis until all of these exist with hashes:
 
 - synthetic source reports;

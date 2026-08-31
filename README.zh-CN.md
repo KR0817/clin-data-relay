@@ -133,7 +133,8 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 用于验证评分逻辑，不代表 OCR 或模型性能。
 [Benchmark v1 报告](docs/eval/v1/REPORT.md)目前明确标记为
 `EXPERIMENT_NOT_RUN`；已跟踪的[150份报告分配](benchmarks/synthetic-v1/README.md)
-不包含源报告、金标准数值、预测或评测结果。
+和确定性语料生成器不包含纳入 Git 的源报告、经裁决金标准、预测或评测结果。
+仅跟踪同一环境复现所需的哈希冻结记录，不公开冻结测试语料。
 
 [AI 辅助开发披露](docs/development/ai-assisted-development.md)说明 agent 可以
 完成什么、哪些内容必须由人判断，以及代码和安全变更如何接受测试。

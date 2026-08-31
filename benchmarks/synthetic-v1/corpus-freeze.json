@@ -1,0 +1,43 @@
+{
+  "benchmark_id": "synthetic-benchmark-v1",
+  "counts": {
+    "annotation_templates": 150,
+    "construction_records": 150,
+    "development_reports": 30,
+    "locked_test_reports": 120,
+    "source_reports": 150
+  },
+  "experiment_status": "EXPERIMENT_NOT_RUN",
+  "generator_seed": 20260901,
+  "inputs": [
+    {
+      "path": "benchmarks/synthetic-v1/dataset-plan.json",
+      "sha256": "ca0701622d7ed02feb54ea614ca60b4f223280485457d78ab13ae41f9d23e916"
+    },
+    {
+      "path": "config/pulmonary-function-field-dictionary.v1.json",
+      "sha256": "549c3ceffc1c84d2ada4225a7b0a257cc1ca4179f5c4abe88c7c9fa30309105d"
+    },
+    {
+      "path": "config/synthetic_lab_mapping.v0.1.json",
+      "sha256": "c88133492265f19dc82371380e6c51cc07b7df02b652d5db0424363027805bad"
+    },
+    {
+      "path": "scripts/generate_benchmark_v1_corpus.py",
+      "sha256": "329cbb24cd6088e8a29f56c3714acf9ab2e369963e9660f6a0ac369f5e3b6acc"
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "7670f6aaffad9bbf0312ccc209cca12e6f0a4ba948d4b1a185dbe81d2535528f"
+    }
+  ],
+  "local_reproducibility_check": {
+    "annotation_manifest_sha256": "bb14cf262407330a772abf90971313739a639863743094cef847685b2ef62721",
+    "construction_manifest_sha256": "2802a8304f39912423335950ca6d9dbe62b5a44683aa89d143a91a883e83e726",
+    "package_manifest_sha256": "e5d078d42ba7b17d409674dea91a308a6b648ed11dfeca22a69f0972c72f75dd",
+    "source_manifest_sha256": "de51a765a0db7a491215e31f7515ebda7c8263bdf6c021b1baaa5225c8653133"
+  },
+  "reporting_boundary": "HASH_ONLY_LOCAL_REPRODUCIBILITY_CHECK_NOT_ARCHIVED_CORPUS_NOT_RESULTS",
+  "schema_version": "clin-data-relay-benchmark-corpus-freeze-v1",
+  "source_archive_status": "not_published"
+}

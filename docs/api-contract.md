@@ -842,3 +842,19 @@ directional paired-transition evidence. These aggregate outputs remain
 synthetic measurement artifacts, never clinical values or participant records.
 `bench-v1` remains forbidden until both frozen arms and required human
 annotation/adjudication evidence have actually been produced and hashed.
+
+### Benchmark v1 synthetic-source command contract
+
+`scripts/generate_benchmark_v1_corpus.py --allocation PATH --output-dir
+NEW_PATH` is a local, offline command. It adds no HTTP endpoint, account,
+clinical record, model request or EDC action.
+
+The command accepts only the frozen allocation schema and rejects duplicate or
+unexpected report metadata. It creates a new directory containing source
+documents, non-gold construction truth, value-free reviewer templates and
+separate hash manifests. It never overwrites an output directory.
+
+The command response contains only status, output path and aggregate counts.
+It never prints field values, construction truth, source bytes or credentials.
+The 150 generated reports are identifier-free and therefore do not supply the
+separate privacy-gate safety denominator.

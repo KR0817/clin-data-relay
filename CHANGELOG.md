@@ -7,6 +7,11 @@ This file is not a substitute for a Git history or an approved project license.
 
 ### Added
 
+- Added an offline, deterministic 150-report Benchmark v1 corpus generator with
+  isolated source, construction-truth and value-free annotation-template layers.
+- Added same-environment corpus freeze hashes, overwrite refusal, reviewer
+  assignment checks and real pulmonary-PDF parser coverage without publishing
+  the locked source corpus or running either prediction arm.
 - Added a deterministic, value-free Benchmark v1 allocation for 30 development
   and 120 locked synthetic reports, including a prespecified 30-report masked
   double-review subset and immutable artifact hashes.

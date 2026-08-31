@@ -1101,3 +1101,40 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   prediction, annotation or adjudication manifests keeps the experiment
   unrun; documentation must not replace those artifacts with placeholders that
   resemble measured results.
+
+## Benchmark v1 synthetic-source contract
+
+- `scripts/generate_benchmark_v1_corpus.py` accepts the tracked allocation and
+  a previously absent output directory. It uses Pillow and pypdf already
+  present in the locked environment; it performs no OCR, model, HTTP or
+  database operation.
+- The generator derives each report from `seed + report_id`, so report content
+  is independent of iteration order. PNG output uses Pillow's bundled default
+  font, explicit RGB dimensions and explicit PNG encoding. PDF output uses
+  standard Helvetica text streams and contains two pages for the pulmonary
+  challenge.
+- Output contains `sources/development`, `sources/locked_test`,
+  `construction-truth`, `annotation-templates` and `manifests`. Source
+  filenames are the allocated report ID plus `.png` or `.pdf`.
+- Construction records use
+  `clin-data-relay-construction-truth-v1`, not the scorer's gold schema. Each
+  field records the displayed tuple and evidence location, but the package is
+  explicitly `NOT_ADJUDICATED_GOLD`.
+- Annotation templates use
+  `clin-data-relay-annotation-template-v1`, carry `not_started`, source path and
+  reviewer slot, and contain an empty `fields` array. They never contain target
+  field count or construction values.
+- For the 90 non-double locked reports, deterministic sorted alternation gives
+  45 primary assignments to each reviewer. Both reviewers also receive the 30
+  frozen double-review reports, producing 75 template rows per reviewer.
+- Source, construction and annotation manifests list relative path, byte length
+  and SHA-256. A package manifest hashes those three manifests and states that
+  no prediction or result exists. Atomic rename publishes the completed tree;
+  an existing destination is an error.
+- Lab construction uses only stable field codes from the active synthetic CRF
+  mapping. Pulmonary construction uses the existing 18-field dictionary and
+  selects the allocated 8-15 rows. No unit conversion or clinical plausibility
+  claim is made.
+- Full-corpus byte identity is guaranteed only for the locked dependency
+  environment recorded by `uv.lock`. Tests prove same-environment
+  determinism; cross-version image/PDF byte identity is not claimed.

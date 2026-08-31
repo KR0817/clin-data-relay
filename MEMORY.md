@@ -756,3 +756,27 @@
 - Local regression validation passed 294 tests with thirteen external-service
   cases skipped, plus lock validation, Python compilation and JavaScript syntax.
   No live model-provider request was made.
+
+## 2026-09-01 Benchmark v1 synthetic-corpus baseline
+
+- `scripts/generate_benchmark_v1_corpus.py` deterministically produces exactly
+  150 identifier-free synthetic reports from the tracked allocation: 30
+  development and 120 locked-test reports, with 132 PNG laboratory reports and
+  18 two-page pulmonary-function PDFs. It refuses to overwrite an output
+  directory and makes no network, OCR, database or model-provider call.
+- Corpus custody is split between source reports, custodian-only construction
+  records and value-free reviewer templates. Construction records are not
+  independent or adjudicated gold. Each reviewer receives 75 assignments; 30
+  locked reports are double-reviewed.
+- `benchmarks/synthetic-v1/corpus-freeze.json` records locked input hashes and
+  same-environment manifest hashes. It is a hash-only reproducibility record,
+  not a published source archive and not a cross-platform byte-identity claim.
+- Development images received visual layout checks, including the two-column
+  vendor template and low-DPI skew. All generated pulmonary PDFs passed the
+  production local parser. Locked reports received only automated structure and
+  hash checks; neither prediction arm was run and no live Kimi request was made.
+- Local regression validation passed 297 tests with thirteen external-service
+  cases skipped, plus lock validation, Python compilation, JavaScript syntax
+  and diff checks. `REPORT.md` remains `EXPERIMENT_NOT_RUN`; `bench-v1` remains
+  absent pending archived sources, independent annotation, adjudication, both
+  frozen prediction arms and immutable results.

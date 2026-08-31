@@ -1,7 +1,8 @@
-# Synthetic Benchmark v1 allocation
+# Synthetic Benchmark v1 corpus preparation
 
-**Status: `ALLOCATION_ONLY`. No source report, gold annotation, extractor
-prediction or benchmark result exists in this directory.**
+**Status: `CORPUS_GENERATOR_READY; EXPERIMENT_NOT_RUN`. No source report,
+adjudicated gold annotation, extractor prediction or benchmark result exists in
+this tracked directory.**
 
 The deterministic allocation contains 30 development IDs and 120 locked-test
 IDs across eight prespecified primary challenge strata. Thirty locked reports
@@ -21,5 +22,22 @@ The tracked hashes are recorded in `manifest.json`. See the
 [reproduction gates](../../docs/eval/v1/reproduce.md) and
 [unrun report](../../docs/eval/v1/REPORT.md).
 
-Do not create a `bench-v1` tag from this allocation. That tag requires the
-frozen source, gold/adjudication, both prediction arms and final result package.
+Generate the deterministic, identifier-free source corpus into an ignored
+directory:
+
+```powershell
+uv run python scripts/generate_benchmark_v1_corpus.py `
+  --allocation benchmarks/synthetic-v1/dataset-plan.json `
+  --output-dir .runtime/benchmark-v1-corpus
+```
+
+The generator creates 150 source reports, construction records and value-free
+reviewer templates. Construction records are retained by the corpus custodian;
+they are not adjudicated gold. The tracked `corpus-freeze.json` records the
+generator inputs and same-environment reproducibility hashes, but it is not a
+source archive and does not claim byte identity across operating systems or
+library versions.
+
+Do not create a `bench-v1` tag from this preparation state. That tag requires
+an archived immutable source package, gold/adjudication, both prediction arms
+and the final result package.

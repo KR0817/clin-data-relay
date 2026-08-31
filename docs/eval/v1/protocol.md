@@ -35,6 +35,13 @@ The locked set contains exactly 15 reports per primary stratum. The allocation
 is value-free and hashed under `benchmarks/synthetic-v1/`. Source documents and
 their values do not yet exist and must receive a separate immutable manifest.
 
+Source generation keeps three access layers separate: identifier-free report
+bytes for extractors and reviewers, construction truth for the corpus
+custodian, and value-free annotation templates for reviewers. Construction
+truth is never substituted for independently reviewed and adjudicated gold.
+The locked source set may receive automated structure/hash checks before
+annotation, but it is not used for prompt, parser or threshold tuning.
+
 ## Gold and annotation
 
 Both reviewers transcribe field code, displayed label, comparator, value, unit,
@@ -67,6 +74,11 @@ Secondary and safety outcomes:
 - deliberate abstention, fallback, provider error and timeout as separate
   outcomes; and
 - privacy-gate false negatives on prespecified synthetic identifier challenges.
+
+The 150-report extraction allocation is identifier-free, so it cannot provide
+that privacy-gate denominator. Privacy performance remains undefined until a
+separate, frozen identifier-safety allocation is created and run; absence of a
+denominator must not be rendered as zero or success.
 
 Every rate is accompanied by numerator and denominator counts. Confidence
 intervals resample reports, never fields. The 120-report target is a portfolio
