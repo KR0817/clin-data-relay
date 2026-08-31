@@ -1,0 +1,18 @@
+ClinData Relay corresponding source
+====================================
+
+ClinData Relay is licensed under GNU AGPL version 3 only.
+
+The complete corresponding source, including build and installation scripts,
+is available at:
+
+https://github.com/KR0817/clin-data-relay
+
+For a released binary, select the Git tag matching the application version
+reported by the local /api/health endpoint. For version 0.2.0, use:
+
+https://github.com/KR0817/clin-data-relay/tree/v0.2.0
+
+Network deployments must preserve a prominent route to the corresponding
+source as required by GNU AGPL section 13. Third-party components remain under
+the licenses listed in THIRD-PARTY-NOTICES.txt and third-party-licenses/.

@@ -11,9 +11,15 @@ if (-not $repoRoot) {
 
 $requiredFiles = @(
     'README.md',
+    'README.zh-CN.md',
     'LICENSE',
+    'CITATION.cff',
     'CONTRIBUTING.md',
     'SECURITY.md',
+    'packaging/SOURCE-CODE.txt',
+    'docs/development/ai-assisted-development.md',
+    'docs/evaluation/benchmark-protocol-v0.1.md',
+    'docs/releases/v0.2.0.md',
     'docs/assets/architecture.svg',
     'docs/assets/showcase/central-workbench.png',
     'docs/assets/showcase/intake-workflow.png',
@@ -105,9 +111,33 @@ if (Test-ContentForCredentialSignature -Content $historyPatch) {
 $readmePath = Join-Path $repoRoot 'README.md'
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
     $readme = Get-Content -LiteralPath $readmePath -Raw
-    foreach ($requiredPhrase in @('research prototype', 'Authority EDC', 'source-available')) {
+    foreach ($requiredPhrase in @('research prototype', 'Authority EDC', 'AGPL-3.0-only')) {
         if ($readme -notmatch [regex]::Escape($requiredPhrase)) {
             $failures.Add("readme_boundary_missing:$requiredPhrase")
+        }
+    }
+}
+
+$licensePath = Join-Path $repoRoot 'LICENSE'
+if (Test-Path -LiteralPath $licensePath -PathType Leaf) {
+    $licenseText = Get-Content -LiteralPath $licensePath -Raw
+    foreach ($requiredLicensePhrase in @(
+        'GNU AFFERO GENERAL PUBLIC LICENSE',
+        'Version 3, 19 November 2007',
+        'Remote Network Interaction'
+    )) {
+        if ($licenseText -notmatch [regex]::Escape($requiredLicensePhrase)) {
+            $failures.Add("agpl_text_missing:$requiredLicensePhrase")
+        }
+    }
+}
+
+foreach ($metadataFile in @('pyproject.toml', 'CITATION.cff')) {
+    $metadataPath = Join-Path $repoRoot $metadataFile
+    if (Test-Path -LiteralPath $metadataPath -PathType Leaf) {
+        $metadata = Get-Content -LiteralPath $metadataPath -Raw
+        if ($metadata -notmatch [regex]::Escape('AGPL-3.0-only')) {
+            $failures.Add("agpl_metadata_missing:$metadataFile")
         }
     }
 }

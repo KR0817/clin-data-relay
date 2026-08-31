@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Reproducible synthetic-data product tour for ClinData Relay",
   "repository": "https://github.com/KR0817/clin-data-relay",
-  "license": "UNLICENSED",
+  "license": "AGPL-3.0-only",
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.518",

@@ -2,19 +2,18 @@
 
 ## Status
 
-The private source-governance baseline is established. External source access
-or distribution remains prohibited unless the owner grants separate written
-authorization under the proprietary root `LICENSE`.
+The original private source-governance baseline is superseded for source-code
+distribution by ADR 0022 and `AGPL-3.0-only`. The clinical, operational and
+real-data blockers below remain active and are not changed by open sourcing.
 
 ## Resolved governance decisions
 
-1. **Project license:** the owner selected a proprietary license and approved
-   the `Copyright (c) 2026 Xinbo Yu` notice. The root `LICENSE` permits only
-   separately authorized internal evaluation, review, approved research and
-   protocol-bound operation; it is not an open-source license.
-2. **Version baseline:** the canonical private Git repository is established on
-   `main`, with the initial annotated `v0.2.0.dev0` baseline tag. Each later
-   package must continue to embed the commit identifier.
+1. **Project license:** the owner selected `AGPL-3.0-only` on 2026-08-31 before
+   accepting external contributions. The earlier proprietary and custom
+   source-available decisions are retained only as Git/ADR history.
+2. **Version baseline:** the canonical public Git repository is established on
+   `main`; the first formal open-source release is `v0.2.0`. Each later package
+   must continue to identify its corresponding tagged source.
 
 ## Remaining blockers
 

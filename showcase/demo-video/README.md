@@ -24,4 +24,5 @@ npm run render
 
 The composition is 3,600 frames at 30 fps (two minutes), 1280x720, and renders
 to `../../docs/demo/clin-data-relay-demo.mp4`. Remotion licensing is separate
-from this repository license; review the upstream terms before commercial use.
+from this repository's AGPL license; review the upstream terms before
+commercial use.

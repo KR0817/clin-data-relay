@@ -658,6 +658,10 @@
       .queued-patient-report { grid-template-columns: minmax(130px, .7fr) minmax(180px, 1.3fr) auto; }
       .review-evidence-layout:has(.inline-review:not(.hidden)) { display: block; }
     }
+    .site-footer { display: flex; width: min(100% - 32px, 1320px); margin: 0 auto 28px; justify-content: center; gap: 8px 16px; flex-wrap: wrap; color: var(--muted); font-size: .76rem; }
+    .site-footer a { color: var(--primary); font-weight: 700; }
+    .site-footer a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+
     @media (max-width: 560px) {
       .app-shell { width: min(100% - 20px, 1320px); padding-top: 14px; }
       .app-header, .session-bar, .section-head { align-items: stretch; flex-direction: column; }

@@ -1,6 +1,6 @@
 # ADR 0021: Public source-available showcase repository
 
-**Status:** Accepted for implementation
+**Status:** Superseded by ADR 0022
 **Date:** 2026-08-31
 
 ## Context

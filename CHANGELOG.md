@@ -5,6 +5,20 @@ This file is not a substitute for a Git history or an approved project license.
 
 ## Unreleased
 
+## [0.2.0] - 2026-08-31
+
+### Changed
+
+- Relicensed first-party repository content under the OSI-approved
+  `AGPL-3.0-only` license and aligned Python, Remotion and citation metadata.
+- Added the AGPL text and corresponding-source notice to first-party portable
+  bundle builders, plus a public source link in the workbench.
+- Added a Chinese README, POSIX-shell quick start, citation metadata, explicit
+  AI-assisted development disclosure and a preregistered-style extraction
+  benchmark protocol with no fabricated results.
+- Kept clinical, privacy, human-review, Authority EDC and production BLOCK
+  boundaries separate from the open-source license.
+
 ## [0.2.0-showcase.1] - 2026-08-31
 
 ### Changed

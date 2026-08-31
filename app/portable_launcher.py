@@ -17,7 +17,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 
-UI_CACHE_TOKEN = "20260824-compact-command-deck-v1"
+UI_CACHE_TOKEN = "20260831-agpl-source-v1"
 MACOS_LITE_DATA_DIRECTORY = "ClinicalReportExtractorLite"
 
 

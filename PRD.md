@@ -53,9 +53,9 @@ Acceptance criteria:
   makes no claim of concurrent central readiness.
 - The full regression suite, JavaScript syntax check, Python compilation and
   local startup check pass with unchanged response contracts.
-- The project uses a proprietary root license and the repository remains
-  private. Source access or distribution requires the owner's separate written
-  authorization and must not be presented as an open-source release.
+- At this tranche the project used a proprietary root license and private
+  remote. That historical release condition is superseded by the 2026-08-31
+  AGPL open-source decision below.
 
 ## 2026-08-22 source repository baseline
 
@@ -1041,3 +1041,41 @@ Acceptance criteria:
   writes LibreClinica database tables directly.
 - Make the GitHub repository public only after the working tree, full tests,
   release check, rendered diagram/video inspection and remote CI all pass.
+
+## 2026-08-31 AGPL open-source release and evaluation readiness
+
+The public showcase now needs an OSI-approved license and a low-friction
+research-review surface. The license change must not weaken the clinical,
+privacy or production-readiness boundaries: those are product and governance
+controls, not restrictions added to the open-source license.
+
+Acceptance criteria:
+
+- Replace the custom evaluation license with the unmodified GNU Affero General
+  Public License version 3 using SPDX identifier `AGPL-3.0-only`. Do not add a
+  noncommercial, nonclinical or other field-of-use restriction to the license.
+- Update package metadata, public copy, release checks and the rendered demo so
+  no current artifact describes the project as proprietary or merely
+  source-available.
+- Every distributed first-party executable bundle includes the root AGPL text
+  and a plain-text route to the corresponding tagged source. Third-party
+  notices and their independent licenses remain separate.
+- Publish application version `0.2.0`, annotated tag `v0.2.0` and a GitHub
+  Release only after local verification and remote CI pass. Attach a verified
+  Windows Lite ZIP plus SHA-256 when the black-box build succeeds.
+- Add a Chinese public README and a POSIX-shell synthetic quick start without
+  adding Docker or another runtime dependency.
+- Add `CITATION.cff` without inventing an ORCID or DOI. Zenodo linkage remains
+  an owner-authenticated external step and must not be represented as complete
+  until a DOI is actually issued.
+- Disclose the AI-assisted development process and the human controls applied
+  to specifications, security-sensitive code, clinical claims, tests and
+  release decisions. Root agent-control files remain available to the tools
+  that require them.
+- Add a preregistration-style benchmark protocol separating development and
+  locked synthetic test sets, independent double annotation and adjudication,
+  field-level extraction metrics, report-clustered uncertainty and a fixed
+  error taxonomy. Accept/edit/reject logs alone are not a gold standard.
+- Preserve every existing human-review, centre-isolation, Authority EDC,
+  external-model and production BLOCK control. No real participant data is
+  introduced into documentation, tests, screenshots, releases or benchmarks.

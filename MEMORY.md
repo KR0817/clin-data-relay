@@ -642,3 +642,29 @@
   cases skipped, Remotion lint/TypeScript, zero production npm audit findings,
   Python compilation, JavaScript syntax, lock validation, SVG/link checks,
   public-release history scan and rendered-video frame review.
+
+## 2026-08-31 AGPL open-source release and evaluation baseline
+
+- The owner selected `AGPL-3.0-only` for first-party repository content. This
+  supersedes the earlier custom source-available showcase license; clinical and
+  production approvals remain separate governance gates and are not added as
+  license restrictions.
+- Formal version `0.2.0` is the next release after the historical
+  `v0.2.0-showcase.1` marker. Python, Remotion, citation metadata, portable
+  bundle notices and the workbench source link use the same license/version.
+- Portable bundles include the complete AGPL text and `SOURCE-CODE.txt` pinned
+  to the matching tag. Windows Lite also emits a standalone archive SHA-256
+  file beside its synthetic black-box verification report.
+- Public evaluation uses a frozen synthetic benchmark, independent double
+  annotation plus adjudication, and paired local-OCR versus OCR-plus-model
+  comparison. Accept/edit/reject audit records are review traces, not an
+  unbiased gold standard; no performance numbers exist until the protocol is
+  executed.
+- AI-assisted development is disclosed with human ownership of scope, safety,
+  tests and release decisions. Root `AGENTS.md` and `MEMORY.md` remain because
+  they are active workflow controls, not hidden authorship claims.
+- Local pre-release validation passed 279 tests with thirteen
+  PostgreSQL/external-service cases skipped, Remotion lint/TypeScript, zero
+  production npm audit findings, Python compilation, JavaScript syntax, lock
+  validation, CFF parsing, desktop/mobile UI checks and the 120-second rendered
+  demo frame review.

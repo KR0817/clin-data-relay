@@ -24,7 +24,7 @@ export const ClosingScene: React.FC = () => {
         <div style={{fontSize: 23, lineHeight: 1.48, color: "#c7d7ea", marginTop: 30, maxWidth: 720}}>Built for technical review with synthetic data. Production use remains blocked until institutional identity, validation and governance are qualified.</div>
         <div style={{display: "flex", gap: 14, marginTop: 34}}>
           <div style={{padding: "12px 18px", borderRadius: 999, backgroundColor: "#0f766e", fontSize: 16, fontWeight: 720}}>github.com/KR0817/clin-data-relay</div>
-          <div style={{padding: "12px 18px", borderRadius: 999, border: "1px solid rgba(148, 163, 184, 0.42)", fontSize: 16, color: "#c7d7ea"}}>Source-available evaluation</div>
+          <div style={{padding: "12px 18px", borderRadius: 999, border: "1px solid rgba(148, 163, 184, 0.42)", fontSize: 16, color: "#c7d7ea"}}>Open source · AGPL-3.0-only</div>
         </div>
       </Interactive.Div>
     </AbsoluteFill>

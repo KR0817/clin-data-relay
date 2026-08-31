@@ -904,9 +904,9 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
   screenshots, `docs/assets/architecture.svg`, the rendered demo and the
   existing detailed design/operations documents. It must not become a second
   API contract or production runbook.
-- `LICENSE` is a source-available evaluation grant. Public visibility permits
-  inspection and review but does not claim OSI open-source status or authorize
-  production clinical use.
+- This showcase tranche originally used a source-available evaluation grant.
+  ADR 0022 and the AGPL release surface below supersede that license decision;
+  the production clinical boundary remains unchanged.
 - `docs/adr/0021-public-showcase-repository.md` supersedes only ADR 0008's
   private-remote default. The canonical architecture, Authority EDC boundary,
   central fail-closed gates and synthetic-data restrictions are unchanged.
@@ -926,3 +926,30 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - No HTTP endpoint, request/response schema, authentication rule, database
   migration, clinical value, model call or transfer behavior changes in this
   release-publication slice.
+
+## AGPL open-source release surface
+
+- `LICENSE` is the verbatim GNU AGPL version 3 text. `pyproject.toml`, the
+  Remotion package metadata, README badges and `CITATION.cff` use the SPDX
+  identifier `AGPL-3.0-only` as the single machine-readable license identity.
+- Safety notices remain non-license documentation. They describe validation,
+  privacy, regulatory and deployment responsibilities without attempting to
+  prohibit fields of use through an additional license term.
+- `packaging/SOURCE-CODE.txt` points recipients to the public repository and
+  the Git tag matching the application version. Windows full/Lite and macOS
+  Lite builders copy it together with the root `LICENSE`; existing third-party
+  notices remain unchanged.
+- The web workbench exposes a small same-origin-safe footer link to the public
+  source and AGPL notice. It carries no state and changes no authorization or
+  API behavior.
+- `scripts/check_public_release.ps1` requires the Chinese README, citation,
+  evaluation protocol, AI-development disclosure and AGPL markers. It still
+  scans tracked paths and complete Git patch history without printing values.
+- The POSIX quick start is documentation-only and uses the same `uv`, Uvicorn,
+  environment variables and localhost binding as the PowerShell example.
+- `docs/evaluation/benchmark-protocol-v0.1.md` defines the evaluation contract;
+  it contains no results. A provider-generalization refactor is deferred until
+  the frozen benchmark can detect a regression or benefit.
+- The formal release is version `0.2.0`. Source archives come from GitHub;
+  binary assets are uploaded only after their existing synthetic black-box
+  verification succeeds and a SHA-256 sidecar is generated.

@@ -76,3 +76,8 @@ MANIFEST.sha256 lists the SHA-256 digest of every distributed file except the
 manifest itself. The build is unsigned; Windows may display a SmartScreen
 warning. Institutional distribution requires code signing, security and
 license/SBOM review, formal validation and approved Kimi/Docker terms.
+
+Open-source license
+-------------------
+This software is licensed under GNU AGPL v3 only. See LICENSE for the complete
+terms and SOURCE-CODE.txt for the corresponding source location.

@@ -132,6 +132,8 @@ ditto "$app_path" "$package_root/$binary_name.app"
 install -m 755 "$project_root/packaging/Configure-Kimi.command" "$package_root/Configure-Kimi.command"
 install -m 644 "$project_root/packaging/README-START-MACOS-LITE.txt" "$package_root/README-START.txt"
 install -m 644 "$project_root/packaging/THIRD-PARTY-NOTICES-LITE.txt" "$package_root/THIRD-PARTY-NOTICES.txt"
+install -m 644 "$project_root/LICENSE" "$package_root/LICENSE"
+install -m 644 "$project_root/packaging/SOURCE-CODE.txt" "$package_root/SOURCE-CODE.txt"
 install -m 644 "$project_root/docs/macos-lite-distribution.md" "$package_root/docs/macos-lite-distribution.md"
 
 site_packages="$($python_bin -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"

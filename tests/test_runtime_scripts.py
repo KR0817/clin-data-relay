@@ -85,6 +85,9 @@ def test_lite_portable_entrypoint_has_no_container_runtime_dependency() -> None:
     assert "-ArgumentList '--port'" in build_script
     assert "docker " not in build_script.lower()
     assert "docker.exe" not in build_script.lower()
+    assert "'LICENSE'" in build_script
+    assert "SOURCE-CODE.txt" in build_script
+    assert "ClinicalReportExtractorLite-windows-x64.sha256" in build_script
 
 
 def test_windows_lite_icon_is_branded_portable_and_credential_free() -> None:
@@ -173,6 +176,8 @@ def test_macos_lite_build_is_native_local_only_and_blackbox_verified() -> None:
     assert "notarytool" in build_script
     assert "docker " not in build_script.lower()
     assert "docker.exe" not in build_script.lower()
+    assert '"$project_root/LICENSE"' in build_script
+    assert "SOURCE-CODE.txt" in build_script
 
     assert "read -r -s" in configure_script
     assert "chmod 600" in configure_script

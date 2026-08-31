@@ -144,6 +144,8 @@ if (-not (Test-PortableLibreClinicaImage)) {
 
 Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\README-START.txt') -Destination $bundleDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\THIRD-PARTY-NOTICES.txt') -Destination $bundleDirectory
+Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination (Join-Path $bundleDirectory 'LICENSE')
+Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\SOURCE-CODE.txt') -Destination $bundleDirectory
 foreach ($entryPoint in @(
     'Start-Clinical-EDC.cmd',
     'Stop-LibreClinica.cmd',

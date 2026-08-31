@@ -1454,7 +1454,7 @@ def test_health_reports_redacted_runtime_profile_and_database_backend(client: Te
 
     assert response.status_code == 200
     health = response.json()
-    assert health["application_version"] == "0.2.0.dev0"
+    assert health["application_version"] == "0.2.0"
     assert health["deployment_profile"] == "local"
     assert health["database_backend"] == "sqlite"
     assert health["database_schema_version"] == 1
@@ -2595,13 +2595,16 @@ def test_homepage_keeps_diagnostics_in_an_accessible_compact_command_deck(
     assert 'id="edc-status"' in response.text
     assert 'id="production-status"' in response.text
     assert (
-        'href="/static/css/app.css?v=20260824-compact-command-deck-v1"'
+        'href="/static/css/app.css?v=20260831-agpl-source-v1"'
         in response.text
     )
     assert stylesheet.status_code == 200
     assert ".session-health" in stylesheet.text
     assert ".session-actions { display: grid;" in stylesheet.text
     assert "scroll-snap-type: x proximity" in stylesheet.text
+    assert "ClinData Relay 采用 AGPL-3.0-only 开源许可" in response.text
+    assert 'href="https://github.com/KR0817/clin-data-relay"' in response.text
+    assert ".site-footer" in stylesheet.text
 
 
 def test_homepage_exposes_one_time_centre_credentials_and_authenticated_kimi_settings(
@@ -2649,7 +2652,7 @@ def test_homepage_serves_external_stylesheet_without_exposing_runtime_data(clien
 
     assert response.status_code == 200
     assert (
-        'href="/static/css/app.css?v=20260824-compact-command-deck-v1"'
+        'href="/static/css/app.css?v=20260831-agpl-source-v1"'
         in response.text
     )
     assert "<style>" not in response.text

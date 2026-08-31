@@ -3,16 +3,21 @@
 **A human-reviewed clinical data companion for multicentre research.**
 Formerly developed as *Clinical EDC Companion*.
 
+[简体中文](README.zh-CN.md)
+
 [![Source quality](https://github.com/KR0817/clin-data-relay/actions/workflows/quality.yml/badge.svg)](https://github.com/KR0817/clin-data-relay/actions/workflows/quality.yml)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-2563eb.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/status-research%20prototype-f59e0b.svg)](#safety-boundary)
-[![License](https://img.shields.io/badge/license-source--available-0f766e.svg)](LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0--only-0f766e.svg)](LICENSE)
 
 ClinData Relay turns laboratory images, pulmonary-function PDFs and structured
 files into traceable **candidate values**. Investigators review every candidate
 before it can enter an immutable transfer package. LibreClinica remains the
 Authority EDC; this application never writes LibreClinica database tables
 directly.
+
+That separation between the convenience layer and the authoritative record is
+the product's central design decision; OCR is only one replaceable component.
 
 > This repository is a synthetic-data research prototype. It is not a medical
 > device, a validated EDC or authorization to process real participant data.
@@ -74,9 +79,16 @@ decisions are recorded in [the ADR index](docs/adr/).
 
 ## Quick start: synthetic localhost sandbox
 
-Requirements: Windows PowerShell, Python 3.12 and
+For a Docker-free Windows evaluation build, use the verified archive and
+SHA-256 file from the [latest release](https://github.com/KR0817/clin-data-relay/releases/latest).
+Release binaries are unsigned research-prototype artifacts; inspect the source
+and verification report before running them.
+
+Requirements: Python 3.12 and
 [uv](https://docs.astral.sh/uv/). Tesseract is optional unless you want to run
 real local OCR.
+
+Windows PowerShell:
 
 ```powershell
 git clone https://github.com/KR0817/clin-data-relay.git
@@ -86,6 +98,19 @@ $env:COMPANION_DATABASE_PATH = ".runtime/demo/companion.db"
 $env:COMPANION_ENV = "development"
 $env:COMPANION_PRODUCT_MODE = "full"
 $env:KIMI_ENABLED = "false"
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+macOS or Linux shell:
+
+```bash
+git clone https://github.com/KR0817/clin-data-relay.git
+cd clin-data-relay
+uv sync --all-extras --frozen
+COMPANION_DATABASE_PATH=.runtime/demo/companion.db \
+COMPANION_ENV=development \
+COMPANION_PRODUCT_MODE=full \
+KIMI_ENABLED=false \
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -142,13 +167,27 @@ Read [the preflight boundary](docs/preflight.md),
 | Project OIDC | Boundary implemented; provider operation not qualified |
 | Real clinical deployment | **Blocked** |
 
+## Evaluation and development transparency
+
+The preregistered-style [benchmark protocol](docs/evaluation/benchmark-protocol-v0.1.md)
+defines independent gold annotation, a locked synthetic test set, OCR-only
+versus OCR-plus-model comparison, error taxonomy and report-clustered
+uncertainty. No benchmark result is claimed until the frozen dataset and
+evidence package exist.
+
+Development uses AI coding tools under explicit human control. The
+[AI-assisted development disclosure](docs/development/ai-assisted-development.md)
+describes what agents may do, what requires human judgment and how generated
+changes are reviewed and tested. Citation metadata is available in
+[`CITATION.cff`](CITATION.cff).
+
 ## Contributing and license
 
 Review feedback and bounded pull requests are welcome; see
 [CONTRIBUTING.md](CONTRIBUTING.md). Please report security issues privately as
 described in [SECURITY.md](SECURITY.md), not in a public issue.
 
-The repository is **source-available for evaluation**, not OSI-approved open
-source. See [LICENSE](LICENSE) for the permitted review, fork and
-noncommercial-evaluation scope. Third-party components retain their own
-licenses.
+ClinData Relay is open source under `AGPL-3.0-only`; see [LICENSE](LICENSE).
+Commercial use is not prohibited, but distribution and network-service use
+must comply with the AGPL. Clinical and production readiness remain separate
+governance questions. Third-party components retain their own licenses.

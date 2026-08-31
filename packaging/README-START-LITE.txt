@@ -32,3 +32,8 @@ Lite 不是 EDC，不连接 LibreClinica，也不执行权威库提交。导出�
 ------
 MANIFEST.sha256 记录分发文件哈希。本构建未进行代码签名，Windows 可能显示
 SmartScreen 提示。机构分发前仍需完成签名、恶意软件扫描和许可证审查。
+
+开源许可
+--------
+本程序采用 AGPL-3.0-only。LICENSE 是许可全文，SOURCE-CODE.txt 提供与版本
+对应的完整源码地址；第三方组件继续适用 THIRD-PARTY-NOTICES.txt 中的许可。

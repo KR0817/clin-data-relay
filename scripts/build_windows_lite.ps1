@@ -14,6 +14,7 @@ $executableName = 'Start-Clinical-EDC-Lite'
 $distRoot = Join-Path $projectRoot 'dist\windows-lite-x64'
 $bundleDirectory = Join-Path $distRoot $binaryName
 $archivePath = Join-Path $projectRoot 'dist\ClinicalReportExtractorLite-windows-x64.zip'
+$checksumPath = Join-Path $projectRoot 'dist\ClinicalReportExtractorLite-windows-x64.sha256'
 $verificationPath = Join-Path $projectRoot 'dist\ClinicalReportExtractorLite-windows-x64.verification.json'
 $buildRoot = Join-Path $projectRoot 'build\pyinstaller-windows-lite'
 $qaRoot = Join-Path $projectRoot '.runtime\portable-lite-build-qa'
@@ -73,6 +74,7 @@ if (-not $SkipTests) {
 Remove-VerifiedTarget -Path $distRoot
 Remove-VerifiedTarget -Path $buildRoot
 Remove-VerifiedTarget -Path $archivePath
+Remove-VerifiedTarget -Path $checksumPath
 Remove-VerifiedTarget -Path $verificationPath
 Remove-VerifiedTarget -Path $qaRoot
 New-Item -ItemType Directory -Path $distRoot, $buildRoot -Force | Out-Null
@@ -118,6 +120,8 @@ Copy-Item -LiteralPath $iconSource -Destination $iconTarget
 Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\Configure-Kimi.cmd') -Destination $bundleDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\README-START-LITE.txt') -Destination (Join-Path $bundleDirectory 'README-START.txt')
 Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\THIRD-PARTY-NOTICES-LITE.txt') -Destination (Join-Path $bundleDirectory 'THIRD-PARTY-NOTICES.txt')
+Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination (Join-Path $bundleDirectory 'LICENSE')
+Copy-Item -LiteralPath (Join-Path $projectRoot 'packaging\SOURCE-CODE.txt') -Destination $bundleDirectory
 
 $recipientScripts = Join-Path $bundleDirectory 'scripts'
 $recipientDocs = Join-Path $bundleDirectory 'docs'
@@ -273,9 +277,15 @@ if (-not (Test-Path -LiteralPath $archivePath -PathType Leaf)) {
     throw 'Lite ZIP creation failed.'
 }
 $archiveHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $archivePath).Hash.ToLowerInvariant()
+[IO.File]::WriteAllText(
+    $checksumPath,
+    "$archiveHash  $([IO.Path]::GetFileName($archivePath))`n",
+    (New-Object Text.UTF8Encoding($false))
+)
 Remove-VerifiedTarget -Path $qaRoot
 
 Write-Output "PASS: Lite folder: $bundleDirectory"
 Write-Output "PASS: Lite ZIP: $archivePath"
 Write-Output "PASS: Verification report: $verificationPath"
+Write-Output "PASS: Checksum: $checksumPath"
 Write-Output "SHA256: $archiveHash"

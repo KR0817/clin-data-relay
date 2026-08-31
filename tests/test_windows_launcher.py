@@ -52,7 +52,7 @@ def restore_portable_environment() -> Iterator[None]:
 
 def test_browser_url_uses_a_versioned_ui_entrypoint() -> None:
     assert browser_url("http://127.0.0.1:8000") == (
-        "http://127.0.0.1:8000/?ui=20260824-compact-command-deck-v1"
+        "http://127.0.0.1:8000/?ui=20260831-agpl-source-v1"
     )
 
 
