@@ -897,3 +897,32 @@ The record contains no raw bytes, credentials, report identifiers or unbounded p
 - Regression suite for existing OCR/Kimi and LibreClinica paths.
 - Real CSV fixture using synthetic data.
 - Browser checks at desktop and mobile viewport for all new panels and primary actions.
+
+## Public showcase repository surface
+
+- `README.md` is the public landing page and links to versioned synthetic
+  screenshots, `docs/assets/architecture.svg`, the rendered demo and the
+  existing detailed design/operations documents. It must not become a second
+  API contract or production runbook.
+- `LICENSE` is a source-available evaluation grant. Public visibility permits
+  inspection and review but does not claim OSI open-source status or authorize
+  production clinical use.
+- `docs/adr/0021-public-showcase-repository.md` supersedes only ADR 0008's
+  private-remote default. The canonical architecture, Authority EDC boundary,
+  central fail-closed gates and synthetic-data restrictions are unchanged.
+- `scripts/check_public_release.ps1` uses Git and PowerShell only. It inspects
+  tracked paths and text without echoing matched values, verifies required
+  showcase files and rejects common credential/private-key signatures. The
+  source-quality workflow runs it before tests.
+- `showcase/demo-video/` contains the small Remotion source project. Its public
+  assets are fixed synthetic screenshots; rendering has no dependency on the
+  live application, Kimi, LibreClinica, a database or network service.
+- `docs/demo/clin-data-relay-demo.mp4` is 1280x720, 30 fps and approximately
+  120 seconds. The repository copy remains below 10 MiB; larger future media
+  belongs in a GitHub Release rather than normal Git history.
+- The architecture SVG is hand-authored repository content with system fonts,
+  descriptive text and no remote assets. README supplies a text alternative
+  through its architecture explanation.
+- No HTTP endpoint, request/response schema, authentication rule, database
+  migration, clinical value, model call or transfer behavior changes in this
+  release-publication slice.

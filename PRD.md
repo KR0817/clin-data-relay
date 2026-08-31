@@ -1008,3 +1008,36 @@ Acceptance criteria:
 - Success returns only `status=deactivated`, membership ID and `active=false`.
   The action does not mount central HTTP, alter Centre Lite or make production
   readiness pass.
+
+## 2026-08-31 public showcase repository
+
+ClinData Relay needs a public, reviewable project surface that explains the
+product and its safety boundary without presenting the synthetic sandbox as a
+validated clinical system or exposing runtime secrets, participant material or
+private deployment state.
+
+Acceptance criteria:
+
+- Preserve the existing real commit history; do not fabricate or squash a
+  showcase-only history. Add a showcase commit and annotated pre-release tag
+  after verification.
+- Replace the private-only license with a source-available evaluation license
+  that explicitly permits public viewing, cloning, GitHub forks, noncommercial
+  evaluation and review while retaining the owner's production, clinical and
+  commercial rights. State clearly that it is not an OSI open-source license.
+- Replace the internal-manual-style README with a concise public landing page
+  covering problem, verified capabilities, architecture, safety boundaries,
+  local synthetic quick start, test commands, roadmap and contribution path.
+- Include one repository-native architecture diagram and a rendered two-minute
+  demo made entirely from synthetic localhost screenshots and explanatory
+  graphics. Neither asset may contain real participant information, API keys,
+  credentials, private endpoints or runtime database content.
+- Add a dependency-free public-release check that fails on tracked secret/data
+  filenames, common credential signatures, missing showcase artifacts,
+  oversized demo media or public-copy claims that contradict the research
+  prototype boundary.
+- Keep the Authority EDC and human-review principles visible: OCR/LLM output is
+  a candidate, LibreClinica remains authoritative, and the companion never
+  writes LibreClinica database tables directly.
+- Make the GitHub repository public only after the working tree, full tests,
+  release check, rendered diagram/video inspection and remote CI all pass.

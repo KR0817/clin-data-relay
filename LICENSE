@@ -1,82 +1,93 @@
-CLINDATA RELAY PROPRIETARY SOFTWARE LICENSE
+CLINDATA RELAY SOURCE-AVAILABLE EVALUATION LICENSE 1.0
 
 Copyright (c) 2026 Xinbo Yu. All rights reserved.
 
-1. Ownership
+This license is not an Open Source Initiative approved open-source license.
 
-ClinData Relay, including its original source code, documentation, user
-interfaces, configuration, and compiled distributions (the "Software"), is
-proprietary to Xinbo Yu (the "Licensor"), except for third-party components
-identified below. No rights are granted except as expressly stated in this
-License or in a separate written agreement signed by the Licensor.
+1. Evaluation grant
 
-2. Limited Authorized Use
+Subject to this License, the Licensor grants each recipient a revocable,
+worldwide, non-exclusive, non-transferable, royalty-free right to:
 
-A person or organization that has received the Software with the Licensor's
-written authorization may install and use it only within the authorized sites,
-time period, systems, research protocol, and purposes stated in that
-authorization. Permitted purposes may include internal evaluation, security or
-regulatory review, approved research, and protocol-bound clinical-data
-operations.
+- view and inspect the Software in this public repository;
+- clone the repository and run or modify the Software solely for personal,
+  academic, security, interoperability or technical evaluation;
+- create a public GitHub fork for those evaluation purposes; and
+- quote limited portions of the Software in review, teaching or commentary
+  with attribution and a link to the original repository.
 
-3. Restrictions
+The term "Software" includes the original source code, documentation, user
+interfaces, configuration and demonstration assets in this repository.
 
-Without the Licensor's prior written permission, no person or organization may:
+2. Conditions
 
-- copy, publish, disclose, sublicense, sell, lease, transfer, distribute, or
-  make the Software available to any third party;
-- modify, adapt, translate, or create derivative works from the Software;
-- remove or alter copyright, attribution, security, audit, or proprietary
-  notices;
-- bypass access controls, audit controls, data-isolation controls, or technical
-  restrictions; or
-- reverse engineer, decompile, or disassemble a compiled distribution, except
-  to the limited extent that applicable law expressly permits despite this
-  restriction.
+Every permitted copy or fork must retain this License, the copyright notice,
+the research-prototype warning and all third-party notices. A modified fork
+must state prominently that it is modified and is not endorsed by the
+Licensor. Rights granted here may not be sublicensed.
 
-4. Clinical and Regulatory Boundary
+3. Uses not granted
 
-The Software is not licensed as a medical device and must not be used to make
-diagnostic, treatment, dosing, or other direct patient-care decisions. Use with
-real participant data requires the applicable protocol, ethics, privacy,
-security, data-flow, validation, and institutional approvals. The authorized
-organization remains responsible for access governance, data protection,
-operator training, validation, incident response, retention, and compliance
-with applicable law and research requirements.
+Without a separate written agreement from the Licensor, this License does not
+permit:
 
-5. Confidentiality and Data
+- production, operational, clinical, diagnostic, treatment, dosing or direct
+  patient-care use;
+- processing real participant data, protected health information or direct
+  identifiers;
+- commercial use, paid consulting, resale, hosting as a service, managed
+  service operation or distribution of a compiled product;
+- use in a regulated study, validated system or institutional deployment;
+- removal or bypass of access, centre-isolation, audit, privacy, integrity,
+  quality or human-review controls; or
+- use of the Software or its output to train or evaluate a competing
+  commercial product.
 
-Source code, non-public technical material, credentials, and security details
-must be protected from unauthorized disclosure. This License grants no rights
-to participant data or other data processed by the Software. Data ownership,
-control, permitted processing, and retention are governed by the applicable
-protocol, authorization, and data agreement.
+No trademark, patent, data, model, deployment or production right is granted.
 
-6. Third-Party Components
+4. Clinical, research and data boundary
 
-Third-party software, models, fonts, images, and other materials remain subject
+The Software is a research prototype, is not a medical device and is not a
+validated electronic data capture system. The repository and its tests do not
+replace protocol, ethics, privacy, security, data-flow, validation,
+institutional or regulatory approval. This License grants no right to any
+participant data. The authorized organization remains responsible for data
+protection, access governance, operator training, incident response, retention
+and compliance with applicable law.
+
+5. Contributions
+
+Unless a separate written agreement applies, a contribution intentionally
+submitted to this repository grants the Licensor a perpetual, worldwide,
+non-exclusive, irrevocable, royalty-free right to use, reproduce, modify,
+distribute, sublicense and relicense that contribution as part of the
+Software. The contributor represents that they have the right to grant those
+permissions and that the contribution contains no participant data, secret or
+third-party material submitted without authorization.
+
+6. Third-party components
+
+Third-party software, models, fonts, images and other materials remain subject
 to their respective licenses and notices. This License applies only to the
-original portions of ClinData Relay and does not replace or restrict rights
-granted under an applicable third-party license.
+Licensor's original portions and does not restrict rights already granted by a
+third-party license.
 
-7. Disclaimer and Limitation of Liability
+7. Disclaimer and limitation of liability
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED
-"AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS"
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY,
-AVAILABILITY, OR REGULATORY FITNESS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE
+AVAILABILITY OR REGULATORY FITNESS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE
 LICENSOR WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
-CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, RESEARCH RESULTS,
-REVENUE, OR BUSINESS OPPORTUNITY, ARISING FROM USE OF THE SOFTWARE.
+CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, RESEARCH
+RESULTS, REVENUE OR BUSINESS OPPORTUNITY, ARISING FROM THE SOFTWARE.
 
 8. Termination
 
-Any permission granted under this License terminates automatically upon breach.
-After termination, the recipient must stop using the Software and securely
-delete or return all copies as directed by the Licensor, except for copies that
-must be retained under an applicable legal, regulatory, or approved research
-record-retention obligation.
+The rights granted by this License terminate automatically upon breach. After
+termination, the recipient must stop using the Software and delete copies
+other than public GitHub forks that are removed through GitHub's normal fork
+network process or records that applicable law requires the recipient to keep.
 
-For permissions or licensing inquiries, contact the Licensor through the
-private repository or another verified written channel designated by the
-Licensor.
+For production, clinical, commercial or alternative licensing, contact the
+Licensor through a verified channel listed by the repository owner.

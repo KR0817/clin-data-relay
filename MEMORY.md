@@ -620,3 +620,25 @@
 - Local verification passed 278 tests with thirteen PostgreSQL/external-service
   cases skipped, plus Python compilation, JavaScript syntax, lock-file and diff
   checks.
+
+## 2026-08-31 public showcase repository
+
+- The GitHub showcase preserves the repository's real commit history; no
+  synthetic backfill, squashing or history rewrite is used. The release marker
+  is `v0.2.0-showcase.1`.
+- Public visibility is paired with the custom source-available evaluation
+  license, not an OSI-approved open-source license. Production, clinical and
+  commercial use still requires a separate written agreement and applicable
+  institutional approvals.
+- The public landing page, architecture SVG, screenshots and two-minute
+  Remotion tour use synthetic data only and keep human review plus LibreClinica
+  as Authority EDC explicit. Runtime databases, report originals, credentials
+  and private endpoints are excluded.
+- `scripts/check_public_release.ps1` is the publication gate. It checks required
+  showcase artifacts, current and historical forbidden paths, current and
+  historical credential signatures, Git history depth, tags and video size
+  without printing secret values. CI must use a full clone for this gate.
+- Local release verification passed 278 tests with thirteen external-service
+  cases skipped, Remotion lint/TypeScript, zero production npm audit findings,
+  Python compilation, JavaScript syntax, lock validation, SVG/link checks,
+  public-release history scan and rendered-video frame review.

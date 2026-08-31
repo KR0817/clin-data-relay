@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">ClinData Relay architecture</title>
+  <desc id="desc">A centre workstation performs local report parsing and human review, creates encrypted centre packages, and sends only confirmed pseudonymous values to a central coordination layer. LibreClinica remains the Authority EDC and is reached only through supported SOAP and ODM interfaces.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#edf5f7"/>
+    </linearGradient>
+    <linearGradient id="site" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef6ff"/>
+    </linearGradient>
+    <linearGradient id="central" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ecfbf7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0f2747" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1 1L11 6L1 11Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1 1L11 6L1 11Z" fill="#0f766e"/>
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+      .eyebrow { font-size: 18px; font-weight: 700; letter-spacing: 3px; fill: #2f6fa3; }
+      .title { font-size: 44px; font-weight: 760; fill: #0f2747; }
+      .subtitle { font-size: 21px; fill: #52657d; }
+      .lane-title { font-size: 24px; font-weight: 750; fill: #0f2747; }
+      .lane-copy { font-size: 16px; fill: #64748b; }
+      .node-title { font-size: 18px; font-weight: 720; fill: #0f2747; }
+      .node-copy { font-size: 14px; fill: #52657d; }
+      .chip { font-size: 13px; font-weight: 700; fill: #0f766e; }
+      .boundary { font-size: 16px; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" rx="36" fill="url(#background)"/>
+  <circle cx="1435" cy="104" r="170" fill="#d7eff1" opacity="0.55"/>
+  <circle cx="1530" cy="160" r="85" fill="#dce8ff" opacity="0.7"/>
+
+  <text x="82" y="78" class="eyebrow">CLINDATA RELAY</text>
+  <text x="82" y="130" class="title">Human-reviewed data flow</text>
+  <text x="82" y="166" class="subtitle">Convenience at the edge. Authority stays in the EDC.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="218" width="520" height="578" rx="28" fill="url(#site)" stroke="#c8dcf4" stroke-width="2"/>
+    <rect x="620" y="218" width="430" height="578" rx="28" fill="url(#central)" stroke="#c4e7df" stroke-width="2"/>
+    <rect x="1080" y="218" width="450" height="578" rx="28" fill="#ffffff" stroke="#d6dee8" stroke-width="2"/>
+  </g>
+
+  <g>
+    <rect x="94" y="242" width="114" height="30" rx="15" fill="#e8f1ff"/>
+    <text x="112" y="263" class="chip" fill="#2563eb">SITE RUNTIME</text>
+    <text x="94" y="310" class="lane-title">Centre workstation</text>
+    <text x="94" y="338" class="lane-copy">Local-first capture, review and export</text>
+
+    <rect x="94" y="372" width="214" height="118" rx="18" fill="#ffffff" stroke="#b9d3ef"/>
+    <circle cx="126" cy="407" r="17" fill="#dbeafe"/>
+    <path d="M118 408h16M126 400v16" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+    <text x="154" y="407" class="node-title">Report intake</text>
+    <text x="112" y="440" class="node-copy">Images · PDFs · CSV</text>
+    <text x="112" y="464" class="node-copy">Pseudonymous subject + visit</text>
+
+    <rect x="340" y="372" width="224" height="118" rx="18" fill="#ffffff" stroke="#b9d3ef"/>
+    <circle cx="374" cy="407" r="17" fill="#dbeafe"/>
+    <path d="M366 401h16M366 407h12M366 413h9" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+    <text x="402" y="407" class="node-title">Local extraction</text>
+    <text x="358" y="440" class="node-copy">Tesseract · PDF text layer</text>
+    <text x="358" y="464" class="node-copy">Versioned field dictionary</text>
+
+    <path d="M308 431H330" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="94" y="526" width="470" height="132" rx="20" fill="#0f2747"/>
+    <circle cx="132" cy="566" r="18" fill="#2dd4bf" opacity="0.24"/>
+    <path d="M124 566l6 6 12-15" fill="none" stroke="#5eead4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="164" y="568" class="node-title" fill="#ffffff">Human review gate</text>
+    <text x="116" y="604" class="node-copy" fill="#c7d7ea">Accept · edit · reject · quality checks</text>
+    <text x="116" y="632" class="node-copy" fill="#c7d7ea">Audit event + evidence provenance</text>
+
+    <path d="M448 490V516" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="94" y="696" width="220" height="72" rx="16" fill="#effaf7" stroke="#9ed8cb"/>
+    <text x="114" y="727" class="node-title">Encrypted package</text>
+    <text x="114" y="751" class="node-copy">AES-GCM · SHA-256 · no images</text>
+    <rect x="340" y="696" width="224" height="72" rx="16" fill="#fff7e8" stroke="#efd39e"/>
+    <text x="360" y="727" class="node-title">Role-scoped Excel</text>
+    <text x="360" y="751" class="node-copy">Confirmed values only</text>
+  </g>
+
+  <g>
+    <rect x="644" y="242" width="144" height="30" rx="15" fill="#e5f8f4"/>
+    <text x="662" y="263" class="chip">CENTRAL CONTROL</text>
+    <text x="644" y="310" class="lane-title">Coordination layer</text>
+    <text x="644" y="338" class="lane-copy">Cross-centre governance and reconciliation</text>
+
+    <rect x="644" y="372" width="382" height="104" rx="18" fill="#ffffff" stroke="#a9ddd1"/>
+    <text x="670" y="408" class="node-title">Package import ledger</text>
+    <text x="670" y="436" class="node-copy">Duplicate prevention · dictionary version</text>
+    <text x="670" y="458" class="node-copy">Failure detail · append-only audit chain</text>
+
+    <rect x="644" y="510" width="184" height="116" rx="18" fill="#ffffff" stroke="#a9ddd1"/>
+    <text x="666" y="546" class="node-title">SQLite</text>
+    <text x="666" y="574" class="node-copy">Centre / Lite runtime</text>
+    <text x="666" y="600" class="node-copy">Local backup + restore check</text>
+
+    <rect x="842" y="510" width="184" height="116" rx="18" fill="#ffffff" stroke="#a9ddd1"/>
+    <text x="864" y="546" class="node-title">PostgreSQL</text>
+    <text x="864" y="574" class="node-copy">Central repository contracts</text>
+    <text x="864" y="600" class="node-copy">HTTP composition still blocked</text>
+
+    <rect x="644" y="660" width="382" height="108" rx="18" fill="#e8f7f3" stroke="#7ccaba"/>
+    <text x="670" y="698" class="node-title">Identity ≠ authorization</text>
+    <text x="670" y="726" class="node-copy">Project OIDC verifies identity</text>
+    <text x="670" y="750" class="node-copy">Study Membership grants role + centre</text>
+  </g>
+
+  <path d="M574 732C598 732 606 424 634 424" fill="none" stroke="#0f766e" stroke-width="4" stroke-dasharray="8 8" marker-end="url(#arrow-teal)"/>
+  <rect x="548" y="600" width="126" height="56" rx="14" fill="#0f766e"/>
+  <text x="564" y="624" class="boundary">Confirmed</text>
+  <text x="564" y="645" class="boundary">values only</text>
+
+  <g>
+    <rect x="1104" y="242" width="138" height="30" rx="15" fill="#eef2f7"/>
+    <text x="1122" y="263" class="chip" fill="#52657d">AUTHORITY EDC</text>
+    <text x="1104" y="310" class="lane-title">LibreClinica</text>
+    <text x="1104" y="338" class="lane-copy">System of record</text>
+
+    <rect x="1104" y="372" width="402" height="134" rx="20" fill="#0f2747"/>
+    <text x="1134" y="415" class="node-title" fill="#ffffff">Supported interface only</text>
+    <text x="1134" y="449" class="node-copy" fill="#c7d7ea">SOAP / ODM adapter</text>
+    <text x="1134" y="478" class="node-copy" fill="#c7d7ea">Immutable request + response receipt</text>
+
+    <rect x="1104" y="544" width="402" height="104" rx="18" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="1134" y="582" class="node-title">Authoritative workflows</text>
+    <text x="1134" y="612" class="node-copy">Queries · signatures · freeze · lock</text>
+
+    <rect x="1104" y="686" width="402" height="82" rx="18" fill="#fff2f2" stroke="#efb2b2"/>
+    <text x="1134" y="720" class="node-title" fill="#a92323">No direct database writes</text>
+    <text x="1134" y="748" class="node-copy">Fail closed when mappings or readiness are absent</text>
+  </g>
+
+  <path d="M1038 442H1092" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="70" y="826" width="1460" height="42" rx="21" fill="#0f2747"/>
+    <text x="800" y="853" text-anchor="middle" class="boundary">Synthetic-data prototype · Human approval required · Production readiness remains fail-closed</text>
+  </g>
+</svg>

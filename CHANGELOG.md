@@ -5,12 +5,24 @@ This file is not a substitute for a Git history or an approved project license.
 
 ## Unreleased
 
+## [0.2.0-showcase.1] - 2026-08-31
+
 ### Changed
 
-- Defined `C:\ClinData Relay` as the canonical clean source root and prepared a
-  private Git baseline that excludes runtime data, secrets and build outputs.
-- Added the owner-approved proprietary root `LICENSE`; the repository remains
-  private and source distribution requires separate written authorization.
+- Replaced the internal operator manual at the repository root with a concise
+  public landing page and kept detailed operational material under `docs/`.
+- Added a source-available evaluation license, contribution and security
+  policies, an architecture diagram, synthetic UI screenshots and a
+  reproducible two-minute product tour.
+- Added a release gate that checks public artifacts, repository history,
+  forbidden runtime paths and credential signatures without printing values.
+- Preserved the real Git history and the research-prototype, human-review and
+  Authority EDC boundaries; this showcase is not production authorization.
+
+- Established a clean Git source root that excludes runtime data, secrets and
+  build outputs.
+- Added the owner-approved source-available evaluation `LICENSE`; production,
+  clinical and commercial use still requires separate written authorization.
 - Adopted `ClinData Relay` as the user-facing product name while retaining
   compatibility-sensitive package, API and launcher filenames.
 - Added a secret-free Windows CI quality gate for locked installation,

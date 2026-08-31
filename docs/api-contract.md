@@ -708,3 +708,16 @@ Stable detail codes include:
 - `recognition_job_duplicate_source`
 - `recognition_job_multiple_centres`
 - `offline_package_timestamp_invalid`
+
+### Public showcase presentation contract
+
+The public README, architecture diagram, screenshots and demo are documentation
+artifacts only. They create no HTTP route, request, response, role, centre
+scope, audit event or production-readiness capability. Every example identity,
+subject reference and value in showcase assets is synthetic.
+
+The showcase must describe OCR/Kimi results as review candidates and
+LibreClinica as the Authority EDC. It must not imply that a rendered demo,
+passing automated tests, a public GitHub repository or a source-available
+license establishes clinical validation, institutional approval or production
+readiness.
