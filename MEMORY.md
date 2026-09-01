@@ -805,8 +805,14 @@
   and two dictionaries with a 30-report overlap; no construction or prediction
   file is present. Central custody-manifest SHA-256 is
   `d600122955faa2b0a8b465fd5db81fab2c25f123c2b516c67c9c0f40a083ef80`.
-- No person has completed a review, no adjudicated gold or formal prediction
-  exists, and no Kimi call was made. `REPORT.md` remains
-  `EXPERIMENT_NOT_RUN`; `bench-v1` remains absent. Local validation passed 298
-  tests with thirteen external-service cases skipped, plus focused workflow,
-  compilation, lock, JavaScript syntax and diff checks.
+- Reviewer A and B completed their independent annotations. Both returned kits
+  compiled successfully into hash-covered evidence for 75 reports each after
+  the missing immutable `README.txt` was restored byte-for-byte from its
+  manifest; neither annotation CSV was modified during recovery.
+- The 30 double-reviewed reports produced 343 discrepancy slots and zero exact
+  report-level agreements. The worklist remains at the third-person resolution
+  boundary; no adjudicated gold or formal prediction exists, and no Kimi call
+  was made. `REPORT.md` remains `EXPERIMENT_NOT_RUN`; `bench-v1` remains absent.
+  The last full local validation passed 298 tests with thirteen external-service
+  cases skipped, plus focused workflow, compilation, lock, JavaScript syntax
+  and diff checks.
