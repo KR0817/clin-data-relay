@@ -810,9 +810,16 @@
   the missing immutable `README.txt` was restored byte-for-byte from its
   manifest; neither annotation CSV was modified during recovery.
 - The 30 double-reviewed reports produced 343 discrepancy slots and zero exact
-  report-level agreements. The worklist remains at the third-person resolution
-  boundary; no adjudicated gold or formal prediction exists, and no Kimi call
-  was made. `REPORT.md` remains `EXPERIMENT_NOT_RUN`; `bench-v1` remains absent.
-  The last full local validation passed 298 tests with thirteen external-service
-  cases skipped, plus focused workflow, compilation, lock, JavaScript syntax
-  and diff checks.
+  report-level agreements. A third adjudicator completed all 343 resolutions
+  with reasons, and `finalize-gold` created 120 unique locked-test gold records:
+  90 single-reviewed and 30 double-reviewed/adjudicated.
+- The local ignored gold package is
+  `.runtime/benchmark-v1-gold-20260901`. Its manifest SHA-256 is
+  `dc6e1a1562c9a4686c83737d7bb8eacfc5267667cb61c6985019c4762d39fd79`;
+  `locked-gold.jsonl` SHA-256 is
+  `679cb06288b00af149039675f74805a54a3c8b3546c186f53cefc88f046d0ae5`.
+  It contains no source image or PDF. No formal prediction exists and no Kimi
+  call was made. `REPORT.md` remains `EXPERIMENT_NOT_RUN`; `bench-v1` remains
+  absent. The last full local validation passed 298 tests with thirteen
+  external-service cases skipped, plus focused workflow, compilation, lock,
+  JavaScript syntax and diff checks.
